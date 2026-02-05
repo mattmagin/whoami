@@ -1,0 +1,103 @@
+{
+    "common": {
+        "sshCommand": "ssh visitor@yoursite.com",
+        "viewAll": "View All",
+        "readMore": "Read more",
+        "getInTouch": "Get in Touch",
+        "backToBlog": "Back to Blog",
+        "copyright": "All rights reserved.",
+        "featured": "Featured",
+        "code": "Code",
+        "liveDemo": "Live Demo"
+    },
+    "nav": {
+        "home": "Home",
+        "resume": "Resume",
+        "projects": "Projects",
+        "blog": "Blog",
+        "contact": "Contact",
+        "portfolio": "Portfolio"
+    },
+    "home": {
+        "greeting": "Hey, I'm",
+        "viewWork": "View My Work",
+        "sshHint": "Or try:",
+        "featuredProjects": "Featured Projects",
+        "featuredDescription": "A selection of work I'm proud of",
+        "viewAllProjects": "View All Projects",
+        "recentWriting": "Recent Writing",
+        "recentDescription": "Thoughts on development, tools, and technology",
+        "viewAllPosts": "View All Posts"
+    },
+    "resume": {
+        "downloadPdf": "Download PDF"
+    },
+    "blog": {
+        "title": "Blog",
+        "description": "Thoughts on development, tools, and the craft of building software.",
+        "emptyState": "No posts yet. Check back soon!"
+    },
+    "blogPost": {
+        "notFoundTitle": "Post Not Found",
+        "notFoundDescription": "The post you're looking for doesn't exist or has been removed.",
+        "thanksForReading": "Thanks for reading! Want to discuss this post?"
+    },
+    "projects": {
+        "title": "Projects",
+        "description": "A collection of personal projects, open-source contributions, and experiments.",
+        "featuredSection": "Featured",
+        "otherSection": "Other Projects",
+        "emptyState": "No projects yet. Check back soon!"
+    },
+    "contact": {
+        "title": "Get in Touch",
+        "description": "Have a question, project idea, or just want to say hello? I'd love to hear from you.",
+        "sendMessage": "Send a Message",
+        "otherWays": "Other Ways to Reach Me",
+        "email": "Email",
+        "location": "Location",
+        "preferTerminal": "Prefer the Terminal?",
+        "sshDescription": "You can also reach me via SSH:"
+    },
+    "contactForm": {
+        "nameLabel": "Name",
+        "namePlaceholder": "Your name",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@example.com",
+        "messageLabel": "Message",
+        "messagePlaceholder": "What would you like to discuss?",
+        "sendButton": "Send Message",
+        "sending": "Sending...",
+        "successTitle": "Message Sent!",
+        "successDescription": "Thanks for reaching out. I'll get back to you soon.",
+        "sendAnother": "Send Another Message"
+    },
+    "commandPalette": {
+        "placeholder": "Type a command or search...",
+        "noResults": "No results found.",
+        "navigation": "Navigation",
+        "actions": "Actions",
+        "toggleTheme": "Toggle Theme",
+        "currentlyLabel": "Currently:",
+        "copySshCommand": "Copy SSH Command",
+        "navigateHint": "Navigate with ↑↓ keys",
+        "selectHint": "to select"
+    },
+    "tuiEntry": {
+        "prompt": ">",
+        "buttonText": "enter terminal mode",
+        "hoverHint": "Try the TUI experience!",
+        "keyboardHint": "Press",
+        "keyboardShortcut": "⌘K",
+        "keyboardHintSuffix": "for quick nav"
+    },
+    "footer": {
+        "yourName": "Your Name"
+    },
+    "aria": {
+        "toggleMenu": "Toggle menu",
+        "toggleTheme": "Switch to {theme} mode",
+        "copyToClipboard": "Copy to clipboard",
+        "copied": "Copied!"
+    }
+}

@@ -1,0 +1,6 @@
+export { Home } from './Home'
+export { Resume } from './Resume'
+export { Blog } from './Blog'
+export { BlogPost } from './BlogPost'
+export { Projects } from './Projects'
+export { Contact } from './Contact'

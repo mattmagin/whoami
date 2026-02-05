@@ -1,0 +1,242 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Forest Green Theme */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Custom forest colors */
+  --color-forest: var(--forest);
+  --color-forest-light: var(--forest-light);
+  --color-sage: var(--sage);
+
+  /* Typography */
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-serif: "Fraunces", Georgia, serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+/* Light Mode - Warm, natural feel */
+:root {
+  --radius: 0.5rem;
+  
+  /* Forest Green palette */
+  --forest: oklch(0.35 0.08 145);
+  --forest-light: oklch(0.45 0.1 145);
+  --sage: oklch(0.65 0.06 145);
+  
+  /* Base colors */
+  --background: oklch(0.985 0.002 100);
+  --foreground: oklch(0.15 0.02 145);
+  
+  /* Card */
+  --card: oklch(0.99 0.001 100);
+  --card-foreground: oklch(0.15 0.02 145);
+  
+  /* Popover */
+  --popover: oklch(0.99 0.001 100);
+  --popover-foreground: oklch(0.15 0.02 145);
+  
+  /* Primary - Forest Green */
+  --primary: oklch(0.35 0.08 145);
+  --primary-foreground: oklch(0.98 0.005 145);
+  
+  /* Secondary */
+  --secondary: oklch(0.95 0.01 145);
+  --secondary-foreground: oklch(0.25 0.04 145);
+  
+  /* Muted */
+  --muted: oklch(0.96 0.008 100);
+  --muted-foreground: oklch(0.45 0.02 145);
+  
+  /* Accent - Sage */
+  --accent: oklch(0.92 0.03 145);
+  --accent-foreground: oklch(0.25 0.05 145);
+  
+  /* Destructive */
+  --destructive: oklch(0.55 0.2 25);
+  
+  /* Border & Input */
+  --border: oklch(0.9 0.01 145);
+  --input: oklch(0.92 0.01 145);
+  --ring: oklch(0.45 0.1 145);
+  
+  /* Charts */
+  --chart-1: oklch(0.4 0.1 145);
+  --chart-2: oklch(0.55 0.08 145);
+  --chart-3: oklch(0.65 0.06 145);
+  --chart-4: oklch(0.5 0.12 180);
+  --chart-5: oklch(0.6 0.08 100);
+}
+
+/* Dark Mode - Deep forest at night */
+.dark {
+  /* Forest Green palette (adjusted for dark) */
+  --forest: oklch(0.55 0.1 145);
+  --forest-light: oklch(0.65 0.1 145);
+  --sage: oklch(0.7 0.06 145);
+  
+  /* Base colors */
+  --background: oklch(0.12 0.015 145);
+  --foreground: oklch(0.92 0.01 145);
+  
+  /* Card */
+  --card: oklch(0.16 0.015 145);
+  --card-foreground: oklch(0.92 0.01 145);
+  
+  /* Popover */
+  --popover: oklch(0.16 0.015 145);
+  --popover-foreground: oklch(0.92 0.01 145);
+  
+  /* Primary - Forest Green (lighter for visibility) */
+  --primary: oklch(0.65 0.12 145);
+  --primary-foreground: oklch(0.12 0.015 145);
+  
+  /* Secondary */
+  --secondary: oklch(0.22 0.02 145);
+  --secondary-foreground: oklch(0.9 0.01 145);
+  
+  /* Muted */
+  --muted: oklch(0.2 0.015 145);
+  --muted-foreground: oklch(0.65 0.02 145);
+  
+  /* Accent - Sage */
+  --accent: oklch(0.25 0.03 145);
+  --accent-foreground: oklch(0.85 0.04 145);
+  
+  /* Destructive */
+  --destructive: oklch(0.65 0.2 25);
+  
+  /* Border & Input */
+  --border: oklch(0.25 0.015 145);
+  --input: oklch(0.22 0.015 145);
+  --ring: oklch(0.55 0.1 145);
+  
+  /* Charts */
+  --chart-1: oklch(0.55 0.1 145);
+  --chart-2: oklch(0.65 0.08 145);
+  --chart-3: oklch(0.7 0.06 145);
+  --chart-4: oklch(0.6 0.12 180);
+  --chart-5: oklch(0.65 0.08 100);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    @apply tracking-tight;
+  }
+  
+  code, pre, kbd {
+    font-family: var(--font-mono);
+  }
+}
+
+/* Smooth transitions for theme switching */
+@layer utilities {
+  .transition-theme {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+}
+
+/* Page transition animations */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out;
+  }
+  
+  .animate-slide-up-delay-1 {
+    animation: slideUp 0.5s ease-out 0.1s both;
+  }
+  
+  .animate-slide-up-delay-2 {
+    animation: slideUp 0.5s ease-out 0.2s both;
+  }
+  
+  .animate-slide-up-delay-3 {
+    animation: slideUp 0.5s ease-out 0.3s both;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Focus styles */
+@layer base {
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+}
+
+/* Selection */
+::selection {
+  background-color: oklch(0.45 0.1 145 / 0.3);
+}
+
+.dark ::selection {
+  background-color: oklch(0.55 0.1 145 / 0.4);
+}
