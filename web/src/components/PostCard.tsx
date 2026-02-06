@@ -8,7 +8,7 @@ interface PostCardProps {
   post: Post
 }
 
-export function PostCard({ post }: PostCardProps) {
+const PostCard = ({ post }: PostCardProps) => {
   const { common } = useStrings()
 
   const formattedDate = new Date(post.publishedAt).toLocaleDateString('en-US', {
@@ -62,3 +62,5 @@ export function PostCard({ post }: PostCardProps) {
     </article>
   )
 }
+
+export default PostCard

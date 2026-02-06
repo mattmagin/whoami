@@ -2,12 +2,12 @@ import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from '@/hooks/ThemeContext'
 import { Layout } from '@/components/layout'
-import { CommandPalette } from '@/components/CommandPalette'
+import CommandPalette from '@/components/CommandPalette'
 import { Home, Resume, Blog, BlogPost, Projects, Contact } from '@/pages'
 import { consoleAsciiArt } from '@/content'
 
 // Console Easter Egg
-function useConsoleEasterEgg() {
+const useConsoleEasterEgg = () => {
   useEffect(() => {
     console.log(
       `%c${consoleAsciiArt}`,
@@ -29,7 +29,7 @@ function useConsoleEasterEgg() {
   }, [])
 }
 
-function App() {
+const App = () => {
   useConsoleEasterEgg()
 
   return (

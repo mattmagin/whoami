@@ -100,10 +100,10 @@ Features:
   },
 ]
 
-export function getProject(slug: string): Project | undefined {
+export const getProject = (slug: string): Project | undefined => {
   return projects.find((project) => project.slug === slug)
 }
 
-export function getFeaturedProjects(): Project[] {
+export const getFeaturedProjects = (): Project[] => {
   return projects.filter((project) => project.featured)
 }

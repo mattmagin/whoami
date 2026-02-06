@@ -4,7 +4,7 @@ interface TypewriterTextProps {
   className?: string
 }
 
-export function TypewriterText({ className }: TypewriterTextProps) {
+const TypewriterText = ({ className }: TypewriterTextProps) => {
   return (
     <TypeAnimation
       sequence={[
@@ -34,3 +34,5 @@ export function TypewriterText({ className }: TypewriterTextProps) {
     />
   )
 }
+
+export default TypewriterText

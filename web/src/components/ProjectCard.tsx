@@ -9,7 +9,7 @@ interface ProjectCardProps {
   project: Project
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+const ProjectCard = ({ project }: ProjectCardProps) => {
   const { common } = useStrings()
 
   return (
@@ -85,3 +85,5 @@ export function ProjectCard({ project }: ProjectCardProps) {
     </Tilt>
   )
 }
+
+export default ProjectCard

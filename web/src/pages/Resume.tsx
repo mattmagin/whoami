@@ -1,10 +1,10 @@
 import { Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { ResumeRenderer } from '@/components/ResumeRenderer'
+import ResumeRenderer from '@/components/ResumeRenderer'
 import { useStrings } from '@/content'
 import resumeContent from '@/content/resume.md?raw'
 
-export function Resume() {
+const Resume = () => {
   const { resume: resumeStrings } = useStrings()
 
   return (
@@ -22,3 +22,5 @@ export function Resume() {
     </div>
   )
 }
+
+export default Resume

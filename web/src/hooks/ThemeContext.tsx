@@ -11,12 +11,12 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-function getSystemTheme(): ThemeKey {
+const getSystemTheme = (): ThemeKey => {
   if (typeof window === 'undefined') return 'light'
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-function getInitialTheme(): ThemeKey {
+const getInitialTheme = (): ThemeKey => {
   if (typeof window === 'undefined') return 'light'
 
   const stored = localStorage.getItem('theme') as ThemeKey | null
@@ -31,7 +31,7 @@ function getInitialTheme(): ThemeKey {
 }
 
 // Generate CSS variables from theme object
-function generateCssVariables(theme: Theme) {
+const generateCssVariables = (theme: Theme) => {
   return css`
     :root {
       /* Radius */
@@ -104,7 +104,7 @@ function generateCssVariables(theme: Theme) {
   `
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [themeKey, setThemeKey] = useState<ThemeKey>(getInitialTheme)
   const theme = getTheme(themeKey)
 
@@ -144,7 +144,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   )
 }
 
-export function useThemeContext() {
+export const useThemeContext = () => {
   const context = useContext(ThemeContext)
   if (context === undefined) {
     throw new Error('useThemeContext must be used within a ThemeProvider')
@@ -153,7 +153,7 @@ export function useThemeContext() {
 }
 
 // Alias for convenience - can use either useTheme or useThemeContext
-export function useTheme() {
+export const useTheme = () => {
   return useThemeContext()
 }
 

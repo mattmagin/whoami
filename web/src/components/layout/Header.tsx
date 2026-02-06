@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { ThemeToggle } from './ThemeToggle'
+import ThemeToggle from './ThemeToggle'
 import { useStrings } from '@/content'
 
-export function Header() {
+const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
   const { nav, aria } = useStrings()
@@ -91,3 +91,5 @@ export function Header() {
     </header>
   )
 }
+
+export default Header

@@ -1,6 +1,6 @@
 import { Github, Linkedin, Mail, Terminal } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
-import { CopyButton } from '@/components/CopyButton'
+import CopyButton from '@/components/CopyButton'
 import { useStrings } from '@/content'
 
 const socialLinks = [
@@ -9,7 +9,7 @@ const socialLinks = [
   { href: 'mailto:hello@example.com', icon: Mail, label: 'Email' },
 ]
 
-export function Footer() {
+const Footer = () => {
   const currentYear = new Date().getFullYear()
   const { common, footer } = useStrings()
 
@@ -51,3 +51,5 @@ export function Footer() {
     </footer>
   )
 }
+
+export default Footer

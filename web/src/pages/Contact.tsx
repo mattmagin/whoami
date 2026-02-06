@@ -1,11 +1,11 @@
 import { Mail, MapPin, Github, Linkedin, Terminal } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
-import { CopyButton } from '@/components/CopyButton'
-import { ContactForm } from '@/components/ContactForm'
+import CopyButton from '@/components/CopyButton'
+import ContactForm from '@/components/ContactForm'
 import { resume } from '@/data'
 import { useStrings } from '@/content'
 
-export function Contact() {
+const Contact = () => {
   const { common, contact } = useStrings()
 
   return (
@@ -129,3 +129,5 @@ export function Contact() {
     </div>
   )
 }
+
+export default Contact
