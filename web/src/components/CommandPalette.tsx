@@ -20,7 +20,7 @@ export function CommandPalette() {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const navigate = useNavigate()
-  const { theme, toggleTheme } = useThemeContext()
+  const { themeKey, toggleTheme } = useThemeContext()
   const [, copy] = useCopyToClipboard()
   const { common, nav, commandPalette } = useStrings()
 
@@ -129,14 +129,14 @@ export function CommandPalette() {
               onSelect={() => runCommand(toggleTheme)}
               className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-accent aria-selected:bg-accent"
             >
-              {theme === 'light' ? (
+              {themeKey === 'light' ? (
                 <Moon className="h-4 w-4" />
               ) : (
                 <Sun className="h-4 w-4" />
               )}
               {commandPalette.toggleTheme}
               <span className="ml-auto text-xs text-muted-foreground">
-                {commandPalette.currentlyLabel} {theme}
+                {commandPalette.currentlyLabel} {themeKey}
               </span>
             </Command.Item>
             <Command.Item

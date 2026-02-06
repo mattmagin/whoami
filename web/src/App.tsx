@@ -4,25 +4,13 @@ import { ThemeProvider } from '@/hooks/ThemeContext'
 import { Layout } from '@/components/layout'
 import { CommandPalette } from '@/components/CommandPalette'
 import { Home, Resume, Blog, BlogPost, Projects, Contact } from '@/pages'
+import { consoleAsciiArt } from '@/content'
 
 // Console Easter Egg
 function useConsoleEasterEgg() {
   useEffect(() => {
-    const asciiArt = `
-%c
-    ╔═══════════════════════════════════════════════════════╗
-    ║                                                       ║
-    ║     █████╗ ██╗     ███████╗██╗  ██╗                   ║
-    ║    ██╔══██╗██║     ██╔════╝╚██╗██╔╝                   ║
-    ║    ███████║██║     █████╗   ╚███╔╝                    ║
-    ║    ██╔══██║██║     ██╔══╝   ██╔██╗                    ║
-    ║    ██║  ██║███████╗███████╗██╔╝ ██╗                   ║
-    ║    ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝                   ║
-    ║                                                       ║
-    ╚═══════════════════════════════════════════════════════╝
-`
     console.log(
-      asciiArt,
+      `%c${consoleAsciiArt}`,
       'color: #4a7c59; font-family: monospace; font-size: 10px;'
     )
     console.log(
