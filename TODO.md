@@ -1,0 +1,1 @@
+[ ] Configure cors in `api` for the frontend

@@ -1,0 +1,15 @@
+services:
+  database:
+    image: postgres:18
+    volumes:
+      - whoami_database:/var/lib/postgresql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: whoami
+      POSTGRES_PASSWORD: shhhhItsASecret
+      POSTGRES_DB: whoami_development
+
+volumes:
+  whoami_database:
