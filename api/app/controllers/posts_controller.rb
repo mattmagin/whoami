@@ -1,14 +1,19 @@
 class PostsController < ApplicationController
-    def index
-        posts = Post.all.map do |post| 
-            post.as_json.merge(reading_time: reading_time(post))
-        end
-        render json: posts
-    end
+  def index
+    render json: serialize(Post.all)
+  end
 
-    private
+  def show
+    post = Post.find(params[:id])
+    render json: serialize(post)
 
-    def reading_time(post)
-        ReadingTime.calculate(post.content)
-    end
+  rescue ActiveRecord::RecordNotFound
+    render_not_found("Post not found")
+  end
+
+  private
+
+  def serialize(post)
+    PostResource.new(post).serialize
+  end
 end

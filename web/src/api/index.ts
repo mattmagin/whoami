@@ -1,5 +1,7 @@
 import ky from 'ky';
 import { transformResponse } from './utils';
+import type { Post as PostResponse, Project as ProjectResponse } from '../types/generated';
+import type { Post, Project } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -7,47 +9,7 @@ const api = ky.create({
     prefixUrl: API_BASE_URL,
 });
 
-interface PostResponse {
-    id: string;
-    title: string;
-    content: string;
-    published_at: string | null;
-    reading_time: string;
-    created_at: string;
-    updated_at: string;
-    deleted_at: string | null;
-}
-
-interface ProjectResponse {
-    id: string;
-    name: string;
-    description: string;
-    technologies: string[];
-    published_at: string | null;
-    created_at: string;
-    updated_at: string;
-    deleted_at: string | null;
-}
-
-export interface Post {
-    id: string;
-    title: string;
-    content: string;
-    publishedAt: string | null;
-    readingTime: string;
-    createdAt: string;
-    updatedAt: string;
-}
-
-export interface Project {
-    id: string;
-    name: string;
-    description: string;
-    technologies: string[];
-    publishedAt: string | null;
-    createdAt: string;
-    updatedAt: string;
-}
+export type { Post, Project };
 
 export const getPosts = async (): Promise<Post[]> => {
     const posts = await api.get('api/posts').json<PostResponse[]>();
