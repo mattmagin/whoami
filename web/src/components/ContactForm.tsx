@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useStrings } from '@/content'
 
-export function ContactForm() {
+const ContactForm = () => {
   const [submitted, setSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -121,3 +121,5 @@ export function ContactForm() {
     </form>
   )
 }
+
+export default ContactForm

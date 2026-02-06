@@ -8,7 +8,7 @@ interface CopyButtonProps {
   className?: string
 }
 
-export function CopyButton({ text, className }: CopyButtonProps) {
+const CopyButton = ({ text, className }: CopyButtonProps) => {
   const [, copy] = useCopyToClipboard()
   const [copied, setCopied] = useState(false)
 
@@ -36,3 +36,5 @@ export function CopyButton({ text, className }: CopyButtonProps) {
     </Button>
   )
 }
+
+export default CopyButton

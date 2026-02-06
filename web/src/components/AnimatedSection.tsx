@@ -7,7 +7,7 @@ interface AnimatedSectionProps {
   delay?: number
 }
 
-export function AnimatedSection({ children, className, delay = 0 }: AnimatedSectionProps) {
+export const AnimatedSection = ({ children, className, delay = 0 }: AnimatedSectionProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -31,7 +31,7 @@ interface AnimatedListProps {
   className?: string
 }
 
-export function AnimatedList({ children, className }: AnimatedListProps) {
+export const AnimatedList = ({ children, className }: AnimatedListProps) => {
   return (
     <motion.div
       initial="hidden"
@@ -51,7 +51,7 @@ export function AnimatedList({ children, className }: AnimatedListProps) {
   )
 }
 
-export function AnimatedListItem({ children, className }: AnimatedListProps) {
+export const AnimatedListItem = ({ children, className }: AnimatedListProps) => {
   return (
     <motion.div
       variants={{

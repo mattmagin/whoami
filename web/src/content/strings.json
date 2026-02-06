@@ -10,6 +10,12 @@
         "code": "Code",
         "liveDemo": "Live Demo"
     },
+    "typewriter": [
+        "Full-Stack Engineer",
+        "Powered By Coffee",
+        "Tinkerer at Heart",
+        "Open Source Enthusiast"
+    ],
     "nav": {
         "home": "Home",
         "resume": "Resume",

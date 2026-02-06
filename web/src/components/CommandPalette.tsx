@@ -16,7 +16,7 @@ import {
 import { useThemeContext } from '@/hooks/ThemeContext'
 import { useStrings } from '@/content'
 
-export function CommandPalette() {
+const CommandPalette = () => {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const navigate = useNavigate()
@@ -164,3 +164,5 @@ export function CommandPalette() {
     </Command.Dialog>
   )
 }
+
+export default CommandPalette

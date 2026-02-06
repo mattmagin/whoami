@@ -3,11 +3,11 @@ import { ArrowLeft, Calendar, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { ReadingProgress } from '@/components/ReadingProgress'
+import ReadingProgress from '@/components/ReadingProgress'
 import { getPost } from '@/data'
 import { useStrings } from '@/content'
 
-export function BlogPost() {
+const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>()
   const post = slug ? getPost(slug) : undefined
   const { common, blogPost } = useStrings()
@@ -184,3 +184,5 @@ export function BlogPost() {
     </>
   )
 }
+
+export default BlogPost

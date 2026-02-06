@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export function ReadingProgress() {
+const ReadingProgress = () => {
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
@@ -26,3 +26,5 @@ export function ReadingProgress() {
     </div>
   )
 }
+
+export default ReadingProgress

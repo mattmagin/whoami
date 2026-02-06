@@ -156,11 +156,11 @@ With the AWS free tier, you can run a small portfolio site for nearly free. Just
   },
 ]
 
-export function getPost(slug: string): Post | undefined {
+export const getPost = (slug: string): Post | undefined => {
   return posts.find((post) => post.slug === slug)
 }
 
-export function getRecentPosts(count: number = 3): Post[] {
+export const getRecentPosts = (count: number = 3): Post[] => {
   return [...posts]
     .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
     .slice(0, count)

@@ -7,16 +7,16 @@ export type Strings = typeof stringsData
 export const strings: Strings = stringsData
 
 // Hook for components (just returns the strings, but allows for future enhancements)
-export function useStrings(): Strings {
+export const useStrings = (): Strings => {
   return strings
 }
 
 // Helper function for string interpolation
 // Usage: interpolate("Hello, {name}!", { name: "World" }) => "Hello, World!"
-export function interpolate(
+export const interpolate = (
   template: string,
   values: Record<string, string | number>
-): string {
+): string => {
   return template.replace(/\{(\w+)\}/g, (_, key) => {
     return values[key]?.toString() ?? `{${key}}`
   })

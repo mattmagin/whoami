@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Terminal } from 'lucide-react'
 import { useStrings } from '@/content'
 
-export function TuiEntryPoint() {
+const TuiEntryPoint = () => {
     const [isHovered, setIsHovered] = useState(false)
     const { tuiEntry } = useStrings()
 
@@ -88,3 +88,5 @@ export function TuiEntryPoint() {
         </motion.div>
     )
 }
+
+export default TuiEntryPoint

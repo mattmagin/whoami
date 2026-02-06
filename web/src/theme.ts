@@ -222,6 +222,6 @@ export const themes: Record<ThemeKey, Theme> = {
     dark: darkTheme,
 }
 
-export function getTheme(key: ThemeKey): Theme {
+export const getTheme = (key: ThemeKey): Theme => {
     return themes[key]
 }

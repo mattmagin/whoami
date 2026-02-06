@@ -1,9 +1,9 @@
 import { projects } from '@/data'
-import { ProjectCard } from '@/components/ProjectCard'
+import ProjectCard from '@/components/ProjectCard'
 import { AnimatedSection, AnimatedList, AnimatedListItem } from '@/components/AnimatedSection'
 import { useStrings } from '@/content'
 
-export function Projects() {
+const Projects = () => {
   const { projects: projectsStrings } = useStrings()
 
   // Sort: featured first, then alphabetically
@@ -75,3 +75,5 @@ export function Projects() {
     </div>
   )
 }
+
+export default Projects

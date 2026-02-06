@@ -13,14 +13,14 @@ interface ResumeRendererProps {
 // Track section context for conditional rendering
 type SectionContext = 'header' | 'summary' | 'skills' | 'content'
 
-function getSectionFromHeading(text: string): SectionContext {
+const getSectionFromHeading = (text: string): SectionContext => {
     const lower = text.toLowerCase()
     if (lower === 'skills') return 'skills'
     return 'content'
 }
 
 // Parse "**Company** | Date" pattern from paragraph children
-function parseCompanyDate(children: ReactNode): { company: string; date: string } | null {
+const parseCompanyDate = (children: ReactNode): { company: string; date: string } | null => {
     if (!Array.isArray(children)) return null
 
     const parts: string[] = []
@@ -52,7 +52,7 @@ const contactIcons: Record<string, React.ComponentType<{ className?: string }>> 
     linkedin: Linkedin,
 }
 
-export function ResumeRenderer({ content }: ResumeRendererProps) {
+const ResumeRenderer = ({ content }: ResumeRendererProps) => {
     // Track current section for context-aware rendering
     let currentSection: SectionContext = 'header'
     let isFirstH2 = true
@@ -280,3 +280,5 @@ export function ResumeRenderer({ content }: ResumeRendererProps) {
         </ReactMarkdown>
     )
 }
+
+export default ResumeRenderer

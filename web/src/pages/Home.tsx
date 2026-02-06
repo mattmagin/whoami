@@ -1,17 +1,17 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Terminal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { CopyButton } from '@/components/CopyButton'
-import { TypewriterText } from '@/components/TypewriterText'
+import CopyButton from '@/components/CopyButton'
+import TypewriterText from '@/components/TypewriterText'
 import { Separator } from '@/components/ui/separator'
-import { PostCard } from '@/components/PostCard'
-import { ProjectCard } from '@/components/ProjectCard'
+import PostCard from '@/components/PostCard'
+import ProjectCard from '@/components/ProjectCard'
 import { AnimatedSection, AnimatedList, AnimatedListItem } from '@/components/AnimatedSection'
-import { TuiEntryPoint } from '@/components/TuiEntryPoint'
+import TuiEntryPoint from '@/components/TuiEntryPoint'
 import { getRecentPosts, getFeaturedProjects, resume } from '@/data'
 import { useStrings } from '@/content'
 
-export function Home() {
+const Home = () => {
   const recentPosts = getRecentPosts(2)
   const featuredProjects = getFeaturedProjects().slice(0, 3)
   const { common, home } = useStrings()
@@ -135,3 +135,5 @@ export function Home() {
     </div>
   )
 }
+
+export default Home
