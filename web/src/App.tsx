@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from '@/hooks/ThemeContext'
 import { Layout } from '@/components/layout'
@@ -33,21 +33,24 @@ const App = () => {
   useConsoleEasterEgg()
 
   return (
-    <ThemeProvider>
-      <BrowserRouter>
-        <CommandPalette />
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/resume" element={<Resume />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
-    </ThemeProvider>
+    // TODO implement suspense
+    <Suspense fallback={<div>Loading...</div>}>
+      <ThemeProvider>
+        <BrowserRouter>
+          <CommandPalette />
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/resume" element={<Resume />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/contact" element={<Contact />} />
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </ThemeProvider>
+    </Suspense>
   )
 }
 
