@@ -7,4 +7,11 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  get "resume" => "resume#index"
+
+  # TODO: add CRUD routes for posts and projects
+  
+  resources :posts
+  resources :projects
 end
