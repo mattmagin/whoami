@@ -34,7 +34,6 @@ gem "image_processing", "~> 1.2"
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors"
-gem "blueprinter", "~> 1.2.1"
 gem "mdl", "~> 0.15.0"
 
 group :development, :test do
