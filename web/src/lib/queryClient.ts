@@ -1,4 +1,5 @@
 import { QueryClient } from '@tanstack/react-query'
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -9,4 +10,13 @@ export const queryClient = new QueryClient({
       retry: 1,
     },
   },
+})
+
+export const persister = createAsyncStoragePersister({
+  storage: {
+    getItem: (key) => Promise.resolve(window.localStorage.getItem(key)),
+    setItem: (key, value) => Promise.resolve(window.localStorage.setItem(key, value)),
+    removeItem: (key) => Promise.resolve(window.localStorage.removeItem(key)),
+  },
+  key: 'whoami-query-cache', // Cache key in localStorage
 })

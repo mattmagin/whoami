@@ -1,7 +1,7 @@
 import { Suspense, useEffect } from 'react'
-import { QueryClientProvider } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { queryClient } from '@/lib/queryClient'
+import { queryClient, persister } from '@/lib/queryClient'
 import { ThemeProvider } from '@/hooks/ThemeContext'
 import { Layout } from '@/components/layout'
 import CommandPalette from '@/components/CommandPalette'
@@ -35,7 +35,7 @@ const App = () => {
   useConsoleEasterEgg()
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
       {/* TODO implement suspense */}
       <Suspense fallback={<div>Loading...</div>}>
         <ThemeProvider>
@@ -54,7 +54,7 @@ const App = () => {
           </BrowserRouter>
         </ThemeProvider>
       </Suspense>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   )
 }
 
