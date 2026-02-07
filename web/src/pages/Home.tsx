@@ -9,12 +9,12 @@ import ProjectCard from '@/components/ProjectCard'
 import LoadingSkeleton from '@/components/LoadingSkeleton'
 import { AnimatedSection, AnimatedList, AnimatedListItem } from '@/components/AnimatedSection'
 import TuiEntryPoint from '@/components/TuiEntryPoint'
-import { usePosts, useProjects } from '@/hooks/queries'
-import { name, summary } from '@/consts'
+import { usePosts, useProjects, useResume } from '@/hooks/queries'
 import { useStrings } from '@/content'
 
 const Home = () => {
   const { common, home } = useStrings()
+  const { data: resume } = useResume()
   const { data: posts, isLoading: postsLoading } = usePosts()
   const { data: projects, isLoading: projectsLoading } = useProjects()
 
@@ -36,13 +36,13 @@ const Home = () => {
           {home.greeting}
         </p>
         <h1 className="mb-2 font-serif text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl animate-slide-up">
-          {name}
+          {resume?.name}
         </h1>
         <div className="mb-6 h-8 text-xl text-primary md:text-2xl animate-slide-up-delay-1">
           <TypewriterText />
         </div>
         <p className="mb-8 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl animate-slide-up-delay-2">
-          {summary}
+          {resume?.summary}
         </p>
         <div className="flex flex-wrap gap-4 animate-slide-up-delay-3">
           <Button asChild size="lg">
