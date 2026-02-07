@@ -2,7 +2,7 @@ import { Mail, MapPin, Github, Linkedin, Terminal } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import CopyButton from '@/components/CopyButton'
 import ContactForm from '@/components/ContactForm'
-import { resume } from '@/data'
+import { email, location, github, linkedin } from '@/consts'
 import { useStrings } from '@/content'
 
 const Contact = () => {
@@ -38,7 +38,7 @@ const Contact = () => {
           <div className="space-y-6">
             {/* Email */}
             <a
-              href={`mailto:${resume.contact.email}`}
+              href={`mailto:${email}`}
               className="flex items-start gap-4 rounded-lg border border-border/50 bg-card p-4 transition-colors hover:border-primary/30"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -47,7 +47,7 @@ const Contact = () => {
               <div>
                 <p className="font-medium">{contact.email}</p>
                 <p className="text-sm text-muted-foreground">
-                  {resume.contact.email}
+                  {email}
                 </p>
               </div>
             </a>
@@ -60,15 +60,15 @@ const Contact = () => {
               <div>
                 <p className="font-medium">{contact.location}</p>
                 <p className="text-sm text-muted-foreground">
-                  {resume.contact.location}
+                  {location}
                 </p>
               </div>
             </div>
 
             {/* GitHub */}
-            {resume.contact.github && (
+            {github && (
               <a
-                href={`https://${resume.contact.github}`}
+                href={`https://${github}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-start gap-4 rounded-lg border border-border/50 bg-card p-4 transition-colors hover:border-primary/30"
@@ -79,16 +79,16 @@ const Contact = () => {
                 <div>
                   <p className="font-medium">GitHub</p>
                   <p className="text-sm text-muted-foreground">
-                    {resume.contact.github}
+                    {github}
                   </p>
                 </div>
               </a>
             )}
 
             {/* LinkedIn */}
-            {resume.contact.linkedin && (
+            {linkedin && (
               <a
-                href={`https://${resume.contact.linkedin}`}
+                href={`https://${linkedin}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-start gap-4 rounded-lg border border-border/50 bg-card p-4 transition-colors hover:border-primary/30"
@@ -99,7 +99,7 @@ const Contact = () => {
                 <div>
                   <p className="font-medium">LinkedIn</p>
                   <p className="text-sm text-muted-foreground">
-                    {resume.contact.linkedin}
+                    {linkedin}
                   </p>
                 </div>
               </a>

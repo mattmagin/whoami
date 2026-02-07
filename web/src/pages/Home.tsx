@@ -10,7 +10,7 @@ import LoadingSkeleton from '@/components/LoadingSkeleton'
 import { AnimatedSection, AnimatedList, AnimatedListItem } from '@/components/AnimatedSection'
 import TuiEntryPoint from '@/components/TuiEntryPoint'
 import { usePosts, useProjects } from '@/hooks/queries'
-import { resume } from '@/data'
+import { name, summary } from '@/consts'
 import { useStrings } from '@/content'
 
 const Home = () => {
@@ -36,13 +36,13 @@ const Home = () => {
           {home.greeting}
         </p>
         <h1 className="mb-2 font-serif text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl animate-slide-up">
-          {resume.name}
+          {name}
         </h1>
         <div className="mb-6 h-8 text-xl text-primary md:text-2xl animate-slide-up-delay-1">
           <TypewriterText />
         </div>
         <p className="mb-8 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl animate-slide-up-delay-2">
-          {resume.summary}
+          {summary}
         </p>
         <div className="flex flex-wrap gap-4 animate-slide-up-delay-3">
           <Button asChild size="lg">
