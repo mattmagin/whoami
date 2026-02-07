@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_07_075332) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_07_103850) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -27,12 +27,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_07_075332) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.text "excerpt"
+    t.uuid "project_id"
     t.datetime "published_at"
     t.string "slug", null: false
     t.string "tags", default: [], array: true
-    t.string "title"
+    t.string "title", null: false
     t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_posts_on_project_id"
     t.index ["slug"], name: "index_posts_on_slug", unique: true
+    t.index ["title"], name: "index_posts_on_title", unique: true
   end
 
   create_table "projects", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -43,12 +46,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_07_075332) do
     t.boolean "featured", default: false, null: false
     t.string "github_url"
     t.string "image_url"
-    t.string "name"
+    t.string "name", null: false
     t.datetime "published_at"
     t.string "slug", null: false
     t.string "tech_stack", array: true
     t.datetime "updated_at", null: false
     t.string "url"
+    t.index ["name"], name: "index_projects_on_name", unique: true
     t.index ["slug"], name: "index_projects_on_slug", unique: true
   end
+
+  add_foreign_key "posts", "projects"
 end

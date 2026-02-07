@@ -4,12 +4,86 @@
 
 puts "Seeding database..."
 
-# Clear existing data
+# Clear existing data (posts first due to foreign key)
 Post.destroy_all
 Project.destroy_all
 
 # ============================================
-# Posts
+# Projects (created first so posts can reference them)
+# ============================================
+projects_data = [
+  {
+    slug: "portfolio-tui",
+    name: "Portfolio TUI",
+    excerpt: "A terminal-based portfolio viewer with smooth animations and keyboard navigation.",
+    description: "A terminal-based portfolio viewer built with Go and Bubble Tea. Features smooth animations, keyboard navigation, and real-time data fetching from a Rails API. Demonstrates how TUIs can be both functional and beautiful.",
+    tech_stack: %w[Go BubbleTea Lipgloss REST],
+    github_url: "https://github.com/example/portfolio-tui",
+    featured: true,
+    published_at: 1.week.ago
+  },
+  {
+    slug: "portfolio-api",
+    name: "Portfolio API",
+    excerpt: "RESTful API backend powering the portfolio with Rails 8 in API-only mode.",
+    description: "RESTful API backend powering the portfolio. Built with Rails 8 in API-only mode. Features include blog posts with reading time estimation, project showcases, and a contact form. Deployed with Kamal to a VPS.",
+    tech_stack: %w[Ruby Rails PostgreSQL Docker Kamal],
+    github_url: "https://github.com/example/portfolio-api",
+    featured: true,
+    published_at: 1.week.ago
+  },
+  {
+    slug: "task-flow",
+    name: "Task Flow",
+    excerpt: "A kanban-style task management app with real-time WebSocket updates.",
+    description: "A kanban-style task management app with drag-and-drop interface. Real-time updates via WebSockets keep all connected clients in sync. Supports multiple boards, labels, and due dates.",
+    tech_stack: %w[React TypeScript Rails ActionCable PostgreSQL],
+    url: "https://taskflow.example.com",
+    github_url: "https://github.com/example/task-flow",
+    featured: true,
+    published_at: 2.months.ago
+  },
+  {
+    slug: "code-review-bot",
+    name: "Code Review Bot",
+    excerpt: "GitHub App providing automated code review using static analysis.",
+    description: "GitHub App that provides automated code review comments using static analysis. Integrates with CI pipelines to catch common issues before human review. Reduced review cycles by 30% on team projects.",
+    tech_stack: %w[Python FastAPI GitHub-API Docker],
+    github_url: "https://github.com/example/code-review-bot",
+    featured: false,
+    published_at: 4.months.ago
+  },
+  {
+    slug: "expense-tracker-cli",
+    name: "Expense Tracker CLI",
+    excerpt: "Command-line expense tracking with SQLite and beautiful terminal output.",
+    description: "Command-line expense tracking with SQLite storage and beautiful terminal output. Supports categories, recurring expenses, and monthly reports. Syncs to a simple REST API for backup.",
+    tech_stack: %w[Rust SQLite REST],
+    github_url: "https://github.com/example/expense-tracker",
+    featured: false,
+    published_at: 6.months.ago
+  },
+  {
+    slug: "weather-dashboard",
+    name: "Weather Dashboard",
+    excerpt: "Minimal weather dashboard with geolocation and accessibility-first design.",
+    description: "Minimal weather dashboard aggregating data from multiple APIs. Features geolocation, 7-day forecasts, and severe weather alerts. Designed with accessibility in mind—fully keyboard navigable.",
+    tech_stack: %w[Vue.js Tailwind OpenWeatherAPI Netlify],
+    url: "https://weather.example.com",
+    featured: false,
+    published_at: 8.months.ago
+  }
+]
+
+projects = {}
+projects_data.each do |project_attrs|
+  project = Project.create!(project_attrs)
+  projects[project_attrs[:slug]] = project
+  puts "  Created project: #{project_attrs[:name]}"
+end
+
+# ============================================
+# Posts (some linked to projects)
 # ============================================
 posts_data = [
   {
@@ -17,6 +91,7 @@ posts_data = [
     title: "Building a Terminal UI with Go and Bubble Tea",
     excerpt: "Exploring the world of terminal user interfaces with Bubble Tea and why TUIs are making a comeback for developer tools.",
     tags: %w[Go TUI BubbleTea CLI],
+    project: projects["portfolio-tui"],
     content: <<~MARKDOWN,
       Recently I've been exploring the world of terminal user interfaces (TUIs), and I have to say—Bubble Tea has completely changed how I think about CLI applications.
 
@@ -71,6 +146,7 @@ posts_data = [
     title: "Why I Chose Rails for My API Backend",
     excerpt: "Rails' convention over configuration philosophy and rich ecosystem make it the perfect choice for rapid API development.",
     tags: %w[Rails Ruby API Backend],
+    project: projects["portfolio-api"],
     content: <<~MARKDOWN,
       When starting a new project, the framework choice can feel overwhelming. Here's why Rails was the right choice for my portfolio API.
 
@@ -110,6 +186,7 @@ posts_data = [
     title: "Deploying with Kamal: A Docker-First Approach",
     excerpt: "Kamal offers simple, zero-downtime deployments to bare metal servers without the Kubernetes complexity.",
     tags: %w[DevOps Docker Kamal Deployment],
+    project: projects["portfolio-api"],
     content: <<~MARKDOWN,
       Kamal (formerly MRSK) is Basecamp's answer to simple deployment. Here's my experience using it for this portfolio.
 
@@ -248,78 +325,6 @@ posts_data = [
 posts_data.each do |post_attrs|
   Post.create!(post_attrs)
   puts "  Created post: #{post_attrs[:title]}"
-end
-
-# ============================================
-# Projects
-# ============================================
-projects_data = [
-  {
-    slug: "portfolio-tui",
-    name: "Portfolio TUI",
-    excerpt: "A terminal-based portfolio viewer with smooth animations and keyboard navigation.",
-    description: "A terminal-based portfolio viewer built with Go and Bubble Tea. Features smooth animations, keyboard navigation, and real-time data fetching from a Rails API. Demonstrates how TUIs can be both functional and beautiful.",
-    tech_stack: %w[Go BubbleTea Lipgloss REST],
-    github_url: "https://github.com/example/portfolio-tui",
-    featured: true,
-    published_at: 1.week.ago
-  },
-  {
-    slug: "portfolio-api",
-    name: "Portfolio API",
-    excerpt: "RESTful API backend powering the portfolio with Rails 8 in API-only mode.",
-    description: "RESTful API backend powering the portfolio. Built with Rails 8 in API-only mode. Features include blog posts with reading time estimation, project showcases, and a contact form. Deployed with Kamal to a VPS.",
-    tech_stack: %w[Ruby Rails PostgreSQL Docker Kamal],
-    github_url: "https://github.com/example/portfolio-api",
-    featured: true,
-    published_at: 1.week.ago
-  },
-  {
-    slug: "task-flow",
-    name: "Task Flow",
-    excerpt: "A kanban-style task management app with real-time WebSocket updates.",
-    description: "A kanban-style task management app with drag-and-drop interface. Real-time updates via WebSockets keep all connected clients in sync. Supports multiple boards, labels, and due dates.",
-    tech_stack: %w[React TypeScript Rails ActionCable PostgreSQL],
-    url: "https://taskflow.example.com",
-    github_url: "https://github.com/example/task-flow",
-    featured: true,
-    published_at: 2.months.ago
-  },
-  {
-    slug: "code-review-bot",
-    name: "Code Review Bot",
-    excerpt: "GitHub App providing automated code review using static analysis.",
-    description: "GitHub App that provides automated code review comments using static analysis. Integrates with CI pipelines to catch common issues before human review. Reduced review cycles by 30% on team projects.",
-    tech_stack: %w[Python FastAPI GitHub-API Docker],
-    github_url: "https://github.com/example/code-review-bot",
-    featured: false,
-    published_at: 4.months.ago
-  },
-  {
-    slug: "expense-tracker-cli",
-    name: "Expense Tracker CLI",
-    excerpt: "Command-line expense tracking with SQLite and beautiful terminal output.",
-    description: "Command-line expense tracking with SQLite storage and beautiful terminal output. Supports categories, recurring expenses, and monthly reports. Syncs to a simple REST API for backup.",
-    tech_stack: %w[Rust SQLite REST],
-    github_url: "https://github.com/example/expense-tracker",
-    featured: false,
-    published_at: 6.months.ago
-  },
-  {
-    slug: "weather-dashboard",
-    name: "Weather Dashboard",
-    excerpt: "Minimal weather dashboard with geolocation and accessibility-first design.",
-    description: "Minimal weather dashboard aggregating data from multiple APIs. Features geolocation, 7-day forecasts, and severe weather alerts. Designed with accessibility in mind—fully keyboard navigable.",
-    tech_stack: %w[Vue.js Tailwind OpenWeatherAPI Netlify],
-    url: "https://weather.example.com",
-    featured: false,
-    published_at: 8.months.ago
-  }
-]
-
-projects_data.each do |project_attrs|
-  Project.create!(project_attrs)
-  puts "  Created project: #{project_attrs[:name]}"
 end
 
 puts "Seeding complete!"
