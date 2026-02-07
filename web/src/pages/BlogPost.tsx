@@ -4,13 +4,41 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import ReadingProgress from '@/components/ReadingProgress'
-import { getPost } from '@/data'
+import LoadingSkeleton from '@/components/LoadingSkeleton'
+import ErrorState from '@/components/ErrorState'
+import { usePost } from '@/hooks/queries'
 import { useStrings } from '@/content'
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>()
-  const post = slug ? getPost(slug) : undefined
+  const { data: post, isLoading, error, refetch } = usePost(slug ?? '')
   const { common, blogPost } = useStrings()
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-3xl px-6 py-16">
+        <LoadingSkeleton variant="title" className="mb-8" />
+        <LoadingSkeleton variant="text" />
+        <div className="mt-10 space-y-4">
+          <LoadingSkeleton variant="text" />
+          <LoadingSkeleton variant="text" />
+          <LoadingSkeleton variant="text" />
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-3xl px-6 py-16">
+        <ErrorState
+          title="Failed to load post"
+          message="We couldn't load this blog post. Please try again."
+          onRetry={() => refetch()}
+        />
+      </div>
+    )
+  }
 
   if (!post) {
     return (
@@ -31,11 +59,13 @@ const BlogPost = () => {
     )
   }
 
-  const formattedDate = new Date(post.publishedAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  const formattedDate = post.publishedAt
+    ? new Date(post.publishedAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : null
 
   // Simple markdown-to-HTML conversion for demo purposes
   // In production, you'd use a proper markdown parser like react-markdown
@@ -139,7 +169,7 @@ const BlogPost = () => {
       {/* Article Header */}
       <header className="mb-10">
         <div className="mb-4 flex flex-wrap gap-2">
-          {post.tags.map((tag) => (
+          {(post.tags ?? []).map((tag) => (
             <Badge key={tag} variant="secondary">
               {tag}
             </Badge>
@@ -151,10 +181,12 @@ const BlogPost = () => {
         </h1>
 
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <Calendar className="h-4 w-4" />
-            {formattedDate}
-          </span>
+          {formattedDate && (
+            <span className="flex items-center gap-1">
+              <Calendar className="h-4 w-4" />
+              {formattedDate}
+            </span>
+          )}
           <span className="flex items-center gap-1">
             <Clock className="h-4 w-4" />
             {post.readingTime}
@@ -166,7 +198,7 @@ const BlogPost = () => {
 
       {/* Article Content */}
       <article className="prose prose-lg dark:prose-invert max-w-none">
-        {renderContent(post.content)}
+        {post.content && renderContent(post.content)}
       </article>
 
       <Separator className="my-12" />

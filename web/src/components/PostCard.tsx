@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Calendar, Clock } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import type { Post } from '@/data/types'
+import type { Post } from '@/types'
 import { useStrings } from '@/content'
 
 interface PostCardProps {
@@ -11,11 +11,13 @@ interface PostCardProps {
 const PostCard = ({ post }: PostCardProps) => {
   const { common } = useStrings()
 
-  const formattedDate = new Date(post.publishedAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  const formattedDate = post.publishedAt
+    ? new Date(post.publishedAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : null
 
   return (
     <article className="group">
@@ -23,7 +25,7 @@ const PostCard = ({ post }: PostCardProps) => {
         <div className="rounded-lg border border-border/50 bg-card p-6 transition-all hover:border-primary/30 hover:shadow-sm">
           {/* Tags */}
           <div className="mb-3 flex flex-wrap gap-2">
-            {post.tags.slice(0, 3).map((tag) => (
+            {(post.tags ?? []).slice(0, 3).map((tag) => (
               <Badge key={tag} variant="secondary" className="text-xs">
                 {tag}
               </Badge>
@@ -43,10 +45,12 @@ const PostCard = ({ post }: PostCardProps) => {
           {/* Meta */}
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                {formattedDate}
-              </span>
+              {formattedDate && (
+                <span className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  {formattedDate}
+                </span>
+              )}
               <span className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
                 {post.readingTime}

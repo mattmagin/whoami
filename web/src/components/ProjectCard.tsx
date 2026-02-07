@@ -2,7 +2,7 @@ import { ExternalLink, Github } from 'lucide-react'
 import Tilt from 'react-parallax-tilt'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import type { Project } from '@/data/types'
+import type { Project } from '@/types'
 import { useStrings } from '@/content'
 
 interface ProjectCardProps {
@@ -45,7 +45,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
 
         {/* Tech Stack */}
         <div className="mb-6 flex flex-wrap gap-2">
-          {project.techStack.map((tech) => (
+          {(project.techStack ?? []).map((tech) => (
             <Badge key={tech} variant="outline" className="text-xs font-mono">
               {tech}
             </Badge>

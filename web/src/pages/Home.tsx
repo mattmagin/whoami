@@ -6,15 +6,27 @@ import TypewriterText from '@/components/TypewriterText'
 import { Separator } from '@/components/ui/separator'
 import PostCard from '@/components/PostCard'
 import ProjectCard from '@/components/ProjectCard'
+import LoadingSkeleton from '@/components/LoadingSkeleton'
 import { AnimatedSection, AnimatedList, AnimatedListItem } from '@/components/AnimatedSection'
 import TuiEntryPoint from '@/components/TuiEntryPoint'
-import { getRecentPosts, getFeaturedProjects, resume } from '@/data'
+import { usePosts, useProjects } from '@/hooks/queries'
+import { resume } from '@/data'
 import { useStrings } from '@/content'
 
 const Home = () => {
-  const recentPosts = getRecentPosts(2)
-  const featuredProjects = getFeaturedProjects().slice(0, 3)
   const { common, home } = useStrings()
+  const { data: posts, isLoading: postsLoading } = usePosts()
+  const { data: projects, isLoading: projectsLoading } = useProjects()
+
+  // Get recent posts (sorted by date, take 2)
+  const recentPosts = [...(posts ?? [])]
+    .sort((a, b) => new Date(b.publishedAt ?? 0).getTime() - new Date(a.publishedAt ?? 0).getTime())
+    .slice(0, 2)
+
+  // Get featured projects (take 3)
+  const featuredProjects = (projects ?? [])
+    .filter((p) => p.featured)
+    .slice(0, 3)
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-16 md:py-24">
@@ -74,13 +86,19 @@ const Home = () => {
             </Button>
           </div>
 
-          <AnimatedList className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {featuredProjects.map((project) => (
-              <AnimatedListItem key={project.slug}>
-                <ProjectCard project={project} />
-              </AnimatedListItem>
-            ))}
-          </AnimatedList>
+          {projectsLoading ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <LoadingSkeleton variant="card" count={3} />
+            </div>
+          ) : (
+            <AnimatedList className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {featuredProjects.map((project) => (
+                <AnimatedListItem key={project.slug}>
+                  <ProjectCard project={project} />
+                </AnimatedListItem>
+              ))}
+            </AnimatedList>
+          )}
 
           <Button variant="ghost" asChild className="mt-6 sm:hidden">
             <Link to="/projects">
@@ -113,13 +131,19 @@ const Home = () => {
             </Button>
           </div>
 
-          <AnimatedList className="grid gap-6 md:grid-cols-2">
-            {recentPosts.map((post) => (
-              <AnimatedListItem key={post.slug}>
-                <PostCard post={post} />
-              </AnimatedListItem>
-            ))}
-          </AnimatedList>
+          {postsLoading ? (
+            <div className="grid gap-6 md:grid-cols-2">
+              <LoadingSkeleton variant="card" count={2} />
+            </div>
+          ) : (
+            <AnimatedList className="grid gap-6 md:grid-cols-2">
+              {recentPosts.map((post) => (
+                <AnimatedListItem key={post.slug}>
+                  <PostCard post={post} />
+                </AnimatedListItem>
+              ))}
+            </AnimatedList>
+          )}
 
           <Button variant="ghost" asChild className="mt-6 sm:hidden">
             <Link to="/blog">

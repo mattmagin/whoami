@@ -1,5 +1,7 @@
 import { Suspense, useEffect } from 'react'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { queryClient } from '@/lib/queryClient'
 import { ThemeProvider } from '@/hooks/ThemeContext'
 import { Layout } from '@/components/layout'
 import CommandPalette from '@/components/CommandPalette'
@@ -33,24 +35,26 @@ const App = () => {
   useConsoleEasterEgg()
 
   return (
-    // TODO implement suspense
-    <Suspense fallback={<div>Loading...</div>}>
-      <ThemeProvider>
-        <BrowserRouter>
-          <CommandPalette />
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/resume" element={<Resume />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:slug" element={<BlogPost />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/contact" element={<Contact />} />
-            </Routes>
-          </Layout>
-        </BrowserRouter>
-      </ThemeProvider>
-    </Suspense>
+    <QueryClientProvider client={queryClient}>
+      {/* TODO implement suspense */}
+      <Suspense fallback={<div>Loading...</div>}>
+        <ThemeProvider>
+          <BrowserRouter>
+            <CommandPalette />
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/resume" element={<Resume />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/contact" element={<Contact />} />
+              </Routes>
+            </Layout>
+          </BrowserRouter>
+        </ThemeProvider>
+      </Suspense>
+    </QueryClientProvider>
   )
 }
 

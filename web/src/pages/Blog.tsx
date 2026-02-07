@@ -1,12 +1,38 @@
-import { posts } from '@/data'
+import { usePosts } from '@/hooks/queries'
 import PostCard from '@/components/PostCard'
+import LoadingSkeleton from '@/components/LoadingSkeleton'
+import ErrorState from '@/components/ErrorState'
 import { AnimatedSection, AnimatedList, AnimatedListItem } from '@/components/AnimatedSection'
 import { useStrings } from '@/content'
 
 const Blog = () => {
   const { blog } = useStrings()
-  const sortedPosts = [...posts].sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  const { data: posts, isLoading, error, refetch } = usePosts()
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-4xl px-6 py-16">
+        <LoadingSkeleton variant="title" className="mb-4" />
+        <LoadingSkeleton variant="text" className="mb-12" />
+        <LoadingSkeleton variant="card" count={3} />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-4xl px-6 py-16">
+        <ErrorState
+          title="Failed to load posts"
+          message="We couldn't load the blog posts. Please try again."
+          onRetry={() => refetch()}
+        />
+      </div>
+    )
+  }
+
+  const sortedPosts = [...(posts ?? [])].sort(
+    (a, b) => new Date(b.publishedAt ?? 0).getTime() - new Date(a.publishedAt ?? 0).getTime()
   )
 
   return (
