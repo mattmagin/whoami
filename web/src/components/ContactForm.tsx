@@ -1,5 +1,5 @@
-import { useState, useRef, type FormEvent } from 'react'
-import { Send, CheckCircle } from 'lucide-react'
+import { useState, useRef, type FormEvent, type ChangeEvent } from 'react'
+import { Send, CheckCircle, AlertCircle } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -7,9 +7,50 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useStrings } from '@/content'
 
+interface FormErrors {
+  name?: string
+  email?: string
+  message?: string
+}
+
+interface FormValues {
+  name: string
+  email: string
+  message: string
+}
+
+interface ValidationTooltipProps {
+  message?: string
+  id: string
+}
+
+const ValidationTooltip = ({ message, id }: ValidationTooltipProps) => {
+  if (!message) return null
+
+  return (
+    <div
+      id={id}
+      role="alert"
+      className="absolute left-0 top-full z-10 mt-2 animate-in fade-in slide-in-from-top-1 duration-200"
+    >
+      <div className="relative rounded-md bg-destructive px-3 py-2 text-sm text-destructive-foreground shadow-lg">
+        {/* Arrow */}
+        <div className="absolute -top-1.5 left-4 h-3 w-3 rotate-45 bg-destructive" />
+        <div className="relative flex items-center gap-2">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span>{message}</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const ContactForm = () => {
   const [submitted, setSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
+  const [values, setValues] = useState<FormValues>({ name: '', email: '', message: '' })
   const buttonRef = useRef<HTMLButtonElement>(null)
   const { contactForm } = useStrings()
 
@@ -33,8 +74,66 @@ const ContactForm = () => {
     })
   }
 
+  const validateField = (name: keyof FormValues, value: string): string | undefined => {
+    switch (name) {
+      case 'name':
+        if (!value.trim()) return contactForm.errors?.nameRequired
+        return undefined
+      case 'email':
+        if (!value.trim()) return contactForm.errors?.emailRequired
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return contactForm.errors?.emailInvalid
+        return undefined
+      case 'message':
+        if (!value.trim()) return contactForm.errors?.messageRequired
+        return undefined
+      default:
+        return undefined
+    }
+  }
+
+  const validateAll = (): FormErrors => {
+    return {
+      name: validateField('name', values.name),
+      email: validateField('email', values.email),
+      message: validateField('message', values.message),
+    }
+  }
+
+  // Determine which field should show the tooltip (first error in order)
+  const fieldOrder: (keyof FormErrors)[] = ['name', 'email', 'message']
+  const firstErrorField = fieldOrder.find(field => errors[field])
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setValues(prev => ({ ...prev, [name]: value }))
+    
+    // Clear error when user starts typing (if field was touched)
+    if (touched[name]) {
+      setErrors(prev => ({ ...prev, [name]: validateField(name as keyof FormValues, value) }))
+    }
+  }
+
+  const handleBlur = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setTouched(prev => ({ ...prev, [name]: true }))
+    setErrors(prev => ({ ...prev, [name]: validateField(name as keyof FormValues, value) }))
+  }
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    
+    // Mark all fields as touched
+    setTouched({ name: true, email: true, message: true })
+    
+    // Validate all fields
+    const newErrors = validateAll()
+    setErrors(newErrors)
+    
+    // Check if there are any errors
+    if (Object.values(newErrors).some(error => error !== undefined)) {
+      return
+    }
+    
     setIsSubmitting(true)
 
     // Simulate form submission
@@ -65,42 +164,65 @@ const ContactForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} noValidate className="space-y-6">
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name">{contactForm.nameLabel}</Label>
-          <Input
-            id="name"
-            name="name"
-            placeholder={contactForm.namePlaceholder}
-            required
-            disabled={isSubmitting}
-          />
+          <div className="relative">
+            <Input
+              id="name"
+              name="name"
+              placeholder={contactForm.namePlaceholder}
+              value={values.name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isSubmitting}
+              aria-invalid={!!errors.name}
+              aria-describedby={errors.name ? 'name-error' : undefined}
+              className={errors.name ? 'border-destructive focus-visible:ring-destructive' : ''}
+            />
+            <ValidationTooltip message={firstErrorField === 'name' ? errors.name : undefined} id="name-error" />
+          </div>
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">{contactForm.emailLabel}</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder={contactForm.emailPlaceholder}
-            required
-            disabled={isSubmitting}
-          />
+          <div className="relative">
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder={contactForm.emailPlaceholder}
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isSubmitting}
+              aria-invalid={!!errors.email}
+              aria-describedby={errors.email ? 'email-error' : undefined}
+              className={errors.email ? 'border-destructive focus-visible:ring-destructive' : ''}
+            />
+            <ValidationTooltip message={firstErrorField === 'email' ? errors.email : undefined} id="email-error" />
+          </div>
         </div>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="message">{contactForm.messageLabel}</Label>
-        <Textarea
-          id="message"
-          name="message"
-          placeholder={contactForm.messagePlaceholder}
-          rows={6}
-          required
-          disabled={isSubmitting}
-          className="resize-none"
-        />
+        <div className="relative">
+          <Textarea
+            id="message"
+            name="message"
+            placeholder={contactForm.messagePlaceholder}
+            rows={6}
+            value={values.message}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            disabled={isSubmitting}
+            aria-invalid={!!errors.message}
+            aria-describedby={errors.message ? 'message-error' : undefined}
+            className={`resize-none ${errors.message ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+          />
+          <ValidationTooltip message={firstErrorField === 'message' ? errors.message : undefined} id="message-error" />
+        </div>
       </div>
 
       <Button

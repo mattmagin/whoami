@@ -76,7 +76,13 @@
         "sending": "Sending...",
         "successTitle": "Message Sent!",
         "successDescription": "Thanks for reaching out. I'll get back to you soon.",
-        "sendAnother": "Send Another Message"
+        "sendAnother": "Send Another Message",
+        "errors": {
+            "nameRequired": "Please enter your name",
+            "emailRequired": "Please enter your email address",
+            "emailInvalid": "Please enter a valid email address",
+            "messageRequired": "Please enter a message"
+        }
     },
     "commandPalette": {
         "placeholder": "Type a command or search...",
