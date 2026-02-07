@@ -2,11 +2,14 @@
 # development, test). The code here should be idempotent so that it can be executed at any point in every environment.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
+require 'yaml'
+
 puts "Seeding database..."
 
 # Clear existing data (posts first due to foreign key)
 Post.destroy_all
 Project.destroy_all
+Resume.destroy_all
 
 # ============================================
 # Projects (created first so posts can reference them)
@@ -327,6 +330,19 @@ posts_data.each do |post_attrs|
   puts "  Created post: #{post_attrs[:title]}"
 end
 
+# ============================================
+# Resume (loaded from YAML)
+# ============================================
+resume_path = Rails.root.join('content', 'resume.yaml')
+if File.exist?(resume_path)
+  resume_yaml = File.read(resume_path)
+  Resume.create!(slug: 'primary', data: resume_yaml)
+  puts "  Created resume: primary"
+else
+  puts "  Warning: resume.yaml not found at #{resume_path}"
+end
+
 puts "Seeding complete!"
 puts "  #{Post.count} posts created"
 puts "  #{Project.count} projects created"
+puts "  #{Resume.count} resume(s) created"

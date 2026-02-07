@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getPosts, getPost, getProjects, getProject, getResume } from '@/api'
-import type { Post, Project } from '@/api'
+import type { Post, Project, ResumeData } from '@/api'
 
 export const usePosts = () => {
   return useQuery({
@@ -39,4 +39,4 @@ export const useResume = () => {
   })
 }
 
-export type { Post, Project }
+export type { Post, Project, ResumeData }

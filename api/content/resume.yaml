@@ -1,0 +1,132 @@
+name: Michael Magin
+title: Full-Stack Software Engineer
+
+contact:
+  email: michael@example.com
+  location: San Francisco, CA
+  github: github.com/mmagin
+  linkedin: linkedin.com/in/mmagin
+
+summary: >
+  Full-stack software engineer with 5+ years of experience building scalable
+  web applications and APIs. Passionate about clean code, developer experience,
+  and bridging the gap between elegant architecture and practical solutions.
+  Experienced in Ruby, Go, TypeScript, and cloud infrastructure.
+
+skills:
+  languages:
+    - Ruby
+    - Go
+    - TypeScript
+    - JavaScript
+    - Python
+    - SQL
+  frameworks:
+    - Ruby on Rails
+    - React
+    - Next.js
+    - Bubble Tea
+    - Express
+  databases:
+    - PostgreSQL
+    - Redis
+    - SQLite
+    - MongoDB
+  infrastructure:
+    - AWS (EC2, RDS, S3, CloudFront)
+    - Docker
+    - Kubernetes
+    - Terraform
+  tools:
+    - Git
+    - GitHub Actions
+    - GitLab CI
+    - Kamal
+    - Linux
+    - Vim
+
+experience:
+  - title: Senior Software Engineer
+    company: Acme Corp
+    location: San Francisco, CA
+    dates: Jan 2023 – Present
+    highlights:
+      - Led development of a real-time collaboration platform serving 50K+ daily active users
+      - Redesigned API architecture, reducing average response time by 40%
+      - Mentored junior developers through code reviews and pair programming sessions
+      - Implemented CI/CD pipelines that reduced deployment time from 45 minutes to 8 minutes
+
+  - title: Software Engineer
+    company: StartupXYZ
+    location: Remote
+    dates: Mar 2020 – Dec 2022
+    highlights:
+      - Built and maintained Ruby on Rails APIs powering mobile and web applications
+      - Developed a Go-based microservice for high-throughput data processing (10K events/sec)
+      - Integrated third-party payment systems handling $2M+ in monthly transactions
+      - Created internal tooling that automated 15+ hours of manual work per week
+
+  - title: Junior Developer
+    company: WebAgency Inc
+    location: Portland, OR
+    dates: Jun 2018 – Feb 2020
+    highlights:
+      - Developed responsive web applications using React and Node.js
+      - Collaborated with design team to implement pixel-perfect UI components
+      - Maintained legacy PHP applications while planning migration to modern stack
+      - Wrote comprehensive test suites increasing code coverage from 40% to 85%
+
+projects:
+  - name: Portfolio TUI
+    description: >
+      A terminal-based portfolio viewer built with Go and Bubble Tea.
+      Connects to a Rails API over SSH, featuring smooth animations
+      and keyboard navigation.
+    technologies:
+      - Go
+      - Bubble Tea
+      - Lip Gloss
+      - Wish
+
+  - name: Task Flow
+    description: >
+      Kanban-style task management with real-time updates via WebSockets.
+      Features drag-and-drop interface and multi-board support.
+    technologies:
+      - React
+      - TypeScript
+      - Rails
+      - ActionCable
+      - PostgreSQL
+
+  - name: Code Review Bot
+    description: >
+      GitHub App providing automated code review using static analysis.
+      Reduced review cycles by 30% on team projects.
+    technologies:
+      - Python
+      - FastAPI
+      - GitHub API
+      - Docker
+
+education:
+  - degree: Bachelor of Science in Computer Science
+    institution: Oregon State University
+    location: Corvallis, OR
+    dates: 2014 – 2018
+    details:
+      - "GPA: 3.7/4.0"
+      - "Relevant coursework: Algorithms, Databases, Operating Systems, Software Engineering"
+
+certifications:
+  - name: "AWS Certified Solutions Architect – Associate"
+    year: 2024
+  - name: "HashiCorp Certified: Terraform Associate"
+    year: 2023
+
+interests:
+  - Open source contribution
+  - Terminal aesthetics
+  - Mechanical keyboards
+  - Rock climbing
+  - Coffee brewing

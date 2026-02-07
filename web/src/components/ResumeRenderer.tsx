@@ -1,283 +1,218 @@
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import type { Components } from 'react-markdown'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Mail, MapPin, Globe, Github, Linkedin } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { Mail, MapPin, Github, Linkedin } from 'lucide-react'
+import type { ResumeData } from '@/types'
 
 interface ResumeRendererProps {
-    content: string
+    data: ResumeData
 }
 
-// Track section context for conditional rendering
-type SectionContext = 'header' | 'summary' | 'skills' | 'content'
-
-const getSectionFromHeading = (text: string): SectionContext => {
-    const lower = text.toLowerCase()
-    if (lower === 'skills') return 'skills'
-    return 'content'
-}
-
-// Parse "**Company** | Date" pattern from paragraph children
-const parseCompanyDate = (children: ReactNode): { company: string; date: string } | null => {
-    if (!Array.isArray(children)) return null
-
-    const parts: string[] = []
-    children.forEach((child) => {
-        if (typeof child === 'string') {
-            parts.push(child)
-        } else if (child && typeof child === 'object' && 'props' in child) {
-            // This is a React element (likely <strong>)
-            parts.push(String(child.props.children || ''))
-        }
-    })
-
-    const text = parts.join('')
-    const pipeIndex = text.indexOf('|')
-    if (pipeIndex === -1) return null
-
-    return {
-        company: text.slice(0, pipeIndex).trim(),
-        date: text.slice(pipeIndex + 1).trim(),
+const ResumeRenderer = ({ data }: ResumeRendererProps) => {
+    // Guard against invalid/cached data
+    if (!data?.contact) {
+        return <div className="text-muted-foreground">Loading resume data...</div>
     }
-}
 
-// Icon mapping for contact table
-const contactIcons: Record<string, React.ComponentType<{ className?: string }>> = {
-    email: Mail,
-    location: MapPin,
-    website: Globe,
-    github: Github,
-    linkedin: Linkedin,
-}
+    return (
+        <article className="space-y-12">
+            {/* Header */}
+            <header className="space-y-4">
+                <h1 className="font-serif text-4xl font-bold tracking-tight">
+                    {data.name}
+                </h1>
+                <p className="text-xl text-muted-foreground">{data.title}</p>
 
-const ResumeRenderer = ({ content }: ResumeRendererProps) => {
-    // Track current section for context-aware rendering
-    let currentSection: SectionContext = 'header'
-    let isFirstH2 = true
-    let isFirstParagraph = true
-    let isFirstTable = true
+                {/* Contact Info */}
+                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                        <MapPin className="h-4 w-4" />
+                        {data.contact.location}
+                    </span>
+                    <a
+                        href={`mailto:${data.contact.email}`}
+                        className="flex items-center gap-1 hover:text-foreground transition-colors"
+                    >
+                        <Mail className="h-4 w-4" />
+                        {data.contact.email}
+                    </a>
+                    <a
+                        href={`https://${data.contact.github}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 hover:text-foreground transition-colors"
+                    >
+                        <Github className="h-4 w-4" />
+                        {data.contact.github}
+                    </a>
+                    <a
+                        href={`https://${data.contact.linkedin}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 hover:text-foreground transition-colors"
+                    >
+                        <Linkedin className="h-4 w-4" />
+                        {data.contact.linkedin}
+                    </a>
+                </div>
+            </header>
 
-    const components: Components = {
-        // H1 = Name
-        h1: ({ children }) => (
-            <h1 className="mb-2 font-serif text-4xl font-bold tracking-tight">
-                {children}
-            </h1>
-        ),
+            <Separator />
 
-        // H2 = Title (first one) or Section headers
-        h2: ({ children }) => {
-            if (isFirstH2) {
-                isFirstH2 = false
-                return (
-                    <p className="text-xl text-muted-foreground">{children}</p>
-                )
-            }
-
-            // Update section context based on heading text
-            const headingText = String(children)
-            currentSection = getSectionFromHeading(headingText)
-
-            return (
+            {/* Summary */}
+            <section>
                 <h2 className="mb-6 font-serif text-2xl font-semibold tracking-tight">
-                    {children}
+                    Summary
                 </h2>
-            )
-        },
+                <p className="text-lg leading-relaxed text-muted-foreground">
+                    {data.summary}
+                </p>
+            </section>
 
-        // H3 = Job/Education titles with dot indicator
-        h3: ({ children }) => (
-            <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:h-2 before:w-2 before:rounded-full before:bg-primary/50">
-                <h3 className="font-semibold text-foreground">{children}</h3>
-            </div>
-        ),
+            <Separator />
 
-        // Tables: Contact info (first) or Skills grid
-        table: ({ children }) => {
-            if (isFirstTable) {
-                isFirstTable = false
-                // Contact info table - render as flex items with icons
-                return (
-                    <div className="mt-6 flex flex-wrap gap-4 text-sm text-muted-foreground">
-                        {children}
-                    </div>
-                )
-            }
-
-            // Skills table
-            if (currentSection === 'skills') {
-                return (
-                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {children}
-                    </div>
-                )
-            }
-
-            // Default table rendering
-            return <table className="w-full">{children}</table>
-        },
-
-        thead: () => null, // Hide table headers
-
-        tbody: ({ children }) => <>{children}</>,
-
-        tr: ({ children }) => {
-            const cells = Array.isArray(children) ? children : [children]
-
-            // For contact table (first table)
-            if (isFirstTable === false && currentSection === 'header') {
-                return <>{children}</>
-            }
-
-            // For skills table
-            if (currentSection === 'skills') {
-                // Extract category and items from cells
-                const cellContents: string[] = []
-                cells.forEach((cell) => {
-                    if (cell && typeof cell === 'object' && 'props' in cell) {
-                        cellContents.push(String(cell.props.children || ''))
-                    }
-                })
-
-                if (cellContents.length >= 2) {
-                    const category = cellContents[0]
-                    const items = cellContents[1].split(',').map((s) => s.trim()).filter(Boolean)
-
-                    return (
-                        <div>
+            {/* Skills */}
+            <section>
+                <h2 className="mb-6 font-serif text-2xl font-semibold tracking-tight">
+                    Skills
+                </h2>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {Object.entries(data.skills).map(([category, skills]) => (
+                        <div key={category}>
                             <h3 className="mb-3 text-sm font-medium text-muted-foreground">
                                 {category}
                             </h3>
                             <div className="flex flex-wrap gap-2">
-                                {items.map((skill) => (
+                                {skills.map((skill) => (
                                     <Badge key={skill} variant="outline" className="font-mono text-xs">
                                         {skill}
                                     </Badge>
                                 ))}
                             </div>
                         </div>
-                    )
-                }
-            }
+                    ))}
+                </div>
+            </section>
 
-            return <tr>{children}</tr>
-        },
+            <Separator />
 
-        td: ({ children }) => {
-            const text = String(children || '').trim()
+            {/* Experience */}
+            <section>
+                <h2 className="mb-6 font-serif text-2xl font-semibold tracking-tight">
+                    Experience
+                </h2>
+                <div className="space-y-8">
+                    {data.experience.map((exp) => (
+                        <div key={`${exp.company}-${exp.title}`}>
+                            <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:h-2 before:w-2 before:rounded-full before:bg-primary/50">
+                                <h3 className="font-semibold text-foreground">{exp.title}</h3>
+                            </div>
+                            <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between pl-6 mt-1">
+                                <p className="text-muted-foreground">
+                                    {exp.company} • {exp.location}
+                                </p>
+                                <span className="text-sm text-muted-foreground">{exp.dates}</span>
+                            </div>
+                            <ul className="mt-3 space-y-1 pl-6">
+                                {exp.highlights.map((highlight, i) => (
+                                    <li key={i} className="text-sm text-muted-foreground before:mr-2 before:content-['•']">
+                                        {highlight}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
+            </section>
 
-            // For contact table, render with icons
-            if (currentSection === 'header') {
-                const lowerText = text.toLowerCase()
-                const IconComponent = contactIcons[lowerText]
+            <Separator />
 
-                if (IconComponent) {
-                    // This is a label cell, skip it (we'll use the icon instead)
-                    return null
-                }
+            {/* Projects */}
+            <section>
+                <h2 className="mb-6 font-serif text-2xl font-semibold tracking-tight">
+                    Projects
+                </h2>
+                <div className="space-y-6">
+                    {data.projects.map((project) => (
+                        <div key={project.name}>
+                            <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:h-2 before:w-2 before:rounded-full before:bg-primary/50">
+                                <h3 className="font-semibold text-foreground">{project.name}</h3>
+                            </div>
+                            <p className="mt-2 text-sm text-muted-foreground pl-6">
+                                {project.description}
+                            </p>
+                            <div className="mt-2 pl-6 flex flex-wrap gap-2">
+                                {project.technologies.map((tech) => (
+                                    <Badge key={tech} variant="secondary" className="text-xs">
+                                        {tech}
+                                    </Badge>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
 
-                // This is a value cell - find what type based on content
-                let icon = null
-                let href: string | undefined
+            <Separator />
 
-                if (text.includes('@')) {
-                    icon = <Mail className="h-4 w-4" />
-                    href = `mailto:${text}`
-                } else if (text.includes('github.com')) {
-                    icon = <Github className="h-4 w-4" />
-                    href = `https://${text}`
-                } else if (text.includes('linkedin.com')) {
-                    icon = <Linkedin className="h-4 w-4" />
-                    href = `https://${text}`
-                } else if (text.includes('.com') || text.includes('.io') || text.includes('.dev')) {
-                    icon = <Globe className="h-4 w-4" />
-                    href = `https://${text}`
-                } else if (text.length > 0 && !text.includes('http')) {
-                    // Assume location
-                    icon = <MapPin className="h-4 w-4" />
-                }
+            {/* Education */}
+            <section>
+                <h2 className="mb-6 font-serif text-2xl font-semibold tracking-tight">
+                    Education
+                </h2>
+                <div className="space-y-6">
+                    {data.education.map((edu) => (
+                        <div key={edu.institution}>
+                            <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:h-2 before:w-2 before:rounded-full before:bg-primary/50">
+                                <h3 className="font-semibold text-foreground">{edu.degree}</h3>
+                            </div>
+                            <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between pl-6 mt-1">
+                                <p className="text-muted-foreground">
+                                    {edu.institution} • {edu.location}
+                                </p>
+                                <span className="text-sm text-muted-foreground">{edu.dates}</span>
+                            </div>
+                            {edu.details && edu.details.length > 0 && (
+                                <ul className="mt-3 space-y-1 pl-6">
+                                    {edu.details.map((detail, i) => (
+                                        <li key={i} className="text-sm text-muted-foreground before:mr-2 before:content-['•']">
+                                            {detail}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </section>
 
-                if (icon) {
-                    if (href) {
-                        return (
-                            <a
-                                href={href}
-                                target={href.startsWith('mailto') ? undefined : '_blank'}
-                                rel={href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
-                                className="flex items-center gap-1 hover:text-foreground transition-colors"
-                            >
-                                {icon}
-                                {text}
-                            </a>
-                        )
-                    }
-                    return (
-                        <span className="flex items-center gap-1">
-                            {icon}
-                            {text}
-                        </span>
-                    )
-                }
-            }
+            <Separator />
 
-            return <td className="py-1 pr-4">{children}</td>
-        },
+            {/* Certifications */}
+            <section>
+                <h2 className="mb-6 font-serif text-2xl font-semibold tracking-tight">
+                    Certifications
+                </h2>
+                <ul className="space-y-1 pl-6">
+                    {data.certifications.map((cert) => (
+                        <li key={cert.name} className="text-sm text-muted-foreground before:mr-2 before:content-['•']">
+                            {cert.name} ({cert.year})
+                        </li>
+                    ))}
+                </ul>
+            </section>
 
-        // Horizontal rules become Separators
-        hr: () => <Separator className="my-12" />,
+            <Separator />
 
-        // Paragraphs - handle summary and company/date patterns
-        p: ({ children }) => {
-            // Check for "**Company** | Date" pattern (starts with strong element)
-            const companyDate = parseCompanyDate(children as ReactNode)
-            if (companyDate) {
-                return (
-                    <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between pl-6 -mt-1">
-                        <p className="text-muted-foreground">{companyDate.company}</p>
-                        <span className="text-sm text-muted-foreground">{companyDate.date}</span>
-                    </div>
-                )
-            }
-
-            // First paragraph after header is the summary
-            if (isFirstParagraph && currentSection === 'header') {
-                isFirstParagraph = false
-                return (
-                    <p className="text-lg leading-relaxed text-muted-foreground">
-                        {children}
-                    </p>
-                )
-            }
-
-            // Regular paragraph (description)
-            return (
-                <p className="mt-2 text-sm text-muted-foreground pl-6">
-                    {children}
+            {/* Interests */}
+            <section>
+                <h2 className="mb-6 font-serif text-2xl font-semibold tracking-tight">
+                    Interests
+                </h2>
+                <p className="text-muted-foreground">
+                    {data.interests.join(' • ')}
                 </p>
-            )
-        },
-
-        // Lists for highlights
-        ul: ({ children }) => (
-            <ul className="mt-3 space-y-1 pl-6">{children}</ul>
-        ),
-
-        li: ({ children }) => (
-            <li className="text-sm text-muted-foreground before:mr-2 before:content-['•']">
-                {children}
-            </li>
-        ),
-
-        // Strong text (bold)
-        strong: ({ children }) => <strong>{children}</strong>,
-    }
-
-    return (
-        <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
-            {content}
-        </ReactMarkdown>
+            </section>
+        </article>
     )
 }
 

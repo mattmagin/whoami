@@ -33,3 +33,51 @@ export interface Project {
     updatedAt: string;
     deletedAt: string | null;
 }
+
+// Resume types (matches YAML structure from API)
+export interface ResumeContact {
+    email: string;
+    location: string;
+    github: string;
+    linkedin: string;
+}
+
+export interface ResumeExperience {
+    title: string;
+    company: string;
+    location: string;
+    dates: string;
+    highlights: string[];
+}
+
+export interface ResumeProject {
+    name: string;
+    description: string;
+    technologies: string[];
+}
+
+export interface ResumeEducation {
+    degree: string;
+    institution: string;
+    location: string;
+    dates: string;
+    details: string[];
+}
+
+export interface ResumeCertification {
+    name: string;
+    year: number;
+}
+
+export interface ResumeData {
+    name: string;
+    title: string;
+    contact: ResumeContact;
+    summary: string;
+    skills: Record<string, string[]>;
+    experience: ResumeExperience[];
+    projects: ResumeProject[];
+    education: ResumeEducation[];
+    certifications: ResumeCertification[];
+    interests: string[];
+}

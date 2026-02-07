@@ -1,7 +1,7 @@
 import ky from 'ky';
 import { transformResponse } from './utils';
 import type { Post as PostResponse, Project as ProjectResponse } from '../types/generated';
-import type { Post, Project } from '../types';
+import type { Post, Project, ResumeData } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -31,6 +31,8 @@ export const getProject = async (slug: string): Promise<Project> => {
     return transformResponse(project) as Project;
 };
 
-export const getResume = async (): Promise<string> => {
-    return api.get('resume').text();
+export const getResume = async (): Promise<ResumeData> => {
+    return api.get('resume').json<ResumeData>();
 };
+
+export type { ResumeData };

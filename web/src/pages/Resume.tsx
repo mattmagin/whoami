@@ -6,7 +6,7 @@ import { useResume } from '@/hooks/queries'
 
 const Resume = () => {
   const { resume: resumeStrings } = useStrings()
-  const { data: resumeContent, isLoading: resumeLoading } = useResume()
+  const { data: resumeData, isLoading: resumeLoading } = useResume()
 
   // TODO: make these look nicer
   // TODO: we have an inital flash of loading before the resume is loaded, need fix and make nicer..
@@ -14,7 +14,7 @@ const Resume = () => {
     return <div>Loading...</div>
   }
 
-  if (!resumeContent) {
+  if (!resumeData) {
     return <div>No resume content found</div>
   }
 
@@ -28,8 +28,8 @@ const Resume = () => {
         </Button>
       </div>
 
-      {/* Resume Content from Markdown */}
-      <ResumeRenderer content={resumeContent} />
+      {/* Resume Content */}
+      <ResumeRenderer data={resumeData} />
     </div>
   )
 }
