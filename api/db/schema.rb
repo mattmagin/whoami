@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_05_073804) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_07_075332) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -26,18 +26,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_073804) do
     t.text "content"
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
+    t.text "excerpt"
     t.datetime "published_at"
+    t.string "slug", null: false
+    t.string "tags", default: [], array: true
     t.string "title"
     t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_posts_on_slug", unique: true
   end
 
   create_table "projects", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.text "description"
+    t.text "excerpt"
+    t.boolean "featured", default: false, null: false
+    t.string "github_url"
+    t.string "image_url"
     t.string "name"
     t.datetime "published_at"
-    t.string "technologies", array: true
+    t.string "slug", null: false
+    t.string "tech_stack", array: true
     t.datetime "updated_at", null: false
+    t.string "url"
+    t.index ["slug"], name: "index_projects_on_slug", unique: true
   end
 end

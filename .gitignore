@@ -1,0 +1,4 @@
+# Environment files (shared across services)
+.env
+.env.local
+.env.*.local
