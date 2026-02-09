@@ -2,3 +2,7 @@
 .env
 .env.local
 .env.*.local
+
+tui/.ssh
+rust-tui/
+tui/
