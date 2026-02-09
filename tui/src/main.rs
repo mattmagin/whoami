@@ -1,44 +1,53 @@
-mod app;
+//! TUI Portfolio Application
+//!
+//! A terminal-based portfolio viewer built with tui-realm for
+//! event-driven, component-based architecture.
+
+mod components;
 mod content;
-mod keymap;
+mod model;
+mod msg;
 mod styles;
-mod view;
-mod views;
+mod ui;
 mod widgets;
 
-use std::{io, time::Duration};
+use std::io;
+use std::time::Duration;
 
-use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
-use ratatui::{backend::CrosstermBackend, Terminal};
+use ratatui::backend::CrosstermBackend;
+use ratatui::Terminal;
+use tuirealm::application::PollStrategy;
+use tuirealm::{Application, EventListenerCfg, Update};
 
-use app::App;
+use model::Model;
+use msg::{Msg, ViewId};
+use ui::{mount_view, App};
 
 fn main() -> io::Result<()> {
     // Setup terminal
-    enable_raw_mode()?;
+    crossterm::terminal::enable_raw_mode()?;
     let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
+    crossterm::execute!(
+        stdout,
+        crossterm::terminal::EnterAlternateScreen,
+        crossterm::event::EnableMouseCapture
+    )?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    // Create app and run
-    let mut app = App::new();
-    let res = run_app(&mut terminal, &mut app);
+    // Run the application
+    let result = run_app(&mut terminal);
 
     // Restore terminal
-    disable_raw_mode()?;
-    execute!(
+    crossterm::terminal::disable_raw_mode()?;
+    crossterm::execute!(
         terminal.backend_mut(),
-        LeaveAlternateScreen,
-        DisableMouseCapture
+        crossterm::terminal::LeaveAlternateScreen,
+        crossterm::event::DisableMouseCapture
     )?;
     terminal.show_cursor()?;
 
-    if let Err(err) = res {
+    if let Err(err) = result {
         eprintln!("Error: {err:?}");
     }
 
@@ -47,27 +56,58 @@ fn main() -> io::Result<()> {
 
 fn run_app<B: ratatui::backend::Backend>(
     terminal: &mut Terminal<B>,
-    app: &mut App,
-) -> io::Result<()> {
-    loop {
-        terminal.draw(|f| app.render(f))?;
+) -> Result<(), Box<dyn std::error::Error>> {
+    // Create the application model
+    let mut model = Model::new();
 
-        // Poll for events with timeout for animations
-        if event::poll(Duration::from_millis(50))? {
-            match event::read()? {
-                Event::Key(key) => {
-                    if app.handle_key(key) {
-                        return Ok(());
-                    }
+    // Create the tui-realm Application with event configuration
+    let mut app: App = Application::init(
+        EventListenerCfg::default()
+            .crossterm_input_listener(Duration::from_millis(50), 3)
+            .poll_timeout(Duration::from_millis(50))
+            .tick_interval(Duration::from_millis(50)),
+    );
+
+    // Mount initial loading view
+    mount_view(&mut app, ViewId::Loading)?;
+    let mut current_view = ViewId::Loading;
+
+    // Main event loop
+    while !model.quit {
+        // Render current view
+        terminal.draw(|frame| {
+            let area = frame.area();
+            // Render the active component
+            app.view(&current_view, frame, area);
+        })?;
+
+        // Poll for events and get messages
+        let messages = match app.tick(PollStrategy::UpTo(3)) {
+            Ok(msgs) => msgs,
+            Err(_) => vec![],
+        };
+
+        // Process messages through the model
+        for msg in messages {
+            // Check for navigation before updating model
+            let new_view = match &msg {
+                Msg::NavigateTo(view_id) => Some(*view_id),
+                Msg::GoBack => Some(ViewId::Home),
+                _ => None,
+            };
+
+            // Update model state
+            model.update(Some(msg));
+
+            // Handle view transitions
+            if let Some(view_id) = new_view {
+                if view_id != current_view {
+                    mount_view(&mut app, view_id)?;
+                    current_view = view_id;
                 }
-                Event::Resize(width, height) => {
-                    app.set_size(width, height);
-                }
-                _ => {}
             }
         }
-
-        // Update animations
-        app.tick();
     }
+
+    Ok(())
 }

@@ -1,21 +1,18 @@
-//! Blog view with list and detail modes
+//! Blog view component with list and detail modes
 
-use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::{
-    layout::Rect,
-    style::Modifier,
-    text::{Line, Span},
-    widgets::Paragraph,
-    Frame,
-};
+use ratatui::layout::Rect;
+use ratatui::style::Modifier;
+use ratatui::text::{Line, Span};
+use ratatui::widgets::Paragraph;
+use tuirealm::command::{Cmd, CmdResult, Direction};
+use tuirealm::event::{Key, KeyEvent, KeyModifiers};
+use tuirealm::props::{AttrValue, Attribute, Props};
+use tuirealm::{Component, Event, Frame, MockComponent, NoUserEvent, State, StateValue};
 
-use crate::keymap::{self, Action};
-use crate::view::{View, ViewResult};
 use crate::content::{Post, POSTS};
+use crate::msg::{Msg, ViewId};
 use crate::styles;
-use crate::widgets::{
-    render_markdown_line, wrap_text, CodeBlock, PageLayout, SelectableItem, TagList,
-};
+use crate::widgets::{render_markdown_line, wrap_text, CodeBlock, PageLayout, SelectableItem, TagList};
 
 /// Blog display mode
 #[derive(Clone, Copy, PartialEq)]
@@ -24,8 +21,15 @@ pub enum BlogMode {
     Detail,
 }
 
-/// Blog view model
-pub struct BlogView {
+/// Represents a processed content line - either regular text or part of a code block
+enum ContentLine {
+    Text(String),
+    CodeBlockLine(Line<'static>),
+}
+
+/// Blog MockComponent - handles the visual representation
+pub struct BlogMock {
+    props: Props,
     mode: BlogMode,
     cursor: usize,
     selected_idx: Option<usize>,
@@ -33,9 +37,16 @@ pub struct BlogView {
     max_scroll: usize,
 }
 
-impl BlogView {
+impl Default for BlogMock {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl BlogMock {
     pub fn new() -> Self {
         Self {
+            props: Props::default(),
             mode: BlogMode::List,
             cursor: 0,
             selected_idx: None,
@@ -44,7 +55,7 @@ impl BlogView {
         }
     }
 
-    pub fn cursor_up(&mut self) {
+    fn cursor_up(&mut self) {
         match self.mode {
             BlogMode::List => {
                 if self.cursor > 0 {
@@ -59,10 +70,10 @@ impl BlogView {
         }
     }
 
-    pub fn cursor_down(&mut self) {
+    fn cursor_down(&mut self) {
         match self.mode {
             BlogMode::List => {
-                if self.cursor < POSTS.len() - 1 {
+                if self.cursor < POSTS.len().saturating_sub(1) {
                     self.cursor += 1;
                 }
             }
@@ -74,7 +85,7 @@ impl BlogView {
         }
     }
 
-    pub fn select(&mut self) {
+    fn select(&mut self) {
         if self.mode == BlogMode::List && !POSTS.is_empty() {
             self.selected_idx = Some(self.cursor);
             self.mode = BlogMode::Detail;
@@ -83,7 +94,8 @@ impl BlogView {
         }
     }
 
-    pub fn back(&mut self) -> bool {
+    /// Returns true if we went back within the component (detail -> list)
+    fn back(&mut self) -> bool {
         if self.mode == BlogMode::Detail {
             self.mode = BlogMode::List;
             self.selected_idx = None;
@@ -92,53 +104,6 @@ impl BlogView {
             true
         } else {
             false
-        }
-    }
-
-    /// Handle key input for the blog view
-    pub fn handle_key(&mut self, key: KeyEvent) -> ViewResult {
-        // Check for navigation shortcuts (only in list mode)
-        if self.mode == BlogMode::List {
-            if let KeyCode::Char(c) = key.code {
-                if let Some(view) = View::from_shortcut(c) {
-                    return ViewResult::NavigateTo(view);
-                }
-            }
-        }
-
-        // Check list keys
-        if let Some(action) = keymap::match_key(key, keymap::LIST_KEYS) {
-            return match action {
-                Action::Back => {
-                    if self.back() {
-                        ViewResult::Handled
-                    } else {
-                        ViewResult::Back
-                    }
-                }
-                Action::CursorUp => {
-                    self.cursor_up();
-                    ViewResult::Handled
-                }
-                Action::CursorDown => {
-                    self.cursor_down();
-                    ViewResult::Handled
-                }
-                Action::Select => {
-                    self.select();
-                    ViewResult::Handled
-                }
-                _ => ViewResult::Ignored,
-            };
-        }
-
-        ViewResult::Ignored
-    }
-
-    pub fn render(&mut self, frame: &mut Frame, area: Rect) {
-        match self.mode {
-            BlogMode::List => self.render_list(frame, area),
-            BlogMode::Detail => self.render_post(frame, area),
         }
     }
 
@@ -187,7 +152,7 @@ impl BlogView {
 
         // Calculate and store scroll bounds
         self.max_scroll = content_length.saturating_sub(viewable_height);
-        
+
         // Clamp viewport to valid range
         self.viewport = self.viewport.min(self.max_scroll);
 
@@ -218,7 +183,8 @@ impl BlogView {
                 );
 
                 let end = (self.viewport + viewable_height).min(content_length);
-                let visible_lines: Vec<Line> = content_lines[self.viewport.min(content_length)..end]
+                let visible_lines: Vec<Line> = content_lines
+                    [self.viewport.min(content_length)..end]
                     .iter()
                     .map(content_line_to_line)
                     .collect();
@@ -227,12 +193,6 @@ impl BlogView {
                 f.render_widget(content, text_area);
             });
     }
-}
-
-/// Represents a processed content line - either regular text or part of a code block
-enum ContentLine {
-    Text(String),
-    CodeBlockLine(Line<'static>),
 }
 
 /// Parse markdown content, wrap text, and render code blocks
@@ -288,5 +248,148 @@ fn content_line_to_line(line: &ContentLine) -> Line<'static> {
     match line {
         ContentLine::Text(text) => render_markdown_line(text),
         ContentLine::CodeBlockLine(line) => line.clone(),
+    }
+}
+
+impl MockComponent for BlogMock {
+    fn view(&mut self, frame: &mut Frame, area: Rect) {
+        match self.mode {
+            BlogMode::List => self.render_list(frame, area),
+            BlogMode::Detail => self.render_post(frame, area),
+        }
+    }
+
+    fn query(&self, attr: Attribute) -> Option<AttrValue> {
+        self.props.get(attr)
+    }
+
+    fn attr(&mut self, attr: Attribute, value: AttrValue) {
+        self.props.set(attr, value);
+    }
+
+    fn state(&self) -> State {
+        State::One(StateValue::Usize(self.cursor))
+    }
+
+    fn perform(&mut self, cmd: Cmd) -> CmdResult {
+        match cmd {
+            Cmd::Move(Direction::Up) | Cmd::Scroll(Direction::Up) => {
+                self.cursor_up();
+                CmdResult::Changed(self.state())
+            }
+            Cmd::Move(Direction::Down) | Cmd::Scroll(Direction::Down) => {
+                self.cursor_down();
+                CmdResult::Changed(self.state())
+            }
+            Cmd::Submit => {
+                self.select();
+                CmdResult::Changed(self.state())
+            }
+            _ => CmdResult::None,
+        }
+    }
+}
+
+/// Blog Component - bridges MockComponent to application messages
+pub struct Blog {
+    component: BlogMock,
+}
+
+impl Default for Blog {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Blog {
+    pub fn new() -> Self {
+        Self {
+            component: BlogMock::new(),
+        }
+    }
+}
+
+impl Component<Msg, NoUserEvent> for Blog {
+    fn on(&mut self, ev: Event<NoUserEvent>) -> Option<Msg> {
+        match ev {
+            Event::Keyboard(KeyEvent {
+                code: Key::Char('c'),
+                modifiers,
+            }) if modifiers.contains(KeyModifiers::CONTROL) => Some(Msg::Quit),
+            Event::Keyboard(KeyEvent { code: Key::Esc, .. })
+            | Event::Keyboard(KeyEvent {
+                code: Key::Char('q'),
+                ..
+            }) => {
+                if self.component.back() {
+                    // Went back within blog (detail -> list)
+                    Some(Msg::None)
+                } else {
+                    // Go back to home
+                    Some(Msg::GoBack)
+                }
+            }
+            Event::Keyboard(KeyEvent {
+                code: Key::Up, ..
+            })
+            | Event::Keyboard(KeyEvent {
+                code: Key::Char('k'),
+                ..
+            }) => {
+                self.component.perform(Cmd::Move(Direction::Up));
+                Some(Msg::None)
+            }
+            Event::Keyboard(KeyEvent {
+                code: Key::Down, ..
+            })
+            | Event::Keyboard(KeyEvent {
+                code: Key::Char('j'),
+                ..
+            }) => {
+                self.component.perform(Cmd::Move(Direction::Down));
+                Some(Msg::None)
+            }
+            Event::Keyboard(KeyEvent {
+                code: Key::Enter, ..
+            }) => {
+                self.component.perform(Cmd::Submit);
+                Some(Msg::None)
+            }
+            Event::Keyboard(KeyEvent {
+                code: Key::Char(c),
+                ..
+            }) => {
+                // Only allow navigation shortcuts in list mode
+                if self.component.mode == BlogMode::List {
+                    if let Some(view) = ViewId::from_shortcut(c) {
+                        return Some(Msg::NavigateTo(view));
+                    }
+                }
+                None
+            }
+            _ => None,
+        }
+    }
+}
+
+impl MockComponent for Blog {
+    fn view(&mut self, frame: &mut Frame, area: Rect) {
+        self.component.view(frame, area);
+    }
+
+    fn query(&self, attr: Attribute) -> Option<AttrValue> {
+        self.component.query(attr)
+    }
+
+    fn attr(&mut self, attr: Attribute, value: AttrValue) {
+        self.component.attr(attr, value);
+    }
+
+    fn state(&self) -> State {
+        self.component.state()
+    }
+
+    fn perform(&mut self, cmd: Cmd) -> CmdResult {
+        self.component.perform(cmd)
     }
 }
