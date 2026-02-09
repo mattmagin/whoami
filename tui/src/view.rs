@@ -17,7 +17,14 @@ pub struct ViewConfig {
     pub description: &'static str,
 }
 
+// TODO: we are likely going to use the menu on other pages, the home currently shows on home, but we are going to want to filter out the current page
 pub const VIEWS: &[ViewConfig] = &[
+    ViewConfig {
+        view: View::Home,
+        shortcut: 'h',
+        label: "Home",
+        description: "You are here",
+    },
     ViewConfig {
         view: View::Resume,
         shortcut: 'r',
