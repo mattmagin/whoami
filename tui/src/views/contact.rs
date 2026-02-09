@@ -1,5 +1,6 @@
 //! Contact form view
 
+use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     layout::{Alignment, Constraint, Layout, Rect},
     style::Modifier,
@@ -8,6 +9,8 @@ use ratatui::{
     Frame,
 };
 
+use crate::keymap::{self, Action};
+use crate::view::ViewResult;
 use crate::styles;
 use crate::widgets::{PageLayout, TextInput};
 
@@ -109,8 +112,55 @@ impl ContactView {
         self.focused_field = ContactField::Name;
     }
 
-    pub fn is_submitted(&self) -> bool {
+    #[allow(dead_code)]
+    fn is_submitted(&self) -> bool {
         self.submitted
+    }
+
+    /// Handle key input for the contact view
+    pub fn handle_key(&mut self, key: KeyEvent) -> ViewResult {
+        // If submitted, only allow going back
+        if self.submitted {
+            if let Some(action) = keymap::match_key(key, keymap::SUBMITTED_KEYS) {
+                if action == Action::Back {
+                    self.reset();
+                    return ViewResult::Back;
+                }
+            }
+            return ViewResult::Ignored;
+        }
+
+        // Check form keys
+        if let Some(action) = keymap::match_key(key, keymap::FORM_KEYS) {
+            return match action {
+                Action::Back => ViewResult::Back,
+                Action::FocusNext => {
+                    self.focus_next();
+                    ViewResult::Handled
+                }
+                Action::FocusPrev => {
+                    self.focus_prev();
+                    ViewResult::Handled
+                }
+                Action::Submit => {
+                    self.submit();
+                    ViewResult::Handled
+                }
+                Action::Backspace => {
+                    self.backspace();
+                    ViewResult::Handled
+                }
+                _ => ViewResult::Ignored,
+            };
+        }
+
+        // Handle text input (any character)
+        if let KeyCode::Char(c) = key.code {
+            self.type_char(c);
+            return ViewResult::Handled;
+        }
+
+        ViewResult::Ignored
     }
 
     pub fn render(&self, frame: &mut Frame, area: Rect) {

@@ -1,5 +1,6 @@
 //! Home view with ASCII logo, typewriter animation, and navigation menu
 
+use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     layout::{Alignment, Constraint, Layout, Rect},
     style::{Modifier, Style},
@@ -8,7 +9,8 @@ use ratatui::{
     Frame,
 };
 
-use crate::view::{View, VIEWS};
+use crate::keymap::{self, Action};
+use crate::view::{View, ViewResult, VIEWS};
 use crate::content::{BIO, LOGO, TYPEWRITER_PHRASES};
 use crate::styles;
 use crate::widgets::{MenuItem, TypewriterState, TypewriterWidget};
@@ -41,6 +43,41 @@ impl HomeView {
 
     pub fn selected_view(&self) -> Option<View> {
         VIEWS.get(self.cursor).map(|config| config.view)
+    }
+
+    /// Handle key input for the home view
+    pub fn handle_key(&mut self, key: KeyEvent) -> ViewResult {
+        // Check for navigation shortcuts first
+        if let KeyCode::Char(c) = key.code {
+            if let Some(view) = View::from_shortcut(c) {
+                return ViewResult::NavigateTo(view);
+            }
+        }
+
+        // Check home-specific keys
+        if let Some(action) = keymap::match_key(key, keymap::HOME_KEYS) {
+            return match action {
+                Action::Quit => ViewResult::Quit,
+                Action::CursorUp => {
+                    self.cursor_up();
+                    ViewResult::Handled
+                }
+                Action::CursorDown => {
+                    self.cursor_down();
+                    ViewResult::Handled
+                }
+                Action::Select => {
+                    if let Some(view) = self.selected_view() {
+                        ViewResult::NavigateTo(view)
+                    } else {
+                        ViewResult::Handled
+                    }
+                }
+                _ => ViewResult::Ignored,
+            };
+        }
+
+        ViewResult::Ignored
     }
 
     pub fn tick(&mut self) {

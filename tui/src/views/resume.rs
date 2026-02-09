@@ -1,11 +1,14 @@
 //! Resume view with markdown rendering and scrolling
 
+use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     layout::Rect,
     widgets::Paragraph,
     Frame,
 };
 
+use crate::keymap::{self, Action};
+use crate::view::{View, ViewResult};
 use crate::content::RESUME;
 use crate::widgets::{Markdown, PageLayout};
 
@@ -45,6 +48,42 @@ impl ResumeView {
 
     pub fn page_down(&mut self) {
         self.viewport = (self.viewport + 10).min(self.max_scroll);
+    }
+
+    /// Handle key input for the resume view
+    pub fn handle_key(&mut self, key: KeyEvent) -> ViewResult {
+        // Check for navigation shortcuts
+        if let KeyCode::Char(c) = key.code {
+            if let Some(view) = View::from_shortcut(c) {
+                return ViewResult::NavigateTo(view);
+            }
+        }
+
+        // Check scroll keys
+        if let Some(action) = keymap::match_key(key, keymap::SCROLL_KEYS) {
+            return match action {
+                Action::Back => ViewResult::Back,
+                Action::ScrollUp => {
+                    self.scroll_up();
+                    ViewResult::Handled
+                }
+                Action::ScrollDown => {
+                    self.scroll_down();
+                    ViewResult::Handled
+                }
+                Action::PageUp => {
+                    self.page_up();
+                    ViewResult::Handled
+                }
+                Action::PageDown => {
+                    self.page_down();
+                    ViewResult::Handled
+                }
+                _ => ViewResult::Ignored,
+            };
+        }
+
+        ViewResult::Ignored
     }
 
     /// Re-wrap content if terminal width changed

@@ -1,5 +1,6 @@
 //! Projects view with project cards
 
+use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     layout::Rect,
     text::{Line, Span},
@@ -7,6 +8,8 @@ use ratatui::{
     Frame,
 };
 
+use crate::keymap::{self, Action};
+use crate::view::{View, ViewResult};
 use crate::content::PROJECTS;
 use crate::styles;
 use crate::widgets::{accent_bold, featured_badge, PageLayout, SelectableItem, TagList};
@@ -31,6 +34,34 @@ impl ProjectsView {
         if self.cursor < PROJECTS.len() - 1 {
             self.cursor += 1;
         }
+    }
+
+    /// Handle key input for the projects view
+    pub fn handle_key(&mut self, key: KeyEvent) -> ViewResult {
+        // Check for navigation shortcuts
+        if let KeyCode::Char(c) = key.code {
+            if let Some(view) = View::from_shortcut(c) {
+                return ViewResult::NavigateTo(view);
+            }
+        }
+
+        // Check list keys
+        if let Some(action) = keymap::match_key(key, keymap::LIST_KEYS) {
+            return match action {
+                Action::Back => ViewResult::Back,
+                Action::CursorUp => {
+                    self.cursor_up();
+                    ViewResult::Handled
+                }
+                Action::CursorDown => {
+                    self.cursor_down();
+                    ViewResult::Handled
+                }
+                _ => ViewResult::Ignored,
+            };
+        }
+
+        ViewResult::Ignored
     }
 
     pub fn render(&self, frame: &mut Frame, area: Rect) {

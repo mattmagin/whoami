@@ -1,5 +1,6 @@
 //! Blog view with list and detail modes
 
+use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     layout::Rect,
     style::Modifier,
@@ -8,6 +9,8 @@ use ratatui::{
     Frame,
 };
 
+use crate::keymap::{self, Action};
+use crate::view::{View, ViewResult};
 use crate::content::{Post, POSTS};
 use crate::styles;
 use crate::widgets::{
@@ -90,6 +93,46 @@ impl BlogView {
         } else {
             false
         }
+    }
+
+    /// Handle key input for the blog view
+    pub fn handle_key(&mut self, key: KeyEvent) -> ViewResult {
+        // Check for navigation shortcuts (only in list mode)
+        if self.mode == BlogMode::List {
+            if let KeyCode::Char(c) = key.code {
+                if let Some(view) = View::from_shortcut(c) {
+                    return ViewResult::NavigateTo(view);
+                }
+            }
+        }
+
+        // Check list keys
+        if let Some(action) = keymap::match_key(key, keymap::LIST_KEYS) {
+            return match action {
+                Action::Back => {
+                    if self.back() {
+                        ViewResult::Handled
+                    } else {
+                        ViewResult::Back
+                    }
+                }
+                Action::CursorUp => {
+                    self.cursor_up();
+                    ViewResult::Handled
+                }
+                Action::CursorDown => {
+                    self.cursor_down();
+                    ViewResult::Handled
+                }
+                Action::Select => {
+                    self.select();
+                    ViewResult::Handled
+                }
+                _ => ViewResult::Ignored,
+            };
+        }
+
+        ViewResult::Ignored
     }
 
     pub fn render(&mut self, frame: &mut Frame, area: Rect) {

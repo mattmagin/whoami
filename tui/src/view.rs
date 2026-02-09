@@ -9,6 +9,21 @@ pub enum View {
     Contact,
 }
 
+/// Result of a view handling a key event
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub enum ViewResult {
+    /// Key was handled internally, no navigation needed
+    Handled,
+    /// Key was not handled by this view
+    Ignored,
+    /// Navigate back (to home, or previous state within view)
+    Back,
+    /// Navigate to a specific view
+    NavigateTo(View),
+    /// Quit the application
+    Quit,
+}
+
 #[derive(Clone, Copy)]
 pub struct ViewConfig {
     pub view: View,

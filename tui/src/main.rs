@@ -1,5 +1,6 @@
 mod app;
 mod content;
+mod keymap;
 mod styles;
 mod view;
 mod views;
@@ -8,7 +9,7 @@ mod widgets;
 use std::{io, time::Duration};
 
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyModifiers},
+    event::{self, DisableMouseCapture, EnableMouseCapture, Event},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -53,17 +54,16 @@ fn run_app<B: ratatui::backend::Backend>(
 
         // Poll for events with timeout for animations
         if event::poll(Duration::from_millis(50))? {
-            if let Event::Key(key) = event::read()? {
-                // Global quit
-                if key.code == KeyCode::Char('c') && key.modifiers.contains(KeyModifiers::CONTROL) {
-                    return Ok(());
+            match event::read()? {
+                Event::Key(key) => {
+                    if app.handle_key(key) {
+                        return Ok(());
+                    }
                 }
-
-                if app.handle_key(key) {
-                    return Ok(());
+                Event::Resize(width, height) => {
+                    app.set_size(width, height);
                 }
-            } else if let Event::Resize(width, height) = event::read()? {
-                app.set_size(width, height);
+                _ => {}
             }
         }
 
