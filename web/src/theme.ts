@@ -60,10 +60,12 @@ export interface ThemeFonts {
     sans: string
     serif: string
     mono: string
+    outfit: string
 }
 
 export interface ThemeRadii {
     base: string
+    xs: string
     sm: string
     md: string
     lg: string
@@ -73,23 +75,42 @@ export interface ThemeRadii {
     '4xl': string
 }
 
+// Logger style configuration
+export interface LoggerStyleConfig {
+    color: string
+    fontSize: string
+    fontWeight?: string
+    fontFamily?: string
+    fontStyle?: string
+    background?: string
+    padding?: string
+    borderRadius?: string
+}
+
+export type LoggerStylePreset = 'heading' | 'subheading' | 'body' | 'accent' | 'muted' | 'link' | 'code' | 'success' | 'warning' | 'error'
+
+export type ThemeLogger = Record<LoggerStylePreset, LoggerStyleConfig>
+
 export interface Theme {
     key: ThemeKey
     colors: ThemeColors
     fonts: ThemeFonts
     radii: ThemeRadii
+    logger: ThemeLogger
 }
 
 const fonts: ThemeFonts = {
     sans: '"DM Sans", system-ui, sans-serif',
     serif: '"Fraunces", Georgia, serif',
     mono: '"JetBrains Mono", monospace',
+    outfit: '"Outfit", system-ui, sans-serif',
 }
 
 const baseRadius = '0.5rem'
 
 const radii: ThemeRadii = {
     base: baseRadius,
+    xs: 'calc(0.5rem - 6px)',
     sm: 'calc(0.5rem - 4px)',
     md: 'calc(0.5rem - 2px)',
     lg: '0.5rem',
@@ -156,6 +177,71 @@ export const lightTheme: Theme = {
     },
     fonts,
     radii,
+    logger: {
+        heading: {
+            color: '#4a7c59',
+            fontSize: '24px',
+            fontWeight: 'bold',
+            fontFamily: fonts.mono,
+        },
+        subheading: {
+            color: '#2d5a3d',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            fontFamily: fonts.sans,
+        },
+        body: {
+            color: '#5c7a62',
+            fontSize: '12px',
+            fontFamily: fonts.sans,
+        },
+        accent: {
+            color: '#2d5a3d',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            fontFamily: fonts.sans,
+        },
+        muted: {
+            color: '#8fa88a',
+            fontSize: '11px',
+            fontStyle: 'italic',
+            fontFamily: fonts.sans,
+        },
+        link: {
+            color: '#4a7c59',
+            fontSize: '12px',
+            fontFamily: fonts.mono,
+            background: '#eef2ed',
+            padding: '2px 6px',
+            borderRadius: radii.sm,
+        },
+        code: {
+            color: '#c4501b',
+            fontSize: '12px',
+            fontFamily: fonts.mono,
+            background: '#fff4eb',
+            padding: '2px 6px',
+            borderRadius: radii.xs,
+        },
+        success: {
+            color: '#3d6b4d',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            fontFamily: fonts.sans,
+        },
+        warning: {
+            color: '#8a8a5c',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            fontFamily: fonts.sans,
+        },
+        error: {
+            color: '#c94a4a',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            fontFamily: fonts.sans,
+        },
+    },
 }
 
 // Dark Mode - Deep forest at night
@@ -215,6 +301,72 @@ export const darkTheme: Theme = {
     },
     fonts,
     radii,
+    // TODO: review logger theme colors for dark and light themes....
+    logger: {
+        heading: {
+            color: '#8ac49a',
+            fontSize: '24px',
+            fontWeight: 'bold',
+            fontFamily: fonts.mono,
+        },
+        subheading: {
+            color: '#6aab7a',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            fontFamily: fonts.sans,
+        },
+        body: {
+            color: '#8aab8e',
+            fontSize: '12px',
+            fontFamily: fonts.sans,
+        },
+        accent: {
+            color: '#6aab7a',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            fontFamily: fonts.sans,
+        },
+        muted: {
+            color: '#a8c4a0',
+            fontSize: '11px',
+            fontStyle: 'italic',
+            fontFamily: fonts.sans,
+        },
+        link: {
+            color: '#8ac49a',
+            fontSize: '12px',
+            fontFamily: fonts.mono,
+            background: '#253529',
+            padding: '2px 6px',
+            borderRadius: radii.sm,
+        },
+        code: {
+            color: '#c4501b',
+            fontSize: '12px',
+            fontFamily: fonts.mono,
+            background: '#dee2e6',
+            padding: '2px 6px',
+            borderRadius: radii.xs,
+        },
+        success: {
+            color: '#6aab7a',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            fontFamily: fonts.sans,
+        },
+        warning: {
+            color: '#abab6a',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            fontFamily: fonts.sans,
+        },
+        error: {
+            color: '#e06666',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            fontFamily: fonts.sans,
+        },
+    },
 }
 
 export const themes: Record<ThemeKey, Theme> = {

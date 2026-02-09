@@ -1,6 +1,6 @@
 {
     "common": {
-        "sshCommand": "ssh visitor@yoursite.com",
+        "sshCommand": "ssh magin.tech",
         "viewAll": "View All",
         "readMore": "Read more",
         "getInTouch": "Get in Touch",
