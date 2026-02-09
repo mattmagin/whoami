@@ -5,7 +5,11 @@ interface ProjectsProps {
     projects: ResumeProject[]
 }
 
-const Projects = ({ projects }: ProjectsProps) => {
+const Projects = ({ projects = [] }: ProjectsProps) => {
+    if (projects.length === 0) {
+        return null
+    }
+
     return (
         <Stack as="section" gap="lg">
             <Text variant="sectionTitle">

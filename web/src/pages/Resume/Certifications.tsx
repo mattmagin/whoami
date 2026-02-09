@@ -5,7 +5,11 @@ interface CertificationsProps {
     certifications: ResumeCertification[]
 }
 
-const Certifications = ({ certifications }: CertificationsProps) => {
+const Certifications = ({ certifications = [] }: CertificationsProps) => {
+    if (certifications.length === 0) {
+        return null
+    }
+
     return (
         <Stack as="section" gap="lg">
             <Text variant="sectionTitle">

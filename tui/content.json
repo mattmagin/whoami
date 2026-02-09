@@ -1,0 +1,191 @@
+{
+    "resume": "# Michael Magin\n\n## Full-Stack Software Engineer\n\nFull-stack software engineer with 5+ years of experience building scalable\nweb applications and APIs. Passionate about clean code, developer experience,\nand bridging the gap between elegant architecture and practical solutions.\nExperienced in Ruby, Go, TypeScript, and cloud infrastructure.\n\n---\n\n## Experience\n\n### Senior Software Engineer | Acme Corp\n*San Francisco, CA • Jan 2023 – Present*\n\n- Led development of a real-time collaboration platform serving 50K+ daily active users\n- Redesigned API architecture, reducing average response time by 40%\n- Mentored junior developers through code reviews and pair programming sessions\n- Implemented CI/CD pipelines that reduced deployment time from 45 minutes to 8 minutes\n\n### Software Engineer | StartupXYZ\n*Remote • Mar 2020 – Dec 2022*\n\n- Built and maintained Ruby on Rails APIs powering mobile and web applications\n- Developed a Go-based microservice for high-throughput data processing (10K events/sec)\n- Integrated third-party payment systems handling $2M+ in monthly transactions\n- Created internal tooling that automated 15+ hours of manual work per week\n\n### Junior Developer | WebAgency Inc\n*Portland, OR • Jun 2018 – Feb 2020*\n\n- Developed responsive web applications using React and Node.js\n- Collaborated with design team to implement pixel-perfect UI components\n- Maintained legacy PHP applications while planning migration to modern stack\n- Wrote comprehensive test suites increasing code coverage from 40% to 85%\n\n---\n\n## Skills\n\n**Languages:** Ruby, Go, TypeScript, JavaScript, Python, SQL\n**Frameworks:** Ruby on Rails, React, Next.js, Bubble Tea, Express\n**Databases:** PostgreSQL, Redis, SQLite, MongoDB\n**Infrastructure:** AWS (EC2, RDS, S3, CloudFront), Docker, Kubernetes, Terraform\n**Tools:** Git, GitHub Actions, GitLab CI, Kamal, Linux, Vim\n\n---\n\n## Certifications\n\n- AWS Certified Solutions Architect – Associate (2024)\n- HashiCorp Certified: Terraform Associate (2023)\n\n---\n\n## Education\n\n**Bachelor of Science in Computer Science**\nOregon State University, Corvallis, OR | 2014 – 2018\nGPA: 3.7/4.0\n\n---\n\n## Contact\n\n- Email: michael@example.com\n- Location: San Francisco, CA\n- GitHub: github.com/mmagin\n- LinkedIn: linkedin.com/in/mmagin",
+    "bio": "Full-stack software engineer with 5+ years of experience building scalable\nweb applications and APIs. Passionate about clean code, developer experience,\nand bridging the gap between elegant architecture and practical solutions.\nExperienced in Ruby, Go, TypeScript, and cloud infrastructure.",
+    "logo": "\n            ██╗    ██╗██╗  ██╗ ██████╗  █████╗ ███╗   ███╗██╗\n            ██║    ██║██║  ██║██╔═══██╗██╔══██╗████╗ ████║██║\n            ██║ █╗ ██║███████║██║   ██║███████║██╔████╔██║██║\n            ██║███╗██║██╔══██║██║   ██║██╔══██║██║╚██╔╝██║██║\n            ╚███╔███╔╝██║  ██║╚██████╔╝██║  ██║██║ ╚═╝ ██║██║\n             ╚══╝╚══╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝\n",
+    "typewriter_phrases": [
+        "Full-Stack Engineer",
+        "Powered By Coffee",
+        "Tinkerer at Heart",
+        "Open Source Enthusiast"
+    ],
+    "menu_items": [
+        {
+            "key": "r",
+            "label": "Resume",
+            "desc": "View my background and skills"
+        },
+        {
+            "key": "b",
+            "label": "Blog",
+            "desc": "Technical articles and thoughts"
+        },
+        {
+            "key": "p",
+            "label": "Projects",
+            "desc": "Things I've built"
+        },
+        {
+            "key": "c",
+            "label": "Contact",
+            "desc": "Get in touch"
+        }
+    ],
+    "posts": [
+        {
+            "slug": "building-a-terminal-ui-with-go-and-bubble-tea",
+            "title": "Building a Terminal UI with Go and Bubble Tea",
+            "excerpt": "Exploring the world of terminal user interfaces with Bubble Tea and why TUIs are making a comeback for developer tools.",
+            "tags": [
+                "Go",
+                "TUI",
+                "BubbleTea",
+                "CLI"
+            ],
+            "published": "2026-02-05",
+            "content": "# Building a Terminal UI with Go and Bubble Tea\n\nRecently I've been exploring the world of terminal user interfaces (TUIs), and I have to say—Bubble Tea has completely changed how I think about CLI applications.\n\n## Why Terminal UIs?\n\nIn an age of web apps and mobile interfaces, why would anyone care about terminal UIs? A few reasons:\n\n- **Speed**: No browser overhead, instant startup\n- **Accessibility**: Works over SSH, in containers, anywhere\n- **Focus**: No distractions, just you and your workflow\n\n## Getting Started with Bubble Tea\n\nBubble Tea follows the Elm architecture, which means your app consists of three main components:\n\n1. **Model** - Your application state\n2. **Update** - How state changes in response to messages\n3. **View** - How to render your state as a string\n\n```go\ntype model struct {\n    cursor int\n    items  []string\n}\n\nfunc (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {\n    switch msg := msg.(type) {\n    case tea.KeyMsg:\n        switch msg.String() {\n        case \"up\":\n            m.cursor--\n        case \"down\":\n            m.cursor++\n        }\n    }\n    return m, nil\n}\n```\n\nThe elegance of this pattern really shines when building complex, stateful applications.\n\n## What I Built\n\nI created a portfolio viewer that fetches data from a Rails API and displays it beautifully in the terminal. Complete with navigation, animations, and even syntax highlighting for code snippets.\n\nStay tuned for more posts on this journey!"
+        },
+        {
+            "slug": "why-i-chose-rails-for-my-api-backend",
+            "title": "Why I Chose Rails for My API Backend",
+            "excerpt": "Rails' convention over configuration philosophy and rich ecosystem make it the perfect choice for rapid API development.",
+            "tags": [
+                "Rails",
+                "Ruby",
+                "API",
+                "Backend"
+            ],
+            "published": "2026-02-01",
+            "content": "# Why I Chose Rails for My API Backend\n\nWhen starting a new project, the framework choice can feel overwhelming. Here's why Rails was the right choice for my portfolio API.\n\n## Convention Over Configuration\n\nRails' opinionated nature is a feature, not a bug. Instead of spending hours debating folder structure or ORM choices, I can focus on building features.\n\n## Rapid Development\n\nWith generators, migrations, and a rich ecosystem of gems, Rails lets me move fast:\n\n```bash\nrails g model Post title:string content:text published_at:datetime\nrails db:migrate\n```\n\nIn two commands, I have a fully-functional model with database backing.\n\n## The Ecosystem\n\n- **Blueprinter** for JSON serialization\n- **RSpec** for testing\n- **Rack CORS** for API security\n\nThese battle-tested tools mean I'm building on solid foundations.\n\n## API-Only Mode\n\nRails 5+ introduced API-only mode, stripping away the view layer overhead. My app boots faster and has a smaller footprint.\n\nFor a personal project where I'm the only developer, Rails' productivity benefits far outweigh any performance considerations."
+        },
+        {
+            "slug": "deploying-with-kamal-a-docker-first-approach",
+            "title": "Deploying with Kamal: A Docker-First Approach",
+            "excerpt": "Kamal offers simple, zero-downtime deployments to bare metal servers without the Kubernetes complexity.",
+            "tags": [
+                "DevOps",
+                "Docker",
+                "Kamal",
+                "Deployment"
+            ],
+            "published": "2026-01-25",
+            "content": "# Deploying with Kamal: A Docker-First Approach\n\nKamal (formerly MRSK) is Basecamp's answer to simple deployment. Here's my experience using it for this portfolio.\n\n## What is Kamal?\n\nKamal deploys containerized applications to bare metal servers. No Kubernetes complexity, no managed container services—just Docker and SSH.\n\n## The Setup\n\nConfiguration lives in a single YAML file:\n\n```yaml\nservice: portfolio-api\nimage: myuser/portfolio-api\n\nservers:\n  web:\n    - 192.168.1.100\n\nregistry:\n  username: myuser\n  password:\n    - KAMAL_REGISTRY_PASSWORD\n```\n\n## Deploy in One Command\n\n```bash\nkamal deploy\n```\n\nThat's it. Kamal builds the image, pushes it, and rolls out to your servers with zero downtime.\n\n## What I Love\n\n- **Simplicity**: No cloud-specific lock-in\n- **Control**: I own my servers\n- **Cost**: A $5 VPS is all I need\n\nFor small to medium projects, Kamal hits the sweet spot between simplicity and capability."
+        },
+        {
+            "slug": "testing-reading-time-calculations-in-ruby",
+            "title": "Testing Reading Time Calculations in Ruby",
+            "excerpt": "Building a reliable reading time estimator with comprehensive RSpec tests for edge cases.",
+            "tags": [
+                "Ruby",
+                "Testing",
+                "RSpec"
+            ],
+            "published": "2026-01-18",
+            "content": "# Testing Reading Time Calculations in Ruby\n\nA small but important feature: showing estimated reading time for blog posts. Here's how I tested it.\n\n## The Requirements\n\n- Average reading speed: ~200 words per minute\n- Handle edge cases: empty content, very short posts\n- Round to nearest minute\n\n## The Implementation\n\n```ruby\nmodule ReadingTime\n  WORDS_PER_MINUTE = 200\n\n  def self.estimate(content)\n    return 0 if content.blank?\n\n    word_count = content.split.size\n    (word_count.to_f / WORDS_PER_MINUTE).ceil\n  end\nend\n```\n\n## Testing Edge Cases\n\nRSpec makes it easy to cover all scenarios:\n\n```ruby\ndescribe ReadingTime do\n  it \"returns 0 for empty content\" do\n    expect(described_class.estimate(\"\")).to eq(0)\n  end\n\n  it \"rounds up partial minutes\" do\n    content = \"word \" * 201\n    expect(described_class.estimate(content)).to eq(2)\n  end\nend\n```\n\nSmall utilities like this benefit greatly from comprehensive test coverage."
+        },
+        {
+            "slug": "crafting-a-developer-portfolio-that-stands-out",
+            "title": "Crafting a Developer Portfolio That Stands Out",
+            "excerpt": "Your portfolio is your handshake with the tech world. Here's how to make it memorable.",
+            "tags": [
+                "Career",
+                "Portfolio",
+                "Advice"
+            ],
+            "published": "2026-01-08",
+            "content": "# Crafting a Developer Portfolio That Stands Out\n\nYour portfolio is your handshake with the tech world. Here's my philosophy on making it memorable.\n\n## Show, Don't Tell\n\nAnyone can list technologies on a resume. A portfolio lets you demonstrate your skills:\n\n- **Clean code**: Link to GitHub repos\n- **Problem solving**: Explain your approach\n- **Communication**: Write about your journey\n\n## The Tech Stack Choice\n\nI deliberately chose an unconventional stack—a Go terminal client talking to a Rails API. Why?\n\n1. It's memorable\n2. It demonstrates systems thinking\n3. It shows I can work across paradigms\n\n## Content Over Flash\n\nFancy animations are nice, but recruiters care about substance. Focus on:\n\n- Clear project descriptions\n- Measurable outcomes\n- Your unique perspective\n\n## Keep It Updated\n\nA stale portfolio signals disengagement. Regular blog posts show you're actively learning and growing.\n\nYour portfolio is a living document—treat it that way."
+        }
+    ],
+    "projects": [
+        {
+            "slug": "portfolio-tui",
+            "name": "Portfolio TUI",
+            "excerpt": "A terminal-based portfolio viewer with smooth animations and keyboard navigation.",
+            "description": "A terminal-based portfolio viewer built with Go and Bubble Tea. Features smooth animations, keyboard navigation, and real-time data fetching from a Rails API. Demonstrates how TUIs can be both functional and beautiful.",
+            "tech_stack": [
+                "Go",
+                "BubbleTea",
+                "Lipgloss",
+                "REST"
+            ],
+            "url": null,
+            "github_url": "https://github.com/example/portfolio-tui",
+            "featured": true
+        },
+        {
+            "slug": "portfolio-api",
+            "name": "Portfolio API",
+            "excerpt": "RESTful API backend powering the portfolio with Rails 8 in API-only mode.",
+            "description": "RESTful API backend powering the portfolio. Built with Rails 8 in API-only mode. Features include blog posts with reading time estimation, project showcases, and a contact form. Deployed with Kamal to a VPS.",
+            "tech_stack": [
+                "Ruby",
+                "Rails",
+                "PostgreSQL",
+                "Docker",
+                "Kamal"
+            ],
+            "url": null,
+            "github_url": "https://github.com/example/portfolio-api",
+            "featured": true
+        },
+        {
+            "slug": "task-flow",
+            "name": "Task Flow",
+            "excerpt": "A kanban-style task management app with real-time WebSocket updates.",
+            "description": "A kanban-style task management app with drag-and-drop interface. Real-time updates via WebSockets keep all connected clients in sync. Supports multiple boards, labels, and due dates.",
+            "tech_stack": [
+                "React",
+                "TypeScript",
+                "Rails",
+                "ActionCable",
+                "PostgreSQL"
+            ],
+            "url": "https://taskflow.example.com",
+            "github_url": "https://github.com/example/task-flow",
+            "featured": true
+        },
+        {
+            "slug": "code-review-bot",
+            "name": "Code Review Bot",
+            "excerpt": "GitHub App providing automated code review using static analysis.",
+            "description": "GitHub App that provides automated code review comments using static analysis. Integrates with CI pipelines to catch common issues before human review. Reduced review cycles by 30% on team projects.",
+            "tech_stack": [
+                "Python",
+                "FastAPI",
+                "GitHub-API",
+                "Docker"
+            ],
+            "url": null,
+            "github_url": "https://github.com/example/code-review-bot",
+            "featured": false
+        },
+        {
+            "slug": "expense-tracker-cli",
+            "name": "Expense Tracker CLI",
+            "excerpt": "Command-line expense tracking with SQLite and beautiful terminal output.",
+            "description": "Command-line expense tracking with SQLite storage and beautiful terminal output. Supports categories, recurring expenses, and monthly reports. Syncs to a simple REST API for backup.",
+            "tech_stack": [
+                "Rust",
+                "SQLite",
+                "REST"
+            ],
+            "url": null,
+            "github_url": "https://github.com/example/expense-tracker",
+            "featured": false
+        },
+        {
+            "slug": "weather-dashboard",
+            "name": "Weather Dashboard",
+            "excerpt": "Minimal weather dashboard with geolocation and accessibility-first design.",
+            "description": "Minimal weather dashboard aggregating data from multiple APIs. Features geolocation, 7-day forecasts, and severe weather alerts. Designed with accessibility in mind—fully keyboard navigable.",
+            "tech_stack": [
+                "Vue.js",
+                "Tailwind",
+                "OpenWeatherAPI",
+                "Netlify"
+            ],
+            "url": "https://weather.example.com",
+            "github_url": null,
+            "featured": false
+        }
+    ]
+}
