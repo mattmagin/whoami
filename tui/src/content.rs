@@ -14,17 +14,8 @@ struct ContentData {
     bio: String,
     logo: String,
     typewriter_phrases: Vec<String>,
-    menu_items: Vec<MenuItemData>,
     posts: Vec<PostData>,
     projects: Vec<ProjectData>,
-}
-
-/// Menu item from JSON
-#[derive(Debug, Deserialize)]
-struct MenuItemData {
-    key: String,
-    label: String,
-    desc: String,
 }
 
 /// Blog post from JSON
@@ -141,15 +132,6 @@ pub static PROJECTS: Lazy<Vec<Project>> = Lazy::new(|| {
     }).collect()
 });
 
-/// Menu items (static slice reference)
-pub static MENU_ITEMS: Lazy<Vec<MenuItem>> = Lazy::new(|| {
-    CONTENT.menu_items.iter().map(|m| MenuItem {
-        key: m.key.chars().next().unwrap_or('?'),
-        label: &m.label,
-        desc: &m.desc,
-    }).collect()
-});
-
 // ============================================================================
 // Legacy structs for backwards compatibility with existing views
 // ============================================================================
@@ -179,11 +161,4 @@ pub struct Project {
     pub url: Option<&'static str>,
     pub github_url: Option<&'static str>,
     pub featured: bool,
-}
-
-/// Menu item for the home view
-pub struct MenuItem {
-    pub key: char,
-    pub label: &'static str,
-    pub desc: &'static str,
 }

@@ -5,19 +5,9 @@ use std::time::Duration;
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::Frame;
 
+use crate::view::View;
 use crate::views::{BlogView, ContactView, HomeView, ProjectsView, ResumeView};
 use crate::widgets::{LoadingState, LoadingWidget};
-
-/// Which view is currently active
-#[derive(Clone, Copy, PartialEq)]
-pub enum View {
-    Loading,
-    Home,
-    Resume,
-    Blog,
-    Projects,
-    Contact,
-}
 
 /// Main application model
 pub struct App {
@@ -94,11 +84,12 @@ impl App {
                     self.current_view = view;
                 }
             }
-            // Direct navigation hotkeys
-            KeyCode::Char('r') => self.current_view = View::Resume,
-            KeyCode::Char('b') => self.current_view = View::Blog,
-            KeyCode::Char('p') => self.current_view = View::Projects,
-            KeyCode::Char('c') => self.current_view = View::Contact,
+            // Direct navigation via VIEWS config
+            KeyCode::Char(c) => {
+                if let Some(view) = View::from_shortcut(c) {
+                    self.current_view = view;
+                }
+            }
             _ => {}
         }
         false

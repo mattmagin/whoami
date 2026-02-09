@@ -1,6 +1,7 @@
 mod app;
 mod content;
 mod styles;
+mod view;
 mod views;
 mod widgets;
 

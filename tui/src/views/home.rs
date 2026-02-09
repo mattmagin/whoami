@@ -8,8 +8,8 @@ use ratatui::{
     Frame,
 };
 
-use crate::app::View;
-use crate::content::{BIO, LOGO, MENU_ITEMS, TYPEWRITER_PHRASES};
+use crate::view::{View, VIEWS};
+use crate::content::{BIO, LOGO, TYPEWRITER_PHRASES};
 use crate::styles;
 use crate::widgets::{MenuItem, TypewriterState, TypewriterWidget};
 
@@ -34,19 +34,13 @@ impl HomeView {
     }
 
     pub fn cursor_down(&mut self) {
-        if self.cursor < MENU_ITEMS.len() - 1 {
+        if self.cursor < VIEWS.len() - 1 {
             self.cursor += 1;
         }
     }
 
     pub fn selected_view(&self) -> Option<View> {
-        match MENU_ITEMS[self.cursor].key {
-            'r' => Some(View::Resume),
-            'b' => Some(View::Blog),
-            'p' => Some(View::Projects),
-            'c' => Some(View::Contact),
-            _ => None,
-        }
+        VIEWS.get(self.cursor).map(|config| config.view)
     }
 
     pub fn tick(&mut self) {
@@ -82,17 +76,17 @@ impl HomeView {
             .alignment(Alignment::Center);
         frame.render_widget(bio, chunks[2]);
 
-        // Menu using MenuItem widget
+        // Menu using MenuItem widget - driven by VIEWS config
         let menu_block = Block::default()
             .borders(Borders::ALL)
             .border_type(ratatui::widgets::BorderType::Rounded)
             .border_style(styles::border());
 
-        let menu_lines: Vec<Line> = MENU_ITEMS
+        let menu_lines: Vec<Line> = VIEWS
             .iter()
             .enumerate()
-            .map(|(i, item)| {
-                MenuItem::new(item.key, item.label, item.desc)
+            .map(|(i, config)| {
+                MenuItem::new(config.shortcut, config.label, config.description)
                     .selected(i == self.cursor)
                     .to_line()
             })
@@ -109,7 +103,7 @@ impl HomeView {
             menu_x,
             chunks[3].y + 1,
             menu_width,
-            (MENU_ITEMS.len() as u16 + 2).min(chunks[3].height),
+            (VIEWS.len() as u16 + 2).min(chunks[3].height),
         );
         frame.render_widget(menu, menu_area);
 
