@@ -1,11 +1,8 @@
 import { useState, useRef, type FormEvent, type ChangeEvent } from 'react'
 import { Send, CheckCircle, AlertCircle } from 'lucide-react'
 import confetti from 'canvas-confetti'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { useStrings } from '@/content'
+import { Button, Input, Label, Textarea, Text, Stack, Flex, Grid } from '@/components/ui'
+import { useContent } from '@/providers/ContentProvider'
 
 interface FormErrors {
   name?: string
@@ -36,10 +33,10 @@ const ValidationTooltip = ({ message, id }: ValidationTooltipProps) => {
       <div className="relative rounded-md bg-destructive px-3 py-2 text-sm text-destructive-foreground shadow-lg">
         {/* Arrow */}
         <div className="absolute -top-1.5 left-4 h-3 w-3 rotate-45 bg-destructive" />
-        <div className="relative flex items-center gap-2">
+        <Flex align="center" gap="sm">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{message}</span>
-        </div>
+        </Flex>
       </div>
     </div>
   )
@@ -52,7 +49,7 @@ const ContactForm = () => {
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [values, setValues] = useState<FormValues>({ name: '', email: '', message: '' })
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const { contactForm } = useStrings()
+  const { contactForm } = useContent()
 
   function triggerConfetti() {
     if (!buttonRef.current) return
@@ -106,7 +103,7 @@ const ContactForm = () => {
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setValues(prev => ({ ...prev, [name]: value }))
-    
+
     // Clear error when user starts typing (if field was touched)
     if (touched[name]) {
       setErrors(prev => ({ ...prev, [name]: validateField(name as keyof FormValues, value) }))
@@ -121,19 +118,19 @@ const ContactForm = () => {
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    
+
     // Mark all fields as touched
     setTouched({ name: true, email: true, message: true })
-    
+
     // Validate all fields
     const newErrors = validateAll()
     setErrors(newErrors)
-    
+
     // Check if there are any errors
     if (Object.values(newErrors).some(error => error !== undefined)) {
       return
     }
-    
+
     setIsSubmitting(true)
 
     // Simulate form submission
@@ -146,27 +143,26 @@ const ContactForm = () => {
 
   if (submitted) {
     return (
-      <div className="rounded-lg border border-primary/20 bg-primary/5 p-8 text-center">
-        <CheckCircle className="mx-auto mb-4 h-12 w-12 text-primary" />
-        <h3 className="mb-2 font-serif text-xl font-semibold">{contactForm.successTitle}</h3>
-        <p className="text-muted-foreground">
+      <Stack align="center" gap="md" className="rounded-lg border border-primary/20 bg-primary/5 p-8">
+        <CheckCircle className="h-12 w-12 text-primary" />
+        <Text variant="cardTitle">{contactForm.successTitle}</Text>
+        <Text variant="muted">
           {contactForm.successDescription}
-        </p>
+        </Text>
         <Button
           variant="outline"
-          className="mt-6"
           onClick={() => setSubmitted(false)}
         >
           {contactForm.sendAnother}
         </Button>
-      </div>
+      </Stack>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-6">
-      <div className="grid gap-6 sm:grid-cols-2">
-        <div className="space-y-2">
+    <Stack as="form" gap="lg" onSubmit={handleSubmit} noValidate>
+      <Grid cols={{ base: 1, sm: 2 }} gap="lg">
+        <Stack gap="xs">
           <Label htmlFor="name">{contactForm.nameLabel}</Label>
           <div className="relative">
             <Input
@@ -183,8 +179,8 @@ const ContactForm = () => {
             />
             <ValidationTooltip message={firstErrorField === 'name' ? errors.name : undefined} id="name-error" />
           </div>
-        </div>
-        <div className="space-y-2">
+        </Stack>
+        <Stack gap="xs">
           <Label htmlFor="email">{contactForm.emailLabel}</Label>
           <div className="relative">
             <Input
@@ -202,10 +198,10 @@ const ContactForm = () => {
             />
             <ValidationTooltip message={firstErrorField === 'email' ? errors.email : undefined} id="email-error" />
           </div>
-        </div>
-      </div>
+        </Stack>
+      </Grid>
 
-      <div className="space-y-2">
+      <Stack gap="xs">
         <Label htmlFor="message">{contactForm.messageLabel}</Label>
         <div className="relative">
           <Textarea
@@ -223,7 +219,7 @@ const ContactForm = () => {
           />
           <ValidationTooltip message={firstErrorField === 'message' ? errors.message : undefined} id="message-error" />
         </div>
-      </div>
+      </Stack>
 
       <Button
         ref={buttonRef}
@@ -240,7 +236,7 @@ const ContactForm = () => {
           </>
         )}
       </Button>
-    </form>
+    </Stack>
   )
 }
 

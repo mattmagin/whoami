@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { Stack, Flex, Grid } from '@/components/ui'
 
 interface LoadingSkeletonProps {
   className?: string
@@ -16,23 +17,23 @@ const Skeleton = ({ className }: { className?: string }) => (
 )
 
 const CardSkeleton = () => (
-  <div className="rounded-lg border border-border p-6">
-    <Skeleton className="mb-4 h-6 w-3/4" />
-    <Skeleton className="mb-2 h-4 w-full" />
-    <Skeleton className="mb-4 h-4 w-2/3" />
-    <div className="flex gap-2">
+  <Stack gap="md" className="rounded-lg border border-border p-6">
+    <Skeleton className="h-6 w-3/4" />
+    <Skeleton className="h-4 w-full" />
+    <Skeleton className="h-4 w-2/3" />
+    <Flex gap="xs">
       <Skeleton className="h-5 w-16" />
       <Skeleton className="h-5 w-16" />
-    </div>
-  </div>
+    </Flex>
+  </Stack>
 )
 
 const TextSkeleton = () => (
-  <div className="space-y-2">
+  <Stack gap="xs">
     <Skeleton className="h-4 w-full" />
     <Skeleton className="h-4 w-5/6" />
     <Skeleton className="h-4 w-4/6" />
-  </div>
+  </Stack>
 )
 
 const TitleSkeleton = () => (
@@ -48,15 +49,15 @@ const LoadingSkeleton = ({
 
   if (variant === 'page') {
     return (
-      <div className={cn('space-y-8', className)}>
+      <Stack gap="xl" className={className}>
         <TitleSkeleton />
         <TextSkeleton />
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Grid cols={{ base: 1, md: 2, lg: 3 }} gap="lg">
           {items.map((i) => (
             <CardSkeleton key={i} />
           ))}
-        </div>
-      </div>
+        </Grid>
+      </Stack>
     )
   }
 
@@ -69,11 +70,11 @@ const LoadingSkeleton = ({
   }
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <Stack gap="lg" className={className}>
       {items.map((i) => (
         <CardSkeleton key={i} />
       ))}
-    </div>
+    </Stack>
   )
 }
 

@@ -1,7 +1,7 @@
 import { Github, Linkedin, Mail, Terminal } from 'lucide-react'
-import { Separator } from '@/components/ui/separator'
+import { Separator, Text, Stack, Flex, Container } from '@/components/ui'
 import CopyButton from '@/components/CopyButton'
-import { useStrings } from '@/content'
+import { useContent } from '@/providers/ContentProvider'
 
 const socialLinks = [
   { href: 'https://github.com', icon: Github, label: 'GitHub' },
@@ -11,23 +11,23 @@ const socialLinks = [
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
-  const { common, footer } = useStrings()
+  const { common, footer } = useContent()
 
   return (
     <footer className="border-t border-border/50 bg-background transition-theme">
-      <div className="mx-auto max-w-5xl px-6 py-12">
-        <div className="flex flex-col items-center gap-6">
+      <Container size="lg" padding="md">
+        <Stack align="center" gap="lg">
           {/* SSH Access */}
-          <div className="flex items-center gap-1 rounded-lg bg-muted/50 pl-4 pr-1 py-1 font-mono text-sm text-muted-foreground">
-            <Terminal className="h-4 w-4 mr-1" />
+          <Flex align="center" gap="xs" className="rounded-lg bg-muted/50 pl-4 pr-1 py-1 font-mono text-sm text-muted-foreground">
+            <Terminal className="h-4 w-4" />
             <span>{common.sshCommand}</span>
             <CopyButton text={common.sshCommand} className="h-8 w-8" />
-          </div>
+          </Flex>
 
           <Separator className="max-w-xs" />
 
           {/* Social Links */}
-          <div className="flex items-center gap-4">
+          <Flex align="center" gap="md">
             {socialLinks.map((link) => (
               <a
                 key={link.label}
@@ -40,14 +40,14 @@ const Footer = () => {
                 <link.icon className="h-5 w-5" />
               </a>
             ))}
-          </div>
+          </Flex>
 
           {/* Copyright */}
-          <p className="text-sm text-muted-foreground">
+          <Text variant="bodySmall">
             &copy; {currentYear} {footer.yourName}. {common.copyright}
-          </p>
-        </div>
-      </div>
+          </Text>
+        </Stack>
+      </Container>
     </footer>
   )
 }

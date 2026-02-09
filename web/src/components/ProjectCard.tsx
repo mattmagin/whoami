@@ -1,16 +1,15 @@
 import { ExternalLink, Github } from 'lucide-react'
 import Tilt from 'react-parallax-tilt'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge, Button, Text } from '@/components/ui'
 import type { Project } from '@/types'
-import { useStrings } from '@/content'
+import { useContent } from '@/providers/ContentProvider'
 
 interface ProjectCardProps {
   project: Project
 }
 
 const ProjectCard = ({ project }: ProjectCardProps) => {
-  const { common } = useStrings()
+  const { common } = useContent()
 
   return (
     <Tilt
@@ -33,15 +32,15 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
               {common.featured}
             </Badge>
           )}
-          <h3 className="font-serif text-xl font-semibold tracking-tight text-foreground">
+          <Text variant="cardTitle">
             {project.name}
-          </h3>
+          </Text>
         </div>
 
         {/* Description */}
-        <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+        <Text variant="bodySmall" className="mb-4 leading-relaxed">
           {project.description}
-        </p>
+        </Text>
 
         {/* Tech Stack */}
         <div className="mb-6 flex flex-wrap gap-2">

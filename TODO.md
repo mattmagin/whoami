@@ -6,3 +6,9 @@
 [ ] Full testing suite..
 [ ] Add basic keyboard shortcuts to jump to pages (ctrl+1, ctrl+2)
 [ ] Add terminal mode ctrl+` opens terminal view. 
+
+
+
+<!-- Are these good ideas? -->
+[ ] Redirect git.magin.tech to my github profile
+[ ] Redirect git.magin.tech/portfolio to github portfolio

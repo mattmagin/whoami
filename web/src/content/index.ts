@@ -1,1 +1,1 @@
-export { strings, useStrings, interpolate, type Strings } from './strings'
+export { strings, type Strings } from './strings'

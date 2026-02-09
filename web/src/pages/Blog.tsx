@@ -1,33 +1,34 @@
 import { usePosts } from '@/hooks/queries'
+import { Text, Stack, Container } from '@/components/ui'
 import PostCard from '@/components/PostCard'
 import LoadingSkeleton from '@/components/LoadingSkeleton'
 import ErrorState from '@/components/ErrorState'
 import { AnimatedSection, AnimatedList, AnimatedListItem } from '@/components/AnimatedSection'
-import { useStrings } from '@/content'
+import { useContent } from '@/providers/ContentProvider'
 
 const Blog = () => {
-  const { blog } = useStrings()
+  const { blog } = useContent()
   const { data: posts, isLoading, error, refetch } = usePosts()
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-4xl px-6 py-16">
+      <Container size="md" padding="lg">
         <LoadingSkeleton variant="title" className="mb-4" />
         <LoadingSkeleton variant="text" className="mb-12" />
         <LoadingSkeleton variant="card" count={3} />
-      </div>
+      </Container>
     )
   }
 
   if (error) {
     return (
-      <div className="mx-auto max-w-4xl px-6 py-16">
+      <Container size="md" padding="lg">
         <ErrorState
           title="Failed to load posts"
           message="We couldn't load the blog posts. Please try again."
           onRetry={() => refetch()}
         />
-      </div>
+      </Container>
     )
   }
 
@@ -36,17 +37,17 @@ const Blog = () => {
   )
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-16">
+    <Container size="md" padding="lg">
       {/* Header */}
       <AnimatedSection>
-        <header className="mb-12">
-          <h1 className="mb-4 font-serif text-4xl font-bold tracking-tight">
+        <Stack as="header" gap="sm" className="mb-12">
+          <Text variant="pageTitle">
             {blog.title}
-          </h1>
-          <p className="text-lg text-muted-foreground">
+          </Text>
+          <Text variant="body">
             {blog.description}
-          </p>
-        </header>
+          </Text>
+        </Stack>
       </AnimatedSection>
 
       {/* Posts List */}
@@ -61,10 +62,10 @@ const Blog = () => {
       {/* Empty State */}
       {sortedPosts.length === 0 && (
         <div className="rounded-lg border border-dashed border-border p-12 text-center">
-          <p className="text-muted-foreground">{blog.emptyState}</p>
+          <Text variant="muted">{blog.emptyState}</Text>
         </div>
       )}
-    </div>
+    </Container>
   )
 }
 

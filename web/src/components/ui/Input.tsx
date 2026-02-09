@@ -1,0 +1,81 @@
+import * as React from 'react'
+import styled from '@emotion/styled'
+import { themeVars } from '@/theme'
+
+export interface InputProps extends React.ComponentPropsWithoutRef<'input'> {}
+
+const StyledInput = styled.input`
+  height: 2.25rem;
+  width: 100%;
+  min-width: 0;
+  border-radius: ${themeVars.radii.md};
+  border: 1px solid ${themeVars.colors.input};
+  background: transparent;
+  padding: 0.25rem 0.75rem;
+  font-size: 1rem;
+  font-family: ${themeVars.fonts.sans};
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  transition: color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  outline: none;
+
+  @media (min-width: 768px) {
+    font-size: 0.875rem;
+  }
+
+  &::placeholder {
+    color: ${themeVars.colors.mutedForeground};
+  }
+
+  &::selection {
+    background: ${themeVars.colors.primary};
+    color: ${themeVars.colors.primaryForeground};
+  }
+
+  &:focus-visible {
+    border-color: ${themeVars.colors.ring};
+    box-shadow: 0 0 0 3px color-mix(in srgb, ${themeVars.colors.ring} 50%, transparent);
+  }
+
+  &:disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &[aria-invalid='true'] {
+    border-color: ${themeVars.colors.destructive};
+    box-shadow: 0 0 0 3px color-mix(in srgb, ${themeVars.colors.destructive} 20%, transparent);
+  }
+
+  /* File input styles */
+  &::file-selector-button {
+    display: inline-flex;
+    height: 1.75rem;
+    border: 0;
+    background: transparent;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: ${themeVars.fonts.sans};
+    color: ${themeVars.colors.foreground};
+  }
+
+  /* Dark mode adjustments via CSS variables */
+  .dark & {
+    background: color-mix(in srgb, ${themeVars.colors.input} 30%, transparent);
+  }
+`
+
+const Input = React.forwardRef<React.ComponentRef<'input'>, InputProps>(
+  ({ className, type, ...props }, ref) => (
+    <StyledInput
+      ref={ref}
+      type={type}
+      data-slot="input"
+      className={className}
+      {...props}
+    />
+  )
+)
+Input.displayName = 'Input'
+
+export default Input

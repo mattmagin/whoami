@@ -11,7 +11,7 @@ export {
     type ThemeColors,
     type ThemeFonts,
     type ThemeRadii,
-} from './ThemeContext'
+} from '../providers/ThemeProvider'
 
 export {
     usePosts,

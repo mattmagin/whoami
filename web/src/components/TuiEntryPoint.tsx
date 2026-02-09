@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Terminal } from 'lucide-react'
-import { useStrings } from '@/content'
+import { Text } from '@/components/ui'
+import { useContent } from '@/providers/ContentProvider'
 
 const TuiEntryPoint = () => {
     const [isHovered, setIsHovered] = useState(false)
-    const { tuiEntry } = useStrings()
+    const { tuiEntry } = useContent()
 
     function handleClick() {
         console.log('🖥️ TUI mode activated!')
@@ -47,7 +48,7 @@ const TuiEntryPoint = () => {
 
                 {/* Text with blinking cursor */}
                 <div className="flex items-center font-mono text-sm">
-                    <span className="text-muted-foreground">{tuiEntry.prompt}</span>
+                    <Text variant="muted" as="span">{tuiEntry.prompt}</Text>
                     <span className="ml-1 text-foreground">{tuiEntry.buttonText}</span>
                     <motion.span
                         className="ml-0.5 inline-block h-4 w-[2px] bg-primary"

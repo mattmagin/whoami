@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui'
 import ThemeToggle from './ThemeToggle'
-import { useStrings } from '@/content'
+import { useContent } from '@/providers/ContentProvider'
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
-  const { nav, aria } = useStrings()
+  const { nav, aria } = useContent()
 
   const navLinks = [
     { href: '/', label: nav.home },
@@ -35,11 +35,10 @@ const Header = () => {
             <Link
               key={link.href}
               to={link.href}
-              className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${
-                location.pathname === link.href
-                  ? 'text-primary bg-primary/5'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-              }`}
+              className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${location.pathname === link.href
+                ? 'text-primary bg-primary/5'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                }`}
             >
               {link.label}
             </Link>
@@ -76,11 +75,10 @@ const Header = () => {
                 key={link.href}
                 to={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${
-                  location.pathname === link.href
-                    ? 'text-primary bg-primary/5'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                }`}
+                className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${location.pathname === link.href
+                  ? 'text-primary bg-primary/5'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                  }`}
               >
                 {link.label}
               </Link>

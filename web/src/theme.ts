@@ -377,3 +377,70 @@ export const themes: Record<ThemeKey, Theme> = {
 export const getTheme = (key: ThemeKey): Theme => {
     return themes[key]
 }
+
+/**
+ * CSS variable references for use with Emotion styled components
+ * These reference the CSS custom properties set by ThemeContext
+ */
+export const themeVars = {
+    colors: {
+        // Forest palette
+        forest: 'var(--forest)',
+        forestLight: 'var(--forest-light)',
+        sage: 'var(--sage)',
+
+        // Base colors
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+
+        // Card
+        card: 'var(--card)',
+        cardForeground: 'var(--card-foreground)',
+
+        // Popover
+        popover: 'var(--popover)',
+        popoverForeground: 'var(--popover-foreground)',
+
+        // Primary
+        primary: 'var(--primary)',
+        primaryForeground: 'var(--primary-foreground)',
+
+        // Secondary
+        secondary: 'var(--secondary)',
+        secondaryForeground: 'var(--secondary-foreground)',
+
+        // Muted
+        muted: 'var(--muted)',
+        mutedForeground: 'var(--muted-foreground)',
+
+        // Accent
+        accent: 'var(--accent)',
+        accentForeground: 'var(--accent-foreground)',
+
+        // Destructive
+        destructive: 'var(--destructive)',
+
+        // Border & Input
+        border: 'var(--border)',
+        input: 'var(--input)',
+        ring: 'var(--ring)',
+    },
+
+    radii: {
+        sm: 'var(--radius-sm)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)',
+        '2xl': 'var(--radius-2xl)',
+        '3xl': 'var(--radius-3xl)',
+        '4xl': 'var(--radius-4xl)',
+    },
+
+    fonts: {
+        sans: 'var(--font-sans)',
+        serif: 'var(--font-serif)',
+        mono: 'var(--font-mono)',
+    },
+} as const
+
+export type ThemeVars = typeof themeVars

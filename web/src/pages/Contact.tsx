@@ -1,69 +1,73 @@
 import { Mail, MapPin, Github, Linkedin, Terminal } from 'lucide-react'
-import { Separator } from '@/components/ui/separator'
+import { Separator, Text, Stack, Flex, Grid, Container } from '@/components/ui'
 import CopyButton from '@/components/CopyButton'
 import ContactForm from '@/components/ContactForm'
 import { useResume } from '@/hooks/queries'
-import { useStrings } from '@/content'
+import { useContent } from '@/providers/ContentProvider'
 
 const Contact = () => {
-  const { common, contact } = useStrings()
+  const { common, contact } = useContent()
   const { data: resume } = useResume()
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-16">
+    <Container size="md" padding="lg">
       {/* Header */}
-      <header className="mb-12">
-        <h1 className="mb-4 font-serif text-4xl font-bold tracking-tight">
+      <Stack as="header" gap="sm" className="mb-12">
+        <Text variant="pageTitle">
           {contact.title}
-        </h1>
-        <p className="text-lg text-muted-foreground">
+        </Text>
+        <Text variant="body">
           {contact.description}
-        </p>
-      </header>
+        </Text>
+      </Stack>
 
-      <div className="grid gap-12 lg:grid-cols-2">
+      <Grid cols={{ base: 1, lg: 2 }} gap="xl">
         {/* Contact Form */}
-        <section>
-          <h2 className="mb-6 font-serif text-xl font-semibold">
+        <Stack as="section" gap="lg">
+          <Text variant="cardTitle" as="h2">
             {contact.sendMessage}
-          </h2>
+          </Text>
           <ContactForm />
-        </section>
+        </Stack>
 
         {/* Contact Info */}
-        <section>
-          <h2 className="mb-6 font-serif text-xl font-semibold">
+        <Stack as="section" gap="lg">
+          <Text variant="cardTitle" as="h2">
             {contact.otherWays}
-          </h2>
+          </Text>
 
-          <div className="space-y-6">
+          <Stack gap="lg">
             {/* Email */}
             <a
               href={`mailto:${resume?.contact.email}`}
-              className="flex items-start gap-4 rounded-lg border border-border/50 bg-card p-4 transition-colors hover:border-primary/30"
+              className="rounded-lg border border-border/50 bg-card p-4 transition-colors hover:border-primary/30"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Mail className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="font-medium">{contact.email}</p>
-                <p className="text-sm text-muted-foreground">
-                  {resume?.contact.email}
-                </p>
-              </div>
+              <Flex align="start" gap="md">
+                <Flex align="center" justify="center" className="h-10 w-10 rounded-lg bg-primary/10 text-primary">
+                  <Mail className="h-5 w-5" />
+                </Flex>
+                <Stack gap="none">
+                  <p className="font-medium">{contact.email}</p>
+                  <Text variant="bodySmall">
+                    {resume?.contact.email}
+                  </Text>
+                </Stack>
+              </Flex>
             </a>
 
             {/* Location */}
-            <div className="flex items-start gap-4 rounded-lg border border-border/50 bg-card p-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <MapPin className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="font-medium">{contact.location}</p>
-                <p className="text-sm text-muted-foreground">
-                  {resume?.contact.location}
-                </p>
-              </div>
+            <div className="rounded-lg border border-border/50 bg-card p-4">
+              <Flex align="start" gap="md">
+                <Flex align="center" justify="center" className="h-10 w-10 rounded-lg bg-primary/10 text-primary">
+                  <MapPin className="h-5 w-5" />
+                </Flex>
+                <Stack gap="none">
+                  <p className="font-medium">{contact.location}</p>
+                  <Text variant="bodySmall">
+                    {resume?.contact.location}
+                  </Text>
+                </Stack>
+              </Flex>
             </div>
 
             {/* GitHub */}
@@ -72,17 +76,19 @@ const Contact = () => {
                 href={`https://${resume.contact.github}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-start gap-4 rounded-lg border border-border/50 bg-card p-4 transition-colors hover:border-primary/30"
+                className="rounded-lg border border-border/50 bg-card p-4 transition-colors hover:border-primary/30"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Github className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-medium">GitHub</p>
-                  <p className="text-sm text-muted-foreground">
-                    {resume.contact.github}
-                  </p>
-                </div>
+                <Flex align="start" gap="md">
+                  <Flex align="center" justify="center" className="h-10 w-10 rounded-lg bg-primary/10 text-primary">
+                    <Github className="h-5 w-5" />
+                  </Flex>
+                  <Stack gap="none">
+                    <p className="font-medium">GitHub</p>
+                    <Text variant="bodySmall">
+                      {resume.contact.github}
+                    </Text>
+                  </Stack>
+                </Flex>
               </a>
             )}
 
@@ -92,42 +98,44 @@ const Contact = () => {
                 href={`https://${resume.contact.linkedin}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-start gap-4 rounded-lg border border-border/50 bg-card p-4 transition-colors hover:border-primary/30"
+                className="rounded-lg border border-border/50 bg-card p-4 transition-colors hover:border-primary/30"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Linkedin className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-medium">LinkedIn</p>
-                  <p className="text-sm text-muted-foreground">
-                    {resume.contact.linkedin}
-                  </p>
-                </div>
+                <Flex align="start" gap="md">
+                  <Flex align="center" justify="center" className="h-10 w-10 rounded-lg bg-primary/10 text-primary">
+                    <Linkedin className="h-5 w-5" />
+                  </Flex>
+                  <Stack gap="none">
+                    <p className="font-medium">LinkedIn</p>
+                    <Text variant="bodySmall">
+                      {resume.contact.linkedin}
+                    </Text>
+                  </Stack>
+                </Flex>
               </a>
             )}
 
             <Separator />
 
             {/* SSH */}
-            <div className="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-4">
-              <div className="flex items-center gap-3 mb-2">
+            <Stack gap="sm" className="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-4">
+              <Flex align="center" gap="sm">
                 <Terminal className="h-5 w-5 text-primary" />
                 <p className="font-medium">{contact.preferTerminal}</p>
-              </div>
-              <p className="text-sm text-muted-foreground mb-2">
+              </Flex>
+              <Text variant="bodySmall">
                 {contact.sshDescription}
-              </p>
-              <div className="flex items-center gap-1 rounded bg-muted pl-3 pr-1 py-1">
+              </Text>
+              <Flex align="center" gap="xs" className="rounded bg-muted pl-3 pr-1 py-1">
                 <code className="flex-1 font-mono text-sm">
                   {common.sshCommand}
                 </code>
                 <CopyButton text={common.sshCommand} className="h-8 w-8" />
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
+              </Flex>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Grid>
+    </Container>
   )
 }
 

@@ -1,17 +1,25 @@
 import { QueryClient } from '@tanstack/react-query'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
+import { minutesToMilliseconds } from './utils'
+
+const LOCAL_STORAGE_CACHE_KEY = 'whoami-query-cache'
+const STALE_TIME = minutesToMilliseconds(5)
+const INACTIVE_TIME = minutesToMilliseconds(30)
+const RETRYS = 3
+const RETRY_DELAY = (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 10000)
 
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes before data is considered stale
-      gcTime: 30 * 60 * 1000, // 30 minutes cache retention
-      refetchOnWindowFocus: false, // Don't refetch on tab focus (portfolio content is stable)
-      retry: 3, // Retry up to 3 times (helps during dev when Rails is still loading)
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
+      staleTime: STALE_TIME,
+      gcTime: INACTIVE_TIME,
+      refetchOnWindowFocus: false,
+      retry: RETRYS,
+      retryDelay: RETRY_DELAY,
     },
   },
 })
+
 
 export const persister = createAsyncStoragePersister({
   storage: {
@@ -19,10 +27,9 @@ export const persister = createAsyncStoragePersister({
     setItem: (key, value) => Promise.resolve(window.localStorage.setItem(key, value)),
     removeItem: (key) => Promise.resolve(window.localStorage.removeItem(key)),
   },
-  key: 'whoami-query-cache', // Cache key in localStorage
+  key: LOCAL_STORAGE_CACHE_KEY,
 })
 
-// Only persist successful queries (don't cache errors)
 export const persistOptions = {
   persister,
   dehydrateOptions: {

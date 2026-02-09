@@ -13,8 +13,8 @@ import {
   Terminal,
   Search,
 } from 'lucide-react'
-import { useThemeContext } from '@/hooks/ThemeContext'
-import { useStrings } from '@/content'
+import { useThemeContext } from '@/providers/ThemeProvider'
+import { useContent } from '@/providers/ContentProvider'
 
 const CommandPalette = () => {
   const [open, setOpen] = useState(false)
@@ -22,7 +22,7 @@ const CommandPalette = () => {
   const navigate = useNavigate()
   const { themeKey, toggleTheme } = useThemeContext()
   const [, copy] = useCopyToClipboard()
-  const { common, nav, commandPalette } = useStrings()
+  const { common, nav, commandPalette } = useContent()
 
   // Toggle the menu when ⌘K or Ctrl+K is pressed
   useEffect(() => {

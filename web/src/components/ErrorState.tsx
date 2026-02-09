@@ -1,5 +1,5 @@
 import { AlertCircle, RefreshCw } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button, Text, Stack } from '@/components/ui'
 
 interface ErrorStateProps {
   title?: string
@@ -13,17 +13,17 @@ const ErrorState = ({
   onRetry,
 }: ErrorStateProps) => {
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border p-12 text-center">
-      <AlertCircle className="mb-4 h-12 w-12 text-muted-foreground" />
-      <h3 className="mb-2 text-lg font-semibold">{title}</h3>
-      <p className="mb-6 max-w-md text-muted-foreground">{message}</p>
+    <Stack align="center" gap="md" className="rounded-lg border border-dashed border-border p-12 text-center">
+      <AlertCircle className="h-12 w-12 text-muted-foreground" />
+      <Text variant="cardTitle">{title}</Text>
+      <Text variant="muted" className="max-w-md">{message}</Text>
       {onRetry && (
         <Button onClick={onRetry} variant="outline">
           <RefreshCw className="mr-2 h-4 w-4" />
           Try again
         </Button>
       )}
-    </div>
+    </Stack>
   )
 }
 

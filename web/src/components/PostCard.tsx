@@ -1,22 +1,22 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Calendar, Clock } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { Badge, Text } from '@/components/ui'
 import type { Post } from '@/types'
-import { useStrings } from '@/content'
+import { useContent } from '@/providers/ContentProvider'
 
 interface PostCardProps {
   post: Post
 }
 
 const PostCard = ({ post }: PostCardProps) => {
-  const { common } = useStrings()
+  const { common } = useContent()
 
   const formattedDate = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
     : null
 
   return (
@@ -33,14 +33,14 @@ const PostCard = ({ post }: PostCardProps) => {
           </div>
 
           {/* Title */}
-          <h3 className="mb-2 font-serif text-xl font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary">
+          <Text variant="cardTitle" className="mb-2 transition-colors group-hover:text-primary">
             {post.title}
-          </h3>
+          </Text>
 
           {/* Excerpt */}
-          <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+          <Text variant="bodySmall" className="mb-4 leading-relaxed">
             {post.excerpt}
-          </p>
+          </Text>
 
           {/* Meta */}
           <div className="flex items-center justify-between text-xs text-muted-foreground">

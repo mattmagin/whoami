@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useCopyToClipboard } from 'usehooks-ts'
 import { Copy, Check } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui'
 
 interface CopyButtonProps {
   text: string
