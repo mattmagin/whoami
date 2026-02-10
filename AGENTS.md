@@ -97,6 +97,13 @@
 - **API Calls**: Centralized in `/src/lib/api.ts`
 - **Routing**: React Router with lazy loading
 - **Forms**: React Hook Form with Zod validation
+- **DRY Constants**: When a value, set of options, or definition (routes, theme options, feature flags, etc.) is used in more than one file, it **must** be extracted into `/src/consts/` as a single source of truth. Follow this pattern:
+  1. Define an `as const` enum-like object for keys (e.g., `ROUTE`, `THEME_PREFERENCE`, `COLOR_THEME`).
+  2. Export a matching TypeScript type derived from that object (e.g., `type Route = typeof ROUTE[keyof typeof ROUTE]`).
+  3. Define a typed `Record` mapping each key to a definition object that carries all associated metadata — paths, labels (as string-key references into `strings.json`), icons, shortcuts, aliases, etc. (e.g., `ROUTE_DEFINITIONS`, `THEME_OPTIONS`, `COLOR_THEME_ALIASES`).
+  4. Derive any convenience lookups from the definitions rather than duplicating data (e.g., `NAV_SHORTCUTS` is derived from `ROUTE_DEFINITIONS`).
+  5. Re-export everything through `consts/index.ts` so consumers import from `@/consts`.
+  6. **Never** duplicate these values locally in components — always import from the central const file.
 
 ### Terraform
 - **Modules**: Separate modules for networking, database, compute, storage
