@@ -3,7 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Forest Green Theme - CSS variable mappings for Tailwind */
+/* Theme - CSS variable mappings for Tailwind */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -36,10 +36,9 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  /* Custom forest colors */
-  --color-forest: var(--forest);
-  --color-forest-light: var(--forest-light);
-  --color-sage: var(--sage);
+  /* Primary color variants */
+  --color-primary-light: var(--primary-light);
+  --color-primary-muted: var(--primary-muted);
 
   /* Typography */
   --font-sans: var(--font-sans);

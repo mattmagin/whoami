@@ -1,36 +1,73 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState, useCallback, type ReactNode } from 'react'
 import { ThemeProvider as EmotionThemeProvider, Global, css } from '@emotion/react'
 import { getTheme, type Theme, type ThemeKey } from '@/theme'
-import { THEME_MODE, DEFAULT_THEME, STORAGE_KEYS } from '@/consts'
+import {
+  THEME_MODE,
+  THEME_PREFERENCE,
+  DEFAULT_THEME,
+  DEFAULT_COLOR_THEME,
+  STORAGE_KEYS,
+  COLOR_THEME,
+  type ThemePreference,
+  type ColorTheme,
+} from '@/consts'
 import { getStorageItem, setStorageItem } from '@/lib/localStorage'
 
 interface ThemeContextType {
+  /** The user's stored preference – may be 'system' */
+  preference: ThemePreference
+  /** The resolved theme key – always 'light' or 'dark' */
   themeKey: ThemeKey
+  colorTheme: ColorTheme
   theme: Theme
-  setTheme: (key: ThemeKey) => void
+  /** Set the user's preference (light / dark / system) */
+  setTheme: (pref: ThemePreference) => void
+  setColorTheme: (key: ColorTheme) => void
   toggleTheme: () => void
+  /** Cycle through light → dark → system → light */
+  cycleTheme: () => void
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-const themeModes = Object.values(THEME_MODE) as ThemeKey[]
+const themePreferences = Object.values(THEME_PREFERENCE) as ThemePreference[]
+const colorThemes = Object.values(COLOR_THEME) as ColorTheme[]
 
+/** Detect OS preference */
 const getSystemTheme = (): ThemeKey => {
-  if (typeof window === 'undefined') return DEFAULT_THEME
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? THEME_MODE.DARK : THEME_MODE.LIGHT
+  if (typeof window === 'undefined') return THEME_MODE.DARK
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? THEME_MODE.DARK
+    : THEME_MODE.LIGHT
 }
 
-const getInitialTheme = (): ThemeKey => {
+/** Resolve a preference to an actual ThemeKey */
+const resolveTheme = (pref: ThemePreference): ThemeKey => {
+  if (pref === THEME_PREFERENCE.SYSTEM) return getSystemTheme()
+  return pref as ThemeKey
+}
+
+const getInitialPreference = (): ThemePreference => {
   if (typeof window === 'undefined') return DEFAULT_THEME
 
   const stored = getStorageItem(STORAGE_KEYS.THEME)
-  if (stored && themeModes.includes(stored)) {
-    return stored
+  if (stored && themePreferences.includes(stored as ThemePreference)) {
+    return stored as ThemePreference
   }
 
-  const systemTheme = getSystemTheme()
-  setStorageItem(STORAGE_KEYS.THEME, systemTheme)
-  return systemTheme
+  setStorageItem(STORAGE_KEYS.THEME, DEFAULT_THEME)
+  return DEFAULT_THEME
+}
+
+const getInitialColorTheme = (): ColorTheme => {
+  if (typeof window === 'undefined') return DEFAULT_COLOR_THEME
+
+  const stored = getStorageItem(STORAGE_KEYS.COLOR_THEME)
+  if (stored && colorThemes.includes(stored as ColorTheme)) {
+    return stored as ColorTheme
+  }
+
+  return DEFAULT_COLOR_THEME
 }
 
 // Generate CSS variables from theme object
@@ -52,10 +89,9 @@ const generateCssVariables = (theme: Theme) => {
       --font-serif: ${theme.fonts.serif};
       --font-mono: ${theme.fonts.mono};
 
-      /* Forest palette */
-      --forest: ${theme.colors.forest};
-      --forest-light: ${theme.colors.forestLight};
-      --sage: ${theme.colors.sage};
+      /* Primary color variants */
+      --primary-light: ${theme.colors.primaryLight};
+      --primary-muted: ${theme.colors.primaryMuted};
 
       /* Base colors */
       --background: ${theme.colors.background};
@@ -108,34 +144,78 @@ const generateCssVariables = (theme: Theme) => {
 }
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [themeKey, setThemeKey] = useState<ThemeKey>(getInitialTheme)
-  const theme = getTheme(themeKey)
+  const [preference, setPreference] = useState<ThemePreference>(getInitialPreference)
+  const [resolvedKey, setResolvedKey] = useState<ThemeKey>(() => resolveTheme(preference))
+  const [colorThemeKey, setColorThemeKey] = useState<ColorTheme>(getInitialColorTheme)
 
+  // Listen for OS colour-scheme changes when preference is 'system'
+  useEffect(() => {
+    if (preference !== THEME_PREFERENCE.SYSTEM) {
+      setResolvedKey(preference as ThemeKey)
+      return
+    }
+
+    // Immediately resolve once
+    setResolvedKey(getSystemTheme())
+
+    const mql = window.matchMedia('(prefers-color-scheme: dark)')
+    const handler = (e: MediaQueryListEvent) => {
+      setResolvedKey(e.matches ? THEME_MODE.DARK : THEME_MODE.LIGHT)
+    }
+
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [preference])
+
+  // Sync the `dark` class on <html>
   useEffect(() => {
     const root = document.documentElement
-
-    if (themeKey === THEME_MODE.DARK) {
+    if (resolvedKey === THEME_MODE.DARK) {
       root.classList.add('dark')
     } else {
       root.classList.remove('dark')
     }
-  }, [themeKey])
+  }, [resolvedKey])
 
-  function setTheme(newKey: ThemeKey) {
-    setStorageItem(STORAGE_KEYS.THEME, newKey)
-    setThemeKey(newKey)
-  }
+  const theme = useMemo(
+    () => getTheme(resolvedKey, colorThemeKey),
+    [resolvedKey, colorThemeKey],
+  )
 
-  function toggleTheme() {
-    setTheme(themeKey === THEME_MODE.LIGHT ? THEME_MODE.DARK : THEME_MODE.LIGHT)
-  }
+  const setTheme = useCallback((pref: ThemePreference) => {
+    setStorageItem(STORAGE_KEYS.THEME, pref)
+    setPreference(pref)
+  }, [])
 
-  const contextValue: ThemeContextType = {
-    themeKey,
+  const setColorTheme = useCallback((key: ColorTheme) => {
+    setStorageItem(STORAGE_KEYS.COLOR_THEME, key)
+    setColorThemeKey(key)
+  }, [])
+
+  const toggleTheme = useCallback(() => {
+    // Toggle cycles resolved key (ignores system)
+    const next = resolvedKey === THEME_MODE.LIGHT ? THEME_MODE.DARK : THEME_MODE.LIGHT
+    setTheme(next)
+  }, [resolvedKey, setTheme])
+
+  const cycleTheme = useCallback(() => {
+    // Cycle through light → dark → system → light
+    const cycle: ThemePreference[] = [THEME_PREFERENCE.LIGHT, THEME_PREFERENCE.DARK, THEME_PREFERENCE.SYSTEM]
+    const idx = cycle.indexOf(preference)
+    const next = cycle[(idx + 1) % cycle.length]
+    setTheme(next)
+  }, [preference, setTheme])
+
+  const contextValue: ThemeContextType = useMemo(() => ({
+    preference,
+    themeKey: resolvedKey,
+    colorTheme: colorThemeKey,
     theme,
     setTheme,
+    setColorTheme,
     toggleTheme,
-  }
+    cycleTheme,
+  }), [preference, resolvedKey, colorThemeKey, theme, setTheme, setColorTheme, cycleTheme, toggleTheme])
 
   return (
     <ThemeContext.Provider value={contextValue}>
@@ -161,5 +241,5 @@ export const useTheme = () => {
 }
 
 // Re-export theme types and utilities for convenience
-export type { Theme, ThemeKey, ThemeColors, ThemeFonts, ThemeRadii } from '@/theme'
-export { themes, getTheme, lightTheme, darkTheme } from '@/theme'
+export type { Theme, ThemeKey, ThemeColors, ThemeFonts, ThemeRadii, ColorPalette } from '@/theme'
+export { themes, getTheme, lightTheme, darkTheme, colorPalettes } from '@/theme'

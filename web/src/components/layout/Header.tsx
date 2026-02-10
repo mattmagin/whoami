@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui'
-import ThemeToggle from './ThemeToggle'
 import { useContent } from '@/providers/ContentProvider'
 
 const Header = () => {
@@ -43,14 +42,10 @@ const Header = () => {
               {link.label}
             </Link>
           ))}
-          <div className="ml-2">
-            <ThemeToggle />
-          </div>
         </nav>
 
         {/* Mobile Menu Button */}
         <div className="flex items-center gap-2 md:hidden">
-          <ThemeToggle />
           <Button
             variant="ghost"
             size="icon"

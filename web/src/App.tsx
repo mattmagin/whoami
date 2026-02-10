@@ -1,4 +1,5 @@
 import { Suspense, useEffect } from 'react'
+import { Toaster } from 'sonner'
 import { MainContainer } from '@/components'
 import CommandPalette from '@/components/CommandPalette'
 import logger from '@/lib/logger'
@@ -35,6 +36,7 @@ const App = () => {
           <Pages />
         </MainContainer>
       </Suspense>
+      <Toaster position="bottom-center" />
     </Providers >
   )
 }

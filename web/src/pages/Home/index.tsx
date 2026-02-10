@@ -5,7 +5,6 @@ import PostCard from '@/components/PostCard'
 import ProjectCard from '@/components/ProjectCard'
 import LoadingSkeleton from '@/components/LoadingSkeleton'
 import { AnimatedSection, AnimatedList, AnimatedListItem } from '@/components/AnimatedSection'
-import TuiEntryPoint from '@/components/TuiEntryPoint'
 import { usePosts, useProjects } from '@/hooks/queries'
 import { useContent } from '@/providers/ContentProvider'
 import HeroSection from './HeroSection'
@@ -118,9 +117,6 @@ const Home = () => {
           </Button>
         </Stack>
       </AnimatedSection>
-
-      {/* TUI Entry Point */}
-      <TuiEntryPoint />
     </Container>
   )
 }
