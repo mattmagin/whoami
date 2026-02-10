@@ -81,7 +81,8 @@
             "nameRequired": "Please enter your name",
             "emailRequired": "Please enter your email address",
             "emailInvalid": "Please enter a valid email address",
-            "messageRequired": "Please enter a message"
+            "messageRequired": "Please enter a message",
+            "serverError": "Something went wrong. Please try again."
         }
     },
     "commandPalette": {

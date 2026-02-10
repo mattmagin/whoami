@@ -56,3 +56,17 @@ export const getResume = async (): Promise<ResumeData> => {
         throw await parseApiError(error);
     }
 };
+
+export interface ContactPayload {
+    name: string;
+    email: string;
+    message: string;
+}
+
+export const createContact = async (payload: ContactPayload): Promise<void> => {
+    try {
+        await api.post('contacts', { json: { contact: payload } });
+    } catch (error) {
+        throw await parseApiError(error);
+    }
+};

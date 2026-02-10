@@ -20,3 +20,7 @@ export {
     useProject,
     useResume,
 } from './queries'
+
+export {
+    useCreateContact,
+} from './mutations'

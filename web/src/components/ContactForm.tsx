@@ -3,6 +3,7 @@ import { Send, CheckCircle, AlertCircle } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import { Button, Input, Label, Textarea, Text, Stack, Flex, Grid } from '@/components/ui'
 import { useContent } from '@/providers/ContentProvider'
+import { useCreateContact } from '@/hooks'
 
 interface FormErrors {
   name?: string
@@ -44,12 +45,13 @@ const ValidationTooltip = ({ message, id }: ValidationTooltipProps) => {
 
 const ContactForm = () => {
   const [submitted, setSubmitted] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
+  const [serverError, setServerError] = useState<string | null>(null)
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [values, setValues] = useState<FormValues>({ name: '', email: '', message: '' })
   const buttonRef = useRef<HTMLButtonElement>(null)
   const { contactForm } = useContent()
+  const { mutate, isPending: isSubmitting } = useCreateContact()
 
   function triggerConfetti() {
     if (!buttonRef.current) return
@@ -131,14 +133,17 @@ const ContactForm = () => {
       return
     }
 
-    setIsSubmitting(true)
+    setServerError(null)
 
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false)
-      setSubmitted(true)
-      triggerConfetti()
-    }, 1000)
+    mutate(values, {
+      onSuccess: () => {
+        setSubmitted(true)
+        triggerConfetti()
+      },
+      onError: () => {
+        setServerError(contactForm.errors?.serverError ?? 'Something went wrong. Please try again.')
+      },
+    })
   }
 
   if (submitted) {
@@ -220,6 +225,13 @@ const ContactForm = () => {
           <ValidationTooltip message={firstErrorField === 'message' ? errors.message : undefined} id="message-error" />
         </div>
       </Stack>
+
+      {serverError && (
+        <Flex align="center" gap="sm" className="rounded-md border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span>{serverError}</span>
+        </Flex>
+      )}
 
       <Button
         ref={buttonRef}
