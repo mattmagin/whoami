@@ -1,6 +1,6 @@
-import { Github, Linkedin, Mail, Terminal } from 'lucide-react'
+import { Github, Linkedin, Mail } from 'lucide-react'
 import { Separator, Text, Stack, Flex, Container } from '@/components/ui'
-import CopyButton from '@/components/CopyButton'
+import SshCommand from '@/components/SshCommand'
 import { useContent } from '@/providers/ContentProvider'
 
 const socialLinks = [
@@ -18,11 +18,7 @@ const Footer = () => {
       <Container size="lg" padding="md">
         <Stack align="center" gap="lg">
           {/* SSH Access */}
-          <Flex align="center" gap="xs" className="rounded-lg bg-muted/50 pl-4 pr-1 py-1 font-mono text-sm text-muted-foreground">
-            <Terminal className="h-4 w-4" />
-            <span>{common.sshCommand}</span>
-            <CopyButton text={common.sshCommand} className="h-8 w-8" />
-          </Flex>
+          <SshCommand />
 
           <Separator className="max-w-xs" />
 
