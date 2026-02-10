@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { ThemeProvider as EmotionThemeProvider, Global, css } from '@emotion/react'
 import { getTheme, type Theme, type ThemeKey } from '@/theme'
+import { THEME_MODE, DEFAULT_THEME, STORAGE_KEYS } from '@/consts'
+import { getStorageItem, setStorageItem } from '@/lib/localStorage'
 
 interface ThemeContextType {
   themeKey: ThemeKey
@@ -11,22 +13,23 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
+const themeModes = Object.values(THEME_MODE) as ThemeKey[]
+
 const getSystemTheme = (): ThemeKey => {
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  if (typeof window === 'undefined') return DEFAULT_THEME
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? THEME_MODE.DARK : THEME_MODE.LIGHT
 }
 
 const getInitialTheme = (): ThemeKey => {
-  if (typeof window === 'undefined') return 'light'
+  if (typeof window === 'undefined') return DEFAULT_THEME
 
-  const stored = localStorage.getItem('theme') as ThemeKey | null
-  if (stored === 'light' || stored === 'dark') {
+  const stored = getStorageItem(STORAGE_KEYS.THEME)
+  if (stored && themeModes.includes(stored)) {
     return stored
   }
 
-  // First visit: use system preference and store it
   const systemTheme = getSystemTheme()
-  localStorage.setItem('theme', systemTheme)
+  setStorageItem(STORAGE_KEYS.THEME, systemTheme)
   return systemTheme
 }
 
@@ -111,7 +114,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const root = document.documentElement
 
-    if (themeKey === 'dark') {
+    if (themeKey === THEME_MODE.DARK) {
       root.classList.add('dark')
     } else {
       root.classList.remove('dark')
@@ -119,12 +122,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   }, [themeKey])
 
   function setTheme(newKey: ThemeKey) {
-    localStorage.setItem('theme', newKey)
+    setStorageItem(STORAGE_KEYS.THEME, newKey)
     setThemeKey(newKey)
   }
 
   function toggleTheme() {
-    setTheme(themeKey === 'light' ? 'dark' : 'light')
+    setTheme(themeKey === THEME_MODE.LIGHT ? THEME_MODE.DARK : THEME_MODE.LIGHT)
   }
 
   const contextValue: ThemeContextType = {

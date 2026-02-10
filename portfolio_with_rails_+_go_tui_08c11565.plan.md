@@ -1,12 +1,12 @@
 ---
-name: Portfolio with Rails + Go TUI
-overview: Build a personal portfolio with a Rails API backend, PostgreSQL database, Go-based SSH TUI for terminal access, and a React frontend — demonstrating full-stack skills across multiple languages.
+name: Portfolio with Rails + Rust TUI
+overview: Build a personal portfolio with a Rails API backend, PostgreSQL database, Rust-based SSH TUI for terminal access, and a React frontend — demonstrating full-stack skills across multiple languages.
 todos:
   - id: phase1-rails
-    content: "Phase 1: Rails API - Setup, models, migrations, controllers, API key auth"
+    content: "Phase 1: Rails API - Setup, models, migrations, controllers, API key auth, rate limiting"
     status: pending
   - id: phase2-tui
-    content: "Phase 2: Go SSH/TUI - Wish server, API client, Bubble Tea views"
+    content: "Phase 2: Rust SSH/TUI - Ratatui + tui-realm views, SSH server, API client, graceful shutdown"
     status: pending
     dependencies:
       - phase1-rails
@@ -21,32 +21,37 @@ todos:
     dependencies:
       - phase2-tui
       - phase3-react
-  - id: phase5-terraform
-    content: "Phase 5: AWS Infrastructure with Terraform - VPC, EC2, RDS, S3, CloudFront"
+  - id: phase5-observability
+    content: "Phase 5: Observability - Structured logging, Prometheus metrics, Grafana dashboard"
     status: pending
     dependencies:
       - phase4-docker
-  - id: phase6-cicd
-    content: "Phase 6: CI/CD Pipeline - GitLab CI for test, build, deploy"
+  - id: phase6-terraform
+    content: "Phase 6: AWS Infrastructure with Terraform - VPC, EC2, RDS, S3, CloudFront"
     status: pending
     dependencies:
-      - phase5-terraform
-  - id: phase6-mirror
-    content: "Phase 6: Set up GitLab to GitHub repo mirroring for visibility"
+      - phase5-observability
+  - id: phase7-cicd
+    content: "Phase 7: CI/CD Pipeline - GitLab CI for test, build, deploy, tfsec security scanning"
     status: pending
     dependencies:
-      - phase6-cicd
+      - phase6-terraform
+  - id: phase7-mirror
+    content: "Phase 7: Set up GitLab to GitHub repo mirroring for visibility"
+    status: pending
+    dependencies:
+      - phase7-cicd
 ---
 
-# Personal Portfolio: Rails API + Go SSH TUI + React Frontend
+# Personal Portfolio: Rails API + Rust SSH TUI + React Frontend
 
 ## What You're Building
 
 A personal website with three distinct interfaces sharing one Rails API:
 
 1. **Public Website** — React SPA for web visitors
-2. **Public SSH TUI** — Go/Bubble Tea terminal interface via `ssh yoursite.com`
-3. **Admin** — Rails console + rake tasks (or optional Go admin CLI)
+2. **Public SSH TUI** — Rust/Ratatui terminal interface via `ssh yoursite.com`
+3. **Admin** — Rails console + rake tasks (or optional Rust admin CLI)
 
 ---
 
@@ -58,7 +63,7 @@ graph TB
         subgraph vpc [VPC]
             subgraph ec2 [EC2 Instance]
                 Rails[Rails API :3000]
-                GoSSH[Go SSH Server :22]
+                RustSSH[Rust SSH Server :22]
             end
             RDS[(RDS PostgreSQL)]
         end
@@ -73,14 +78,22 @@ graph TB
         GHA[GitHub Actions]
     end
     
+    subgraph observability [Observability Stack]
+        Prometheus[Prometheus]
+        Grafana[Grafana Dashboard]
+    end
+    
     User((Web User)) --> Route53
     SSHUser((SSH User)) --> Route53
     Route53 --> CloudFront
-    Route53 --> GoSSH
+    Route53 --> RustSSH
     CloudFront --> S3
     S3 --> ReactSPA[React SPA]
     Rails --> RDS
-    GoSSH --> Rails
+    RustSSH --> Rails
+    Rails --> Prometheus
+    RustSSH --> Prometheus
+    Prometheus --> Grafana
     TF --> aws
     GHA --> aws
 ```
@@ -88,7 +101,7 @@ graph TB
 **Three ways to access your site:**
 
 1. `https://yoursite.com` - React SPA via CloudFront
-2. `ssh yoursite.com` - Go TUI via Wish
+2. `ssh yoursite.com` - Rust TUI via SSH
 3. `https://api.yoursite.com` - Rails API directly
 
 ---
@@ -105,13 +118,15 @@ graph TB
 
 | **ORM** | Active Record | Built into Rails, migrations, validations |
 
-| **SSH Server** | Go + [Wish](https://github.com/charmbracelet/wish) | Charm ecosystem, easy SSH setup |
+| **SSH Server** | Rust + [russh](https://github.com/warp-tech/russh) | Memory-safe, zero-cost abstractions, async SSH |
 
-| **TUI** | Go + [Bubble Tea](https://github.com/charmbracelet/bubbletea) | Best-in-class terminal UI framework |
+| **TUI Framework** | Rust + [Ratatui](https://ratatui.rs/) | Modern terminal UI framework for Rust |
 
-| **TUI Styling** | [Lip Gloss](https://github.com/charmbracelet/lipgloss) | CSS-like styling for terminals |
+| **TUI Architecture** | [tui-realm](https://github.com/veeso/tui-realm) | Component-based, event-driven architecture on top of Ratatui |
 
-| **Markdown Rendering** | [Glamour](https://github.com/charmbracelet/glamour) | Beautiful terminal markdown |
+| **TUI Styling** | Ratatui built-in styles (Tokyo Night theme) | Native style system, no extra dependencies |
+
+| **Markdown Rendering** | [termimad](https://github.com/Canop/termimad) | Terminal markdown rendering for Rust |
 
 | **Frontend** | React 18 + TypeScript + Vite | Modern, fast builds |
 
@@ -123,7 +138,11 @@ graph TB
 
 | **Cloud** | AWS (EC2, RDS, S3, CloudFront) | Industry standard, free tier, impressive |
 
-| **CI/CD** | GitHub Actions | Free, integrated with repo |
+| **CI/CD** | GitLab CI | Full pipeline with security scanning |
+
+| **Observability** | Prometheus + Grafana | Industry-standard metrics and dashboards |
+
+| **Rate Limiting** | Rack::Attack (Rails) + IP-based (Rust) | Prevent abuse on API and SSH |
 
 ---
 
@@ -144,7 +163,7 @@ yoursite/
 │   │   │   ├── project.rb
 │   │   │   ├── contact.rb
 │   │   │   └── api_key.rb
-│   │   └── serializers/      # JSON serialization (jbuilder or blueprinter)
+│   │   └── resources/        # JSON serialization (jsonapi-resources)
 │   ├── config/
 │   │   ├── routes.rb
 │   │   └── database.yml
@@ -155,31 +174,40 @@ yoursite/
 │   ├── lib/
 │   │   └── tasks/            # Rake tasks for admin operations
 │   ├── content/
-│   │   └── resume.md         # Your resume
+│   │   └── resume.yaml       # Your resume
 │   ├── Gemfile
 │   └── Dockerfile
 │
-├── tui/                      # Go SSH/TUI application
-│   ├── cmd/
-│   │   └── server/
-│   │       └── main.go       # SSH server entry point
-│   ├── internal/
-│   │   ├── api/              # Rails API client
-│   │   │   └── client.go
-│   │   ├── ssh/              # Wish SSH server setup
-│   │   │   └── server.go
-│   │   └── tui/              # Bubble Tea application
-│   │       ├── app.go
-│   │       ├── styles.go
-│   │       └── views/
-│   │           ├── home.go
-│   │           ├── resume.go
-│   │           ├── blog.go
-│   │           ├── projects.go
-│   │           └── contact.go
-│   ├── go.mod
-│   ├── go.sum
-│   ├── Makefile
+├── tui/                      # Rust SSH/TUI application
+│   ├── src/
+│   │   ├── main.rs           # Entry point, terminal setup, event loop
+│   │   ├── model.rs          # Application state (Update trait)
+│   │   ├── msg.rs            # Message protocol + ViewId enum
+│   │   ├── styles.rs         # Tokyo Night color palette + style helpers
+│   │   ├── ui.rs             # View orchestration (mount/unmount)
+│   │   ├── content.rs        # JSON content loader (compile-time embed)
+│   │   ├── components/       # tui-realm components (Event→Msg bridge)
+│   │   │   ├── mod.rs
+│   │   │   ├── home.rs       # ASCII logo, typewriter animation, nav menu
+│   │   │   ├── resume.rs     # Markdown rendering with scrollbar
+│   │   │   ├── blog.rs       # List/detail modes, code block rendering
+│   │   │   ├── projects.rs   # Featured badges, tech stack tags
+│   │   │   ├── contact.rs    # Multi-field form with validation
+│   │   │   └── loading.rs    # Bouncing ball animation
+│   │   └── widgets/          # Reusable rendering primitives
+│   │       ├── mod.rs
+│   │       ├── markdown.rs   # Markdown → styled Line renderer
+│   │       ├── page_layout.rs # Header/divider/content/help layout + scrollbar
+│   │       ├── code_block.rs # Syntax-highlighted code blocks
+│   │       ├── selectable_item.rs # Cursor-navigable list items
+│   │       ├── tag_list.rs   # Tech stack badge rendering
+│   │       ├── text_input.rs # Focused/unfocused text fields
+│   │       ├── text_wrap.rs  # Word wrapping utility
+│   │       ├── typewriter.rs # Typing/deleting animation state machine
+│   │       └── loading.rs    # Loading state tracker
+│   ├── content.json          # Static content (compile-time embedded)
+│   ├── Cargo.toml
+│   ├── Cargo.lock
 │   └── Dockerfile
 │
 ├── web/                      # React frontend
@@ -211,7 +239,7 @@ yoursite/
 │
 ├── .gitlab-ci.yml            # GitLab CI/CD pipeline
 │
-├── docker-compose.yml        # Local development (Postgres, all services)
+├── docker-compose.yml        # Local development (Postgres, all services, observability)
 ├── Makefile                  # Root-level commands
 └── README.md
 ```
@@ -339,7 +367,7 @@ rails new api --api --database=postgresql --skip-test
 cd api
 ```
 
-- Add gems: `pg`, `rack-cors`, `blueprinter` (or use jbuilder)
+- Add gems: `pg`, `rack-cors`, `blueprinter` (or use jbuilder), `rack-attack`
 - Configure CORS for frontend domain
 - Set up UUID primary keys
 
@@ -353,11 +381,33 @@ cd api
 **Step 1.3: Controllers**
 
 - Implement CRUD for posts, projects
-- Resume controller reads `content/resume.md`
+- Resume controller reads `content/resume.yaml`
 - Contact controller with email notification (optional)
 - Admin authentication via `X-API-Key` header
 
-**Step 1.4: Seeds + Rake Tasks**
+**Step 1.4: Rate Limiting with Rack::Attack**
+
+```ruby
+# config/initializers/rack_attack.rb
+class Rack::Attack
+  # Throttle all requests by IP (300 requests per 5 minutes)
+  throttle("req/ip", limit: 300, period: 5.minutes) do |req|
+    req.ip
+  end
+
+  # Stricter limit on contact form submissions
+  throttle("contacts/ip", limit: 5, period: 1.hour) do |req|
+    req.ip if req.path == "/api/contacts" && req.post?
+  end
+
+  # Strict limit on admin auth attempts
+  throttle("admin/ip", limit: 10, period: 15.minutes) do |req|
+    req.ip if req.path.start_with?("/api/admin")
+  end
+end
+```
+
+**Step 1.5: Seeds + Rake Tasks**
 
 ```ruby
 # lib/tasks/admin.rake
@@ -371,45 +421,100 @@ namespace :admin do
 end
 ```
 
-### Phase 2: Go SSH/TUI (Days 4-8)
+### Phase 2: Rust SSH/TUI (Days 4-10)
 
-**Step 2.1: Go Project Setup**
+> **Note:** The TUI is built with Rust using Ratatui + tui-realm, not Go/Bubble Tea.
+> This demonstrates systems programming, memory safety, and async I/O.
 
-```bash
-cd tui
-go mod init github.com/yourusername/yoursite-tui
+**Step 2.1: Rust Project Setup**
+
+The project is initialized as a Rust binary crate:
+
+```toml
+# tui/Cargo.toml
+[package]
+name = "whoami-tui"
+version = "0.1.0"
+edition = "2024"
+authors = ["Michael Magin"]
+description = "A terminal-based portfolio viewer built with Ratatui"
+
+[dependencies]
+tuirealm = { version = "3", features = ["derive", "crossterm"] }
+ratatui = "0.29"
+crossterm = "0.28"
+termimad = "0.31"
+unicode-width = "0.2"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+once_cell = "1.19"
+
+[[bin]]
+name = "tui"
+path = "src/main.rs"
 ```
 
-- Add dependencies: bubbletea, wish, lipgloss, glamour
+**Step 2.2: Architecture Overview**
 
-**Step 2.2: API Client**
+The TUI uses tui-realm's component-based architecture with an event-driven message system:
 
-- Create HTTP client for Rails API
-- Struct types matching API responses
-- Error handling and retries
+- **`msg.rs`** — Defines `Msg` enum (NavigateTo, Quit, ScrollUp, TypeChar, etc.) and `ViewId` enum (Loading, Home, Resume, Blog, Projects, Contact) with keyboard shortcut mappings
+- **`model.rs`** — `Model` struct with `Update<Msg>` trait impl for centralized state transitions
+- **`ui.rs`** — `mount_view()` function that unmounts all components then mounts the active one
+- **`content.rs`** — Compile-time JSON embedding via `include_str!()` with lazy deserialization into typed structs
+- **`styles.rs`** — Tokyo Night color palette as `const Color` values with helper functions (`title()`, `selected()`, `accent()`, `muted()`, etc.)
 
-**Step 2.3: SSH Server**
+**Step 2.3: Components (tui-realm)**
 
-- Set up Wish server with Bubble Tea middleware
-- Generate/load SSH host keys
+Each view is a pair: an inner `MockComponent` (handles rendering + state) wrapped by an outer `Component` (bridges keyboard events to `Msg`).
+
+- **Loading** — Bouncing ball animation (`( ●    )` → `(    ● )`) with timed auto-transition to Home
+- **Home** — ASCII art logo, typewriter animation (type/pause/delete/pause cycle across phrases), j/k navigable menu with shortcut keys
+- **Resume** — Markdown rendering via custom `Markdown` widget with word wrapping, scrollbar, page up/down
+- **Blog** — List mode (selectable posts with excerpts) and Detail mode (scrollable post with code blocks, tags, metadata)
+- **Projects** — Featured-first sorting, tech stack tag badges, GitHub/live URL links
+- **Contact** — Tab-navigable form fields (Name, Email, Message, Submit) with client-side validation and success state
+
+**Step 2.4: Reusable Widgets**
+
+- **`PageLayout`** — Standard layout: header → divider → content → divider → help text, with optional `Scrollbar` widget
+- **`Markdown`** — Renders markdown headings, lists, bold labels, italics, horizontal rules with styled `Line`/`Span` output
+- **`CodeBlock`** — Renders fenced code blocks with language labels and distinct background color
+- **`SelectableItem`** — `▶ ` pointer + highlight style for cursor-navigable lists, with optional badges/suffixes
+- **`TagList`** — Renders `[tag1] [tag2]` style badges with configurable indent
+- **`TextInput`** — Renders labeled text fields with focused/unfocused border styles
+- **`text_wrap`** — Word-wrapping utility for reflowing content to terminal width
+
+**Step 2.5: SSH Server Integration**
+
+- Add `russh` crate for async SSH server
+- Spawn a Ratatui session per SSH connection (each client gets their own TUI instance)
+- Load/generate SSH host keys from disk
+- IP-based connection rate limiting (sliding window, reject after threshold)
 - Configure port (typically 22 or 2222)
 
-**Step 2.4: TUI Views**
+**Step 2.6: Graceful Shutdown**
 
-- **Home**: ASCII art, navigation menu
-- **Resume**: Fetch from API, render with Glamour
-- **Blog**: List view with pagination, detail view
-- **Projects**: Grid/list with tech stack badges
-- **Contact**: Text input form, submit to API
+- Handle `SIGTERM`/`SIGINT` via `tokio::signal` (or `signal-hook` for sync)
+- Drain active SSH connections: stop accepting new connections, send "server shutting down" message to active sessions, wait for graceful disconnect with timeout
+- Clean up terminal state on crash/panic (crossterm restore already implemented in `main.rs`)
 
-**Step 2.5: Polish**
+**Step 2.7: API Client**
 
-- Vim-style keybindings (j/k navigation)
-- Consistent styling with Lip Gloss
-- Loading spinners
-- Error states
+- Create async HTTP client for Rails API using `reqwest`
+- Typed response structs matching API JSON schema
+- Error handling with `thiserror` or `anyhow`
+- Replace compile-time `content.json` with live API calls (keep JSON fallback for offline/demo mode)
 
-### Phase 3: React Frontend (Days 9-13)
+**Step 2.8: Polish**
+
+- Vim-style keybindings (j/k navigation) ✅ already implemented
+- Consistent Tokyo Night theme ✅ already implemented
+- Loading animation with bouncy ball ✅ already implemented
+- Typewriter animation on home ✅ already implemented
+- Error states and loading indicators
+
+### Phase 3: React Frontend (Days 11-15)
 
 **Step 3.1: Project Setup**
 
@@ -451,7 +556,7 @@ export const api = {
 - Subtle CRT/scanline effects (optional)
 - Typing animations for hero text
 
-### Phase 4: Docker + Local Integration (Days 14-15)
+### Phase 4: Docker + Local Integration (Days 16-17)
 
 **Step 4.1: Dockerfiles**
 
@@ -467,17 +572,19 @@ CMD ["rails", "server", "-b", "0.0.0.0"]
 ```
 ```dockerfile
 # tui/Dockerfile
-FROM golang:1.22-alpine AS builder
+FROM rust:1.83-slim AS builder
 WORKDIR /app
-COPY go.* ./
-RUN go mod download
+COPY Cargo.toml Cargo.lock ./
+# Cache dependencies
+RUN mkdir src && echo "fn main() {}" > src/main.rs && cargo build --release && rm -rf src
 COPY . .
-RUN go build -o server ./cmd/server
+RUN cargo build --release
 
-FROM alpine:latest
-COPY --from=builder /app/server /server
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /app/target/release/tui /usr/local/bin/tui
 EXPOSE 22
-CMD ["/server"]
+CMD ["tui"]
 ```
 
 **Step 4.2: Docker Compose (Local Dev)**
@@ -491,33 +598,33 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: yoursite_dev
     ports:
-   - "5432:5432"
+     - "5432:5432"
     volumes:
-   - postgres_data:/var/lib/postgresql/data
+     - postgres_data:/var/lib/postgresql/data
   
   api:
     build: ./api
     ports:
-   - "3000:3000"
+     - "3000:3000"
     environment:
       DATABASE_URL: postgres://postgres:postgres@db:5432/yoursite_dev
       RAILS_ENV: development
     depends_on:
-   - db
+     - db
   
   tui:
     build: ./tui
     ports:
-   - "2222:22"
+     - "2222:22"
     environment:
       API_URL: http://api:3000
     depends_on:
-   - api
+     - api
   
   web:
     build: ./web
     ports:
-   - "5173:5173"
+     - "5173:5173"
     environment:
       VITE_API_URL: http://localhost:3000
 
@@ -534,7 +641,113 @@ volumes:
 
 ---
 
-### Phase 5: AWS Infrastructure with Terraform (Days 16-19)
+### Phase 5: Observability Stack (Days 18-19)
+
+> Show that you don't just deploy code — you monitor its health.
+> This phase adds structured logging, Prometheus metrics, and a Grafana dashboard.
+
+**Step 5.1: Structured JSON Logging**
+
+Add structured logging middleware to both services so logs are machine-parseable:
+
+**Rails API:**
+
+```ruby
+# config/initializers/lograge.rb
+# Add gem 'lograge' to Gemfile
+Rails.application.configure do
+  config.lograge.enabled = true
+  config.lograge.formatter = Lograge::Formatters::Json.new
+  config.lograge.custom_payload do |controller|
+    {
+      request_id: controller.request.request_id,
+      user_agent: controller.request.user_agent,
+      ip: controller.request.remote_ip
+    }
+  end
+end
+```
+
+**Rust SSH Server:**
+
+```rust
+// Use tracing + tracing-subscriber with JSON formatting
+// Each SSH session gets a span with session_id, client_ip
+tracing::info!(
+    session_id = %id,
+    client_ip = %addr,
+    view = "blog",
+    "client navigated to view"
+);
+```
+
+**Step 5.2: Prometheus Metrics**
+
+**Rails API — Add `/metrics` endpoint:**
+
+```ruby
+# Add gem 'prometheus-exporter' to Gemfile
+# Exposes: http_request_duration_seconds, http_requests_total
+# Automatically instruments request count, latency, status codes
+```
+
+**Rust SSH Server — Add `/metrics` HTTP endpoint:**
+
+Track these metrics:
+- `ssh_active_sessions` (gauge) — currently connected clients
+- `ssh_connections_total` (counter) — total connections since startup
+- `ssh_session_duration_seconds` (histogram) — how long each session lasts
+- `ssh_commands_total` (counter, label: view) — navigation events per view
+
+```rust
+// Use prometheus crate to expose metrics on a separate HTTP port (e.g., :9090/metrics)
+// Prometheus scrapes this alongside the Rails metrics endpoint
+```
+
+**Step 5.3: Grafana Dashboard**
+
+Add Prometheus + Grafana to Docker Compose for local observability:
+
+```yaml
+# Add to docker-compose.yml
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+     - "9090:9090"
+    volumes:
+     - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+     - api
+     - tui
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+     - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+     - ./observability/dashboards:/var/lib/grafana/dashboards
+     - ./observability/provisioning:/etc/grafana/provisioning
+    depends_on:
+     - prometheus
+```
+
+**Step 5.4: Dashboard Panels**
+
+Create a multi-service health dashboard with:
+- API request rate and latency (p50, p95, p99)
+- API error rate by status code
+- Active SSH sessions (real-time gauge)
+- SSH session duration distribution
+- TUI view popularity (which views get the most traffic)
+- System uptime for both services
+
+> Include a screenshot of this dashboard in your README.
+
+---
+
+### Phase 6: AWS Infrastructure with Terraform (Days 20-23)
 
 **AWS Architecture:**
 
@@ -565,14 +778,14 @@ graph TB
     EC2 --> RDS
 ```
 
-**Step 5.1: Terraform Setup**
+**Step 6.1: Terraform Setup**
 
 ```bash
 cd infrastructure
 terraform init
 ```
 
-**Step 5.2: Networking Module**
+**Step 6.2: Networking Module**
 
 ```hcl
 # infrastructure/modules/networking/main.tf
@@ -637,7 +850,7 @@ resource "aws_security_group" "app" {
 }
 ```
 
-**Step 5.3: Database Module**
+**Step 6.3: Database Module**
 
 ```hcl
 # infrastructure/modules/database/main.tf
@@ -669,7 +882,7 @@ resource "aws_db_instance" "postgres" {
 }
 ```
 
-**Step 5.4: Compute Module**
+**Step 6.4: Compute Module**
 
 ```hcl
 # infrastructure/modules/compute/main.tf
@@ -706,7 +919,7 @@ resource "aws_instance" "app" {
 }
 ```
 
-**Step 5.5: Storage Module (Static Site)**
+**Step 6.5: Storage Module (Static Site)**
 
 ```hcl
 # infrastructure/modules/storage/main.tf
@@ -773,7 +986,7 @@ resource "aws_cloudfront_distribution" "static" {
 }
 ```
 
-**Step 5.6: Main Configuration**
+**Step 6.6: Main Configuration**
 
 ```hcl
 # infrastructure/main.tf
@@ -826,7 +1039,7 @@ module "storage" {
 }
 ```
 
-**Step 5.7: Apply Infrastructure**
+**Step 6.7: Apply Infrastructure**
 
 ```bash
 # Create S3 bucket for state (one-time)
@@ -841,13 +1054,14 @@ terraform apply -var-file=environments/dev.tfvars
 
 ---
 
-### Phase 6: CI/CD Pipeline (Days 20-21)
+### Phase 7: CI/CD Pipeline (Days 24-25)
 
-**Step 6.1: GitLab CI - Pipeline Configuration**
+**Step 7.1: GitLab CI - Pipeline Configuration**
 
 ```yaml
 # .gitlab-ci.yml
 stages:
+ - security
  - test
  - build
  - deploy
@@ -856,6 +1070,25 @@ variables:
   POSTGRES_DB: test_db
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
+
+# ============ SECURITY STAGE ============
+
+tfsec-scan:
+  stage: security
+  image:
+    name: aquasec/tfsec:latest
+    entrypoint: [""]
+  script:
+  - tfsec infrastructure/ --format json --out tfsec-results.json || true
+  - tfsec infrastructure/ --soft-fail
+  artifacts:
+    reports:
+      terraform: tfsec-results.json
+    paths:
+    - tfsec-results.json
+  only:
+  - merge_requests
+  - main
 
 # ============ TEST STAGE ============
 
@@ -878,10 +1111,12 @@ test-api:
 
 test-tui:
   stage: test
-  image: golang:1.22
-  script:
+  image: rust:1.83-slim
+  before_script:
   - cd tui
-  - go test ./...
+  script:
+  - cargo test --release
+  - cargo clippy -- -D warnings
   only:
   - merge_requests
   - main
@@ -976,7 +1211,7 @@ deploy-web:
   - main
 ```
 
-**Step 6.2: GitLab CI Variables**
+**Step 7.2: GitLab CI Variables**
 
 Set these in GitLab → Settings → CI/CD → Variables:
 
@@ -989,25 +1224,23 @@ Set these in GitLab → Settings → CI/CD → Variables:
 
 ---
 
-### Step 6.3: GitLab to GitHub Mirroring
+### Step 7.3: GitLab to GitHub Mirroring
 
 Set up push mirroring so your code appears on GitHub for recruiters:
 
 1. **Create empty GitHub repo** — `github.com/yourusername/yoursite`
 
 2. **Create GitHub Personal Access Token**
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                - GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                - Scopes: `repo` (full control)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                - Copy the token
+   - GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+   - Scopes: `repo` (full control)
+   - Copy the token
 
 3. **Configure GitLab Push Mirror**
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                - GitLab → Your Project → Settings → Repository → Mirroring repositories
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                - Git repository URL: `https://yourusername@github.com/yourusername/yoursite.git`
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                - Mirror direction: **Push**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                - Password: Your GitHub personal access token
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                - Check "Keep divergent refs"
+   - GitLab → Your Project → Settings → Repository → Mirroring repositories
+   - Git repository URL: `https://yourusername@github.com/yourusername/yoursite.git`
+   - Mirror direction: **Push**
+   - Password: Your GitHub personal access token
+   - Check "Keep divergent refs"
 
 4. **Verify** — Push to GitLab, check GitHub within a few minutes
 
@@ -1035,7 +1268,7 @@ Your resume links to `github.com/yourusername/yoursite` but you develop in GitLa
 
 | `api.yoursite.com` | EC2 / ALB (Rails API) |
 
-| `ssh.yoursite.com` | EC2 public IP (Go SSH, port 22) |
+| `ssh.yoursite.com` | EC2 public IP (Rust SSH, port 22) |
 
 ---
 
@@ -1076,61 +1309,70 @@ class PostsController < ApplicationController
 end
 ```
 
-### Go API Client
+### Rust Content Loader (compile-time JSON embed)
 
-```go
-// internal/api/client.go
-type Client struct {
-    baseURL    string
-    httpClient *http.Client
+```rust
+// src/content.rs
+use once_cell::sync::Lazy;
+use serde::Deserialize;
+
+const CONTENT_JSON: &str = include_str!("../content.json");
+
+#[derive(Debug, Deserialize)]
+struct ContentData {
+    resume: String,
+    bio: String,
+    logo: String,
+    typewriter_phrases: Vec<String>,
+    posts: Vec<PostData>,
+    projects: Vec<ProjectData>,
 }
 
-func (c *Client) GetPosts() ([]Post, error) {
-    resp, err := c.httpClient.Get(c.baseURL + "/api/posts")
-    if err != nil {
-        return nil, err
-    }
-    defer resp.Body.Close()
-    
-    var posts []Post
-    if err := json.NewDecoder(resp.Body).Decode(&posts); err != nil {
-        return nil, err
-    }
-    return posts, nil
-}
+static CONTENT: Lazy<ContentData> = Lazy::new(|| {
+    serde_json::from_str(CONTENT_JSON).expect("Failed to parse content.json")
+});
+
+pub fn resume() -> &'static str { &CONTENT.resume }
+pub fn posts() -> &'static [PostData] { &CONTENT.posts }
 ```
 
-### Bubble Tea View
+### Rust tui-realm Component Pattern
 
-```go
-// internal/tui/views/blog.go
-type BlogModel struct {
-    client   *api.Client
-    posts    []api.Post
-    cursor   int
-    loading  bool
+```rust
+// src/components/blog.rs — MockComponent handles rendering
+impl MockComponent for BlogMock {
+    fn view(&mut self, frame: &mut Frame, area: Rect) {
+        match self.mode {
+            BlogMode::List => self.render_list(frame, area),
+            BlogMode::Detail => self.render_post(frame, area),
+        }
+    }
+
+    fn perform(&mut self, cmd: Cmd) -> CmdResult {
+        match cmd {
+            Cmd::Move(Direction::Up) => { self.cursor_up(); CmdResult::Changed(self.state()) }
+            Cmd::Move(Direction::Down) => { self.cursor_down(); CmdResult::Changed(self.state()) }
+            Cmd::Submit => { self.select(); CmdResult::Changed(self.state()) }
+            _ => CmdResult::None,
+        }
+    }
 }
 
-func (m BlogModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-    switch msg := msg.(type) {
-    case tea.KeyMsg:
-        switch msg.String() {
-        case "j", "down":
-            if m.cursor < len(m.posts)-1 {
-                m.cursor++
+// Component bridges events to Msg
+impl Component<Msg, NoUserEvent> for Blog {
+    fn on(&mut self, ev: Event<NoUserEvent>) -> Option<Msg> {
+        match ev {
+            Event::Keyboard(KeyEvent { code: Key::Char('j'), .. }) => {
+                self.component.perform(Cmd::Move(Direction::Down));
+                Some(Msg::None)
             }
-        case "k", "up":
-            if m.cursor > 0 {
-                m.cursor--
+            Event::Keyboard(KeyEvent { code: Key::Enter, .. }) => {
+                self.component.perform(Cmd::Submit);
+                Some(Msg::None)
             }
-        case "enter":
-            // Navigate to post detail
+            // ...
         }
-    case postsLoadedMsg:
-        m.posts = msg.posts
-        m.loading = false
     }
-    return m, nil
 }
 ```
 
@@ -1138,8 +1380,8 @@ func (m BlogModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 ## Future Improvements (README notes)
 
-- Migrate Rails API to Go for single-language backend
-- Add Go admin CLI (reusing TUI components)
+- Migrate Rails API to Rust for single-language backend
+- Add Rust admin CLI (reusing TUI components)
 - WebSocket terminal in React frontend (xterm.js)
 - Analytics/view counts
 - RSS feed for blog
@@ -1147,6 +1389,8 @@ func (m BlogModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 - ECS Fargate instead of EC2 for container orchestration
 - RDS Multi-AZ for production
 - Terraform workspaces for environment isolation
+- Pub/Sub live updates — broadcast "live" updates from Rails API (via Postgres LISTEN/NOTIFY) to all active TUI sessions via async channels
+- Cross-service integration tests with Playwright (trigger action on Web UI, verify state change via Rails API)
 - **AI Summarize in Context Menu** — Right-click selected text → "Summarize with AI" → LLM API call → show summary in tooltip/popover. Could use OpenAI, Claude, or local Ollama. Impressive UX touch for portfolio.
 
 ---
@@ -1156,23 +1400,33 @@ func (m BlogModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 **Rails:**
 
 - [Rails API Mode Guide](https://guides.rubyonrails.org/api_app.html)
+- [Rack::Attack - Rate Limiting](https://github.com/rack/rack-attack)
+- [Lograge - Structured Logging](https://github.com/roidrage/lograge)
 
-**Go TUI:**
+**Rust TUI:**
 
-- [Bubble Tea Tutorials](https://github.com/charmbracelet/bubbletea/tree/master/tutorials)
-- [Wish Examples](https://github.com/charmbracelet/wish/tree/main/examples)
-- [Glamour - Terminal Markdown](https://github.com/charmbracelet/glamour)
-- [Lip Gloss - Terminal Styling](https://github.com/charmbracelet/lipgloss)
+- [Ratatui Documentation](https://ratatui.rs/)
+- [tui-realm - Component Framework](https://github.com/veeso/tui-realm)
+- [termimad - Terminal Markdown](https://github.com/Canop/termimad)
+- [russh - Async SSH](https://github.com/warp-tech/russh)
+- [crossterm - Terminal Manipulation](https://github.com/crossterm-rs/crossterm)
 
 **React:**
 
 - [shadcn/ui Components](https://ui.shadcn.com/)
 - [TanStack Query](https://tanstack.com/query/latest)
 
+**Observability:**
+
+- [Prometheus Rust Client](https://github.com/prometheus/client_rust)
+- [prometheus-exporter (Rails)](https://github.com/discourse/prometheus_exporter)
+- [Grafana Dashboards](https://grafana.com/grafana/dashboards/)
+
 **Terraform + AWS:**
 
 - [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 - [Terraform Best Practices](https://www.terraform-best-practices.com/)
+- [tfsec - Terraform Security Scanner](https://github.com/aquasecurity/tfsec)
 - [AWS Free Tier](https://aws.amazon.com/free/)
 - [EC2 User Data Scripts](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html)
 

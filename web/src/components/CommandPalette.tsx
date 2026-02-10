@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { useThemeContext } from '@/providers/ThemeProvider'
 import { useContent } from '@/providers/ContentProvider'
+import { THEME_MODE } from '@/consts'
 
 const CommandPalette = () => {
   const [open, setOpen] = useState(false)
@@ -129,7 +130,7 @@ const CommandPalette = () => {
               onSelect={() => runCommand(toggleTheme)}
               className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-accent aria-selected:bg-accent"
             >
-              {themeKey === 'light' ? (
+              {themeKey === THEME_MODE.LIGHT ? (
                 <Moon className="h-4 w-4" />
               ) : (
                 <Sun className="h-4 w-4" />

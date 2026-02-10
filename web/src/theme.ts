@@ -1,7 +1,9 @@
 // Theme configuration with all colors in hex format
 // Fonts and radii are also defined here
 
-export type ThemeKey = 'light' | 'dark'
+import { THEME_MODE, type ThemeMode } from '@/consts'
+
+export type ThemeKey = ThemeMode
 
 export interface ThemeColors {
     // Forest palette
@@ -122,7 +124,7 @@ const radii: ThemeRadii = {
 
 // Light Mode - Warm, natural feel
 export const lightTheme: Theme = {
-    key: 'light',
+    key: THEME_MODE.LIGHT,
     colors: {
         // Forest Green palette
         forest: '#2d5a3d',
@@ -246,7 +248,7 @@ export const lightTheme: Theme = {
 
 // Dark Mode - Deep forest at night
 export const darkTheme: Theme = {
-    key: 'dark',
+    key: THEME_MODE.DARK,
     colors: {
         // Forest Green palette (adjusted for dark)
         forest: '#6aab7a',
@@ -370,8 +372,8 @@ export const darkTheme: Theme = {
 }
 
 export const themes: Record<ThemeKey, Theme> = {
-    light: lightTheme,
-    dark: darkTheme,
+    [THEME_MODE.LIGHT]: lightTheme,
+    [THEME_MODE.DARK]: darkTheme,
 }
 
 export const getTheme = (key: ThemeKey): Theme => {
