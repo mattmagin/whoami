@@ -8,6 +8,8 @@ import LoadingSkeleton from '@/components/LoadingSkeleton'
 import ErrorState from '@/components/ErrorState'
 import { usePost } from '@/hooks/queries'
 import { useContent } from '@/providers/ContentProvider'
+import { isApiError } from '@/api'
+import { ERROR_TYPE, ERROR_DEFINITIONS } from '@/consts'
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>()
@@ -32,8 +34,8 @@ const BlogPost = () => {
     return (
       <Container size="sm" padding="lg">
         <ErrorState
-          title="Failed to load post"
-          message="We couldn't load this blog post. Please try again."
+          statusCode={isApiError(error) ? error.status : undefined}
+          detail={isApiError(error) ? error.detail : undefined}
           onRetry={() => refetch()}
         />
       </Container>
@@ -41,13 +43,14 @@ const BlogPost = () => {
   }
 
   if (!post) {
+    const notFound = ERROR_DEFINITIONS[ERROR_TYPE.NOT_FOUND]
     return (
       <Container size="md" padding="lg" className="text-center">
         <Text variant="pageTitle" className="mb-4">
-          {blogPost.notFoundTitle}
+          {notFound.title}
         </Text>
         <Text variant="muted" as="p" className="mb-8">
-          {blogPost.notFoundDescription}
+          {notFound.message}
         </Text>
         <Button asChild>
           <Link to="/blog">

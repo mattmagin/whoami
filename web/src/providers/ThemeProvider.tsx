@@ -24,7 +24,7 @@ interface ThemeContextType {
   setColorTheme: (key: ColorTheme) => void
   toggleTheme: () => void
   /** Cycle through light → dark → system → light */
-  cycleTheme: () => void
+  cycleTheme: () => void // Cycle through light → dark → system → light
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)

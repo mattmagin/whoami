@@ -6,6 +6,7 @@ import Blog from './Blog'
 import BlogPost from './BlogPost'
 import Projects from './Projects'
 import Contact from './Contact'
+import NotFound from './NotFound'
 
 /** Map route keys to their page components (kept local — components aren't consts) */
 const ROUTE_COMPONENTS: Partial<Record<string, React.ElementType>> = {
@@ -25,6 +26,7 @@ const Pages: React.FC = () => {
         if (!Element) return null
         return <Route key={path} path={path} element={<Element />} />
       })}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }

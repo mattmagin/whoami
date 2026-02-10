@@ -2,6 +2,8 @@ import { Download } from 'lucide-react'
 import { Button, Flex, Container, Separator, Stack } from '@/components/ui'
 import { useContent } from '@/providers/ContentProvider'
 import { useResume } from '@/hooks/queries'
+import ErrorState from '@/components/ErrorState'
+import { isApiError } from '@/api'
 import Header from './Header'
 import Summary from './Summary'
 import Skills from './Skills'
@@ -13,7 +15,7 @@ import Interests from './Interests'
 
 const Resume = () => {
   const { resume: resumeStrings } = useContent()
-  const { data: resumeData, isLoading: resumeLoading } = useResume()
+  const { data: resumeData, isLoading: resumeLoading, error, refetch } = useResume()
 
   // TODO: make these look nicer
   // TODO: we have an inital flash of loading before the resume is loaded, need fix and make nicer..
@@ -21,9 +23,24 @@ const Resume = () => {
     return <div>Loading...</div>
   }
 
+  if (error) {
+    return (
+      <Container size="md" padding="lg">
+        <ErrorState
+          statusCode={isApiError(error) ? error.status : undefined}
+          detail={isApiError(error) ? error.detail : undefined}
+          onRetry={() => refetch()}
+        />
+      </Container>
+    )
+  }
+
   if (!resumeData) {
-    // TODO: better error handling - probably fallback on something else
-    return <div>No resume content found</div>
+    return (
+      <Container size="md" padding="lg">
+        <ErrorState onRetry={() => refetch()} />
+      </Container>
+    )
   }
 
   const { name, title, contact, summary, skills, experience, projects, education, certifications, interests } = resumeData

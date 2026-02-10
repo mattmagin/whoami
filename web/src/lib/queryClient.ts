@@ -2,6 +2,7 @@ import { QueryClient } from '@tanstack/react-query'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import { minutesToMilliseconds } from './utils'
 import { STORAGE_KEYS } from '@/consts'
+
 const STALE_TIME = minutesToMilliseconds(5)
 const INACTIVE_TIME = minutesToMilliseconds(30)
 const RETRYS = 3
@@ -18,7 +19,6 @@ export const queryClient = new QueryClient({
     },
   },
 })
-
 
 export const persister = createAsyncStoragePersister({
   storage: {

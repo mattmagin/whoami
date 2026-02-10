@@ -5,6 +5,7 @@ import LoadingSkeleton from '@/components/LoadingSkeleton'
 import ErrorState from '@/components/ErrorState'
 import { AnimatedSection, AnimatedList, AnimatedListItem } from '@/components/AnimatedSection'
 import { useContent } from '@/providers/ContentProvider'
+import { isApiError } from '@/api'
 
 const Blog = () => {
   const { blog } = useContent()
@@ -24,8 +25,8 @@ const Blog = () => {
     return (
       <Container size="md" padding="lg">
         <ErrorState
-          title="Failed to load posts"
-          message="We couldn't load the blog posts. Please try again."
+          statusCode={isApiError(error) ? error.status : undefined}
+          detail={isApiError(error) ? error.detail : undefined}
           onRetry={() => refetch()}
         />
       </Container>

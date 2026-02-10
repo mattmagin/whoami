@@ -2,6 +2,8 @@ import { Suspense, useEffect } from 'react'
 import { Toaster } from 'sonner'
 import { MainContainer } from '@/components'
 import CommandPalette from '@/components/CommandPalette'
+import ErrorBoundary from '@/components/ErrorBoundary'
+import RenderErrorFallback from '@/components/RenderErrorFallback'
 import logger from '@/lib/logger'
 import Providers from './providers'
 import { strings } from './content'
@@ -29,15 +31,21 @@ const App = () => {
 
   return (
     <Providers>
-      {/* TODO implement suspense if needed */}
-      <Suspense fallback={<div>Loading...</div>}>
-        <CommandPalette />
-        <MainContainer>
-          <Pages />
-        </MainContainer>
-      </Suspense>
-      <Toaster position="bottom-center" />
-    </Providers >
+      <ErrorBoundary
+        fallback={(error, reset) => (
+          <RenderErrorFallback error={error} reset={reset} fullPage />
+        )}
+      >
+        {/* TODO implement suspense if needed */}
+        <Suspense fallback={<div>Loading...</div>}>
+          <CommandPalette />
+          <MainContainer>
+            <Pages />
+          </MainContainer>
+        </Suspense>
+        <Toaster position="bottom-center" />
+      </ErrorBoundary>
+    </Providers>
   )
 }
 

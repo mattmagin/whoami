@@ -5,6 +5,7 @@ import LoadingSkeleton from '@/components/LoadingSkeleton'
 import ErrorState from '@/components/ErrorState'
 import { AnimatedSection, AnimatedList, AnimatedListItem } from '@/components/AnimatedSection'
 import { useContent } from '@/providers/ContentProvider'
+import { isApiError } from '@/api'
 
 const Projects = () => {
   const { projects: projectsStrings } = useContent()
@@ -26,8 +27,8 @@ const Projects = () => {
     return (
       <Container size="lg" padding="lg">
         <ErrorState
-          title="Failed to load projects"
-          message="We couldn't load the projects. Please try again."
+          statusCode={isApiError(error) ? error.status : undefined}
+          detail={isApiError(error) ? error.detail : undefined}
           onRetry={() => refetch()}
         />
       </Container>
