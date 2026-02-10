@@ -1,3 +1,5 @@
+import { Sun, Moon, Monitor, type LucideIcon } from 'lucide-react'
+
 export const THEME_MODE = {
     LIGHT: 'light',
     DARK: 'dark',
@@ -15,6 +17,19 @@ export const THEME_PREFERENCE = {
 export type ThemePreference = typeof THEME_PREFERENCE[keyof typeof THEME_PREFERENCE]
 
 export const DEFAULT_THEME: ThemePreference = THEME_PREFERENCE.SYSTEM
+
+export interface ThemeOptionDefinition {
+    value: ThemePreference
+    icon: LucideIcon
+    label: string
+}
+
+/** Theme preference picker options (Light / System / Dark) */
+export const THEME_OPTIONS: ThemeOptionDefinition[] = [
+    { value: THEME_PREFERENCE.LIGHT, icon: Sun, label: 'Light' },
+    { value: THEME_PREFERENCE.SYSTEM, icon: Monitor, label: 'System' },
+    { value: THEME_PREFERENCE.DARK, icon: Moon, label: 'Dark' },
+]
 
 export const COLOR_THEME = {
     FOREST: 'forest',

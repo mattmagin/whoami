@@ -4,14 +4,6 @@ import { Command } from 'cmdk'
 import { useCopyToClipboard } from 'usehooks-ts'
 import { toast } from 'sonner'
 import {
-  Home,
-  FileText,
-  FolderKanban,
-  BookOpen,
-  Mail,
-  Sun,
-  Moon,
-  Monitor,
   Terminal,
   Search,
   Zap,
@@ -20,32 +12,23 @@ import {
 } from 'lucide-react'
 import { useThemeContext, colorPalettes } from '@/providers/ThemeProvider'
 import { useContent } from '@/providers/ContentProvider'
-import { THEME_PREFERENCE, STORAGE_KEYS, COLOR_THEME_ALIASES, type ColorTheme, type ThemePreference } from '@/consts'
+import {
+  THEME_PREFERENCE,
+  THEME_OPTIONS,
+  STORAGE_KEYS,
+  COLOR_THEME_ALIASES,
+  NAV_ROUTES,
+  NAV_SHORTCUTS,
+  ROUTE_DEFINITIONS,
+  type ColorTheme,
+  type ThemePreference,
+} from '@/consts'
 import { getStorageItem, setStorageItem } from '@/lib/localStorage'
 
 const paletteEntries = Object.entries(colorPalettes) as [ColorTheme, (typeof colorPalettes)[ColorTheme]][]
 const paletteKeys = paletteEntries.map(([key]) => key)
 
-const themeOptions: { value: ThemePreference; icon: typeof Sun; label: string }[] = [
-  { value: THEME_PREFERENCE.LIGHT, icon: Sun, label: 'Light' },
-  { value: THEME_PREFERENCE.SYSTEM, icon: Monitor, label: 'System' },
-  { value: THEME_PREFERENCE.DARK, icon: Moon, label: 'Dark' },
-]
-const themePreferenceKeys = themeOptions.map((o) => o.value)
-
-/** Single-key navigation shortcuts (no modifiers — safe from browser conflicts) */
-const NAV_SHORTCUTS: Record<string, string> = {
-  h: '/',
-  r: '/resume',
-  p: '/projects',
-  b: '/blog',
-  c: '/contact',
-}
-
-/** Reverse lookup: path → shortcut key (for displaying hints) */
-const PATH_SHORTCUT: Record<string, string> = Object.fromEntries(
-  Object.entries(NAV_SHORTCUTS).map(([key, path]) => [path, key]),
-)
+const themePreferenceKeys = THEME_OPTIONS.map((o) => o.value)
 
 const CommandPalette = () => {
   const [open, setOpen] = useState(false)
@@ -76,7 +59,7 @@ const CommandPalette = () => {
 
   const themeValueMap = useMemo(() => {
     const map = new Map<string, ThemePreference>()
-    for (const { value, label } of themeOptions) {
+    for (const { value, label } of THEME_OPTIONS) {
       map.set(`change to ${label} mode theme`.toLowerCase(), value)
     }
     return map
@@ -213,13 +196,14 @@ const CommandPalette = () => {
   }, [])
 
   const themeIcon = () => {
-    if (preference === THEME_PREFERENCE.SYSTEM) return <Monitor className="h-4 w-4" />
-    if (preference === THEME_PREFERENCE.DARK) return <Moon className="h-4 w-4" />
-    return <Sun className="h-4 w-4" />
+    const opt = THEME_OPTIONS.find((o) => o.value === preference)
+    if (!opt) return null
+    const Icon = opt.icon
+    return <Icon className="h-4 w-4" />
   }
 
   const themeLabel = () => {
-    const opt = themeOptions.find((o) => o.value === preference)
+    const opt = THEME_OPTIONS.find((o) => o.value === preference)
     return opt?.label ?? 'System'
   }
 
@@ -257,7 +241,7 @@ const CommandPalette = () => {
           <Search className="h-4 w-4 text-muted-foreground" />
           <Command.Input
             value={search}
-            onValueChange={setSearch}
+            onValueChange={(v) => setSearch(v.trimStart())}
             placeholder={commandPalette.placeholder}
             className="flex-1 bg-transparent py-4 px-3 text-sm outline-none placeholder:text-muted-foreground"
           />
@@ -274,28 +258,26 @@ const CommandPalette = () => {
 
           {/* Navigation */}
           <Command.Group heading={commandPalette.navigation} className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-            {([
-              { path: '/', value: 'home', icon: Home, label: nav.home },
-              { path: '/resume', value: 'resume', icon: FileText, label: nav.resume },
-              { path: '/projects', value: 'projects', icon: FolderKanban, label: nav.projects },
-              { path: '/blog', value: 'blog', icon: BookOpen, label: nav.blog },
-              { path: '/contact', value: 'contact', icon: Mail, label: nav.contact },
-            ] as const).map(({ path, value, icon: Icon, label }) => (
-              <Command.Item
-                key={value}
-                value={value}
-                onSelect={() => runCommand(() => navigate(path))}
-                className={itemClass}
-              >
-                <Icon className="h-4 w-4" />
-                {label}
-                {PATH_SHORTCUT[path] && (
-                  <kbd className="ml-auto rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
-                    {PATH_SHORTCUT[path].toUpperCase()}
-                  </kbd>
-                )}
-              </Command.Item>
-            ))}
+            {NAV_ROUTES.map((route) => {
+              const { path, labelKey, icon: Icon, shortcut } = ROUTE_DEFINITIONS[route]
+              if (!Icon) return null
+              return (
+                <Command.Item
+                  key={route}
+                  value={route}
+                  onSelect={() => runCommand(() => navigate(path))}
+                  className={itemClass}
+                >
+                  <Icon className="h-4 w-4" />
+                  {nav[labelKey]}
+                  {shortcut && (
+                    <kbd className="ml-auto rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+                      {shortcut.toUpperCase()}
+                    </kbd>
+                  )}
+                </Command.Item>
+              )
+            })}
           </Command.Group>
 
           {/* Actions */}
@@ -347,7 +329,7 @@ const CommandPalette = () => {
 
               {/* Hovered / selected: show theme pills */}
               <span className="ml-auto hidden items-center gap-0.5 rounded-lg bg-muted p-0.5 group-hover:flex group-aria-selected:flex">
-                {themeOptions.map(({ value, icon: Icon, label }) => (
+                {THEME_OPTIONS.map(({ value, icon: Icon, label }) => (
                   <button
                     key={value}
                     onClick={(e) => {
@@ -430,7 +412,7 @@ const CommandPalette = () => {
                 ))}
               </Command.Group>
               <Command.Group heading="Theme" className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                {themeOptions.map(({ value, icon: Icon, label }) => (
+                {THEME_OPTIONS.map(({ value, icon: Icon, label }) => (
                   <Command.Item
                     key={value}
                     value={`change to ${label} mode theme`}

@@ -3,19 +3,12 @@ import { Link, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { useContent } from '@/providers/ContentProvider'
+import { NAV_ROUTES, ROUTE_DEFINITIONS } from '@/consts'
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
   const { nav, aria } = useContent()
-
-  const navLinks = [
-    { href: '/', label: nav.home },
-    { href: '/resume', label: nav.resume },
-    { href: '/projects', label: nav.projects },
-    { href: '/blog', label: nav.blog },
-    { href: '/contact', label: nav.contact },
-  ]
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md transition-theme">
@@ -30,18 +23,21 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-1 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              to={link.href}
-              className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${location.pathname === link.href
-                ? 'text-primary bg-primary/5'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {NAV_ROUTES.map((route) => {
+            const { path, labelKey } = ROUTE_DEFINITIONS[route]
+            return (
+              <Link
+                key={path}
+                to={path}
+                className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${location.pathname === path
+                  ? 'text-primary bg-primary/5'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                  }`}
+              >
+                {nav[labelKey]}
+              </Link>
+            )
+          })}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -65,19 +61,22 @@ const Header = () => {
       {mobileMenuOpen && (
         <nav className="border-t border-border/50 bg-background px-6 py-4 md:hidden">
           <div className="flex flex-col gap-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${location.pathname === link.href
-                  ? 'text-primary bg-primary/5'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                  }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV_ROUTES.map((route) => {
+              const { path, labelKey } = ROUTE_DEFINITIONS[route]
+              return (
+                <Link
+                  key={path}
+                  to={path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${location.pathname === path
+                    ? 'text-primary bg-primary/5'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                    }`}
+                >
+                  {nav[labelKey]}
+                </Link>
+              )
+            })}
           </div>
         </nav>
       )}
