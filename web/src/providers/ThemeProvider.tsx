@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useMemo, useState, useCallback, t
 import { ThemeProvider as EmotionThemeProvider, Global, css } from '@emotion/react'
 import { getTheme, type Theme, type ThemeKey } from '@/theme'
 import {
-  THEME_MODE,
   THEME_PREFERENCE,
   DEFAULT_THEME,
   DEFAULT_COLOR_THEME,
@@ -35,10 +34,10 @@ const colorThemes = Object.values(COLOR_THEME) as ColorTheme[]
 
 /** Detect OS preference */
 const getSystemTheme = (): ThemeKey => {
-  if (typeof window === 'undefined') return THEME_MODE.DARK
+  if (typeof window === 'undefined') return THEME_PREFERENCE.DARK
   return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? THEME_MODE.DARK
-    : THEME_MODE.LIGHT
+    ? THEME_PREFERENCE.DARK
+    : THEME_PREFERENCE.LIGHT
 }
 
 /** Resolve a preference to an actual ThemeKey */
@@ -160,7 +159,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
     const mql = window.matchMedia('(prefers-color-scheme: dark)')
     const handler = (e: MediaQueryListEvent) => {
-      setResolvedKey(e.matches ? THEME_MODE.DARK : THEME_MODE.LIGHT)
+      setResolvedKey(e.matches ? THEME_PREFERENCE.DARK : THEME_PREFERENCE.LIGHT)
     }
 
     mql.addEventListener('change', handler)
@@ -170,7 +169,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   // Sync the `dark` class on <html>
   useEffect(() => {
     const root = document.documentElement
-    if (resolvedKey === THEME_MODE.DARK) {
+    if (resolvedKey === THEME_PREFERENCE.DARK) {
       root.classList.add('dark')
     } else {
       root.classList.remove('dark')
@@ -194,7 +193,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   const toggleTheme = useCallback(() => {
     // Toggle cycles resolved key (ignores system)
-    const next = resolvedKey === THEME_MODE.LIGHT ? THEME_MODE.DARK : THEME_MODE.LIGHT
+    const next = resolvedKey === THEME_PREFERENCE.LIGHT ? THEME_PREFERENCE.DARK : THEME_PREFERENCE.LIGHT
     setTheme(next)
   }, [resolvedKey, setTheme])
 
@@ -242,4 +241,4 @@ export const useTheme = () => {
 
 // Re-export theme types and utilities for convenience
 export type { Theme, ThemeKey, ThemeColors, ThemeFonts, ThemeRadii, ColorPalette } from '@/theme'
-export { themes, getTheme, lightTheme, darkTheme, colorPalettes } from '@/theme'
+export { themes, getTheme, lightTheme, darkTheme } from '@/theme'

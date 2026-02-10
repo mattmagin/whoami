@@ -1,7 +1,7 @@
 // Theme configuration with all colors in hex format
 // Fonts and radii are also defined here
 
-import { THEME_MODE, COLOR_THEME, type ThemeMode, type ColorTheme } from '@/consts'
+import { THEME_PREFERENCE, COLOR_THEME, type ThemeMode, type ColorTheme } from '@/consts'
 
 export type ThemeKey = ThemeMode
 
@@ -123,7 +123,7 @@ const radii: ThemeRadii = {
 
 // Light Mode - Warm, natural feel
 export const lightTheme: Theme = {
-    key: THEME_MODE.LIGHT,
+    key: THEME_PREFERENCE.LIGHT,
     colors: {
         // Primary color variants
         primaryLight: '#4a7c59',
@@ -246,7 +246,7 @@ export const lightTheme: Theme = {
 
 // Dark Mode
 export const darkTheme: Theme = {
-    key: THEME_MODE.DARK,
+    key: THEME_PREFERENCE.DARK,
     colors: {
         // Primary color variants (adjusted for dark)
         primaryLight: '#8ac49a',
@@ -369,8 +369,8 @@ export const darkTheme: Theme = {
 }
 
 export const themes: Record<ThemeKey, Theme> = {
-    [THEME_MODE.LIGHT]: lightTheme,
-    [THEME_MODE.DARK]: darkTheme,
+    [THEME_PREFERENCE.LIGHT]: lightTheme,
+    [THEME_PREFERENCE.DARK]: darkTheme,
 }
 
 // ---------------------------------------------------------------------------
@@ -378,23 +378,17 @@ export const themes: Record<ThemeKey, Theme> = {
 // ---------------------------------------------------------------------------
 
 export interface ColorPalette {
-    label: string
-    preview: string // hex color for swatch UI
     light: Partial<ThemeColors>
     dark: Partial<ThemeColors>
 }
 
 export const colorPalettes: Record<ColorTheme, ColorPalette> = {
     [COLOR_THEME.FOREST]: {
-        label: 'Forest',
-        preview: '#2d5a3d',
         light: {},
         dark: {},
     },
 
     [COLOR_THEME.CRIMSON]: {
-        label: 'Crimson',
-        preview: '#8b2252',
         light: {
             primaryLight: '#a83865',
             primaryMuted: '#c48a95',
@@ -452,8 +446,6 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
     },
 
     [COLOR_THEME.OCEAN]: {
-        label: 'Ocean',
-        preview: '#2d4a7a',
         light: {
             primaryLight: '#4a6ea0',
             primaryMuted: '#8aa0c0',
@@ -511,8 +503,6 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
     },
 
     [COLOR_THEME.AMBER]: {
-        label: 'Amber',
-        preview: '#8a6b2d',
         light: {
             primaryLight: '#a0823d',
             primaryMuted: '#bfa870',
@@ -570,8 +560,6 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
     },
 
     [COLOR_THEME.VIOLET]: {
-        label: 'Violet',
-        preview: '#5a2d7a',
         light: {
             primaryLight: '#7a4aa0',
             primaryMuted: '#a08ac0',
@@ -629,8 +617,6 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
     },
 
     [COLOR_THEME.SLATE]: {
-        label: 'Slate',
-        preview: '#4a5568',
         light: {
             primaryLight: '#647080',
             primaryMuted: '#94a0aa',
@@ -691,7 +677,7 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
 export const getTheme = (key: ThemeKey, colorTheme: ColorTheme = COLOR_THEME.FOREST): Theme => {
     const base = themes[key]
     const palette = colorPalettes[colorTheme]
-    const overrides = key === THEME_MODE.LIGHT ? palette.light : palette.dark
+    const overrides = key === THEME_PREFERENCE.LIGHT ? palette.light : palette.dark
     return {
         ...base,
         colors: { ...base.colors, ...overrides },

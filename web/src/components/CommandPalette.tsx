@@ -10,13 +10,13 @@ import {
   ZapOff,
   Palette,
 } from 'lucide-react'
-import { useThemeContext, colorPalettes } from '@/providers/ThemeProvider'
+import { useThemeContext } from '@/providers/ThemeProvider'
 import { useContent } from '@/providers/ContentProvider'
 import {
   THEME_PREFERENCE,
   THEME_OPTIONS,
   STORAGE_KEYS,
-  COLOR_THEME_ALIASES,
+  COLOR_THEME_DEFINITIONS,
   NAV_ROUTES,
   NAV_SHORTCUTS,
   ROUTE_DEFINITIONS,
@@ -25,8 +25,8 @@ import {
 } from '@/consts'
 import { getStorageItem, setStorageItem } from '@/lib/localStorage'
 
-const paletteEntries = Object.entries(colorPalettes) as [ColorTheme, (typeof colorPalettes)[ColorTheme]][]
-const paletteKeys = paletteEntries.map(([key]) => key)
+const colorEntries = Object.entries(COLOR_THEME_DEFINITIONS) as [ColorTheme, (typeof COLOR_THEME_DEFINITIONS)[ColorTheme]][]
+const colorKeys = colorEntries.map(([key]) => key)
 
 const themePreferenceKeys = THEME_OPTIONS.map((o) => o.value)
 
@@ -51,8 +51,8 @@ const CommandPalette = () => {
   // Lookup maps: cmdk value → color/theme key (cmdk lowercases values)
   const colorValueMap = useMemo(() => {
     const map = new Map<string, ColorTheme>()
-    for (const [key, palette] of paletteEntries) {
-      map.set(`change to ${palette.label} accent color ${COLOR_THEME_ALIASES[key]}`.toLowerCase(), key)
+    for (const [key, { label, aliases }] of colorEntries) {
+      map.set(`change to ${label} accent color ${aliases.join(' ')}`.toLowerCase(), key)
     }
     return map
   }, [])
@@ -138,10 +138,10 @@ const CommandPalette = () => {
       e.stopPropagation()
 
       if (isAppearance) {
-        const idx = paletteKeys.indexOf(colorTheme)
+        const idx = colorKeys.indexOf(colorTheme)
         const next = e.key === 'ArrowRight'
-          ? paletteKeys[(idx + 1) % paletteKeys.length]
-          : paletteKeys[(idx - 1 + paletteKeys.length) % paletteKeys.length]
+          ? colorKeys[(idx + 1) % colorKeys.length]
+          : colorKeys[(idx - 1 + colorKeys.length) % colorKeys.length]
         setColorTheme(next)
       }
 
@@ -207,7 +207,7 @@ const CommandPalette = () => {
     return opt?.label ?? 'System'
   }
 
-  const currentPalette = colorPalettes[colorTheme]
+  const currentColorDef = COLOR_THEME_DEFINITIONS[colorTheme]
 
   const commitColor = useCallback(() => {
     colorCommittedRef.current = true
@@ -363,12 +363,12 @@ const CommandPalette = () => {
 
               {/* Default: show current color name */}
               <span className="ml-auto text-xs text-muted-foreground group-hover:hidden group-aria-selected:hidden">
-                {currentPalette.label}
+                {currentColorDef.label}
               </span>
 
               {/* Hovered / selected: show color dots */}
               <span className="ml-auto hidden items-center gap-1.5 group-hover:flex group-aria-selected:flex">
-                {paletteEntries.map(([key, palette]) => (
+                {colorEntries.map(([key, { label, preview }]) => (
                   <button
                     key={key}
                     onClick={(e) => {
@@ -376,13 +376,13 @@ const CommandPalette = () => {
                       commitColor()
                       setColorTheme(key)
                     }}
-                    aria-label={palette.label}
-                    title={palette.label}
+                    aria-label={label}
+                    title={label}
                     className={`h-4 w-4 rounded-full transition-all ${colorTheme === key
                       ? 'ring-2 ring-primary ring-offset-1 ring-offset-card scale-110'
                       : 'hover:scale-110'
                       }`}
-                    style={{ backgroundColor: palette.preview }}
+                    style={{ backgroundColor: preview }}
                   />
                 ))}
               </span>
@@ -393,18 +393,18 @@ const CommandPalette = () => {
           {search && (
             <>
               <Command.Group heading={commandPalette.colorTheme} className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                {paletteEntries.map(([key, palette]) => (
+                {colorEntries.map(([key, { label, preview, aliases }]) => (
                   <Command.Item
                     key={key}
-                    value={`change to ${palette.label} accent color ${COLOR_THEME_ALIASES[key]}`}
+                    value={`change to ${label} accent color ${aliases.join(' ')}`}
                     onSelect={() => { commitColor(); runCommand(() => setColorTheme(key)) }}
                     className={itemClass}
                   >
                     <span
                       className="inline-block h-4 w-4 rounded-full border border-border"
-                      style={{ backgroundColor: palette.preview }}
+                      style={{ backgroundColor: preview }}
                     />
-                    Change to {palette.label} accent
+                    Change to {label} accent
                     {colorTheme === key && (
                       <span className="ml-auto text-xs text-muted-foreground">current</span>
                     )}
