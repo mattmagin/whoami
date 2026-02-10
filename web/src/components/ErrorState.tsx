@@ -1,6 +1,6 @@
 import { useMemo, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
-import { RefreshCw } from 'lucide-react'
+import { AlertCircle, RefreshCw, RotateCcw } from 'lucide-react'
 import { Button, Text, Stack, Badge } from '@/components/ui'
 import { ERROR_TYPE, ERROR_DEFINITIONS, type ErrorType } from '@/consts'
 
@@ -15,35 +15,58 @@ const WifiDropIcon = () => {
   const totalHeight = 30
 
   return (
-    <svg
-      width={totalWidth}
-      height={totalHeight}
-      viewBox={`0 0 ${totalWidth} ${totalHeight}`}
-      className="text-muted-foreground"
-    >
-      {barHeights.map((height, i) => (
-        <motion.rect
-          key={i}
-          x={i * (barWidth + gap)}
-          y={totalHeight - height}
-          width={barWidth}
-          rx={1}
-          fill="currentColor"
-          animate={{
-            height: [height, 2, 2, height],
-            opacity: [1, 0.25, 0.25, 1],
-          }}
-          transition={{
-            delay: i * 0.15,
-            duration: 2.4,
-            ease: 'easeInOut',
-            repeat: Infinity,
-            repeatDelay: 0.5,
-          }}
-        />
-      ))}
-    </svg>
+    <div className="flex h-16 w-16 items-center justify-center">
+      <svg
+        width={totalWidth}
+        height={totalHeight}
+        viewBox={`0 0 ${totalWidth} ${totalHeight}`}
+        className="text-muted-foreground"
+      >
+        {barHeights.map((height, i) => (
+          <motion.rect
+            key={i}
+            x={i * (barWidth + gap)}
+            y={totalHeight - height}
+            width={barWidth}
+            rx={1}
+            fill="currentColor"
+            animate={{
+              height: [height, 2, 2, height],
+              opacity: [1, 0.25, 0.25, 1],
+            }}
+            transition={{
+              delay: i * 0.15,
+              duration: 2.4,
+              ease: 'easeInOut',
+              repeat: Infinity,
+              repeatDelay: 0.5,
+            }}
+          />
+        ))}
+      </svg>
+    </div>
   )
+}
+
+/** Glitching alert icon for render errors */
+const GlitchIcon = () => (
+  <motion.div
+    initial={{ filter: 'blur(4px)', scale: 1.2, rotate: -5 }}
+    animate={{ filter: 'blur(0px)', scale: 1, rotate: 0 }}
+    transition={{ duration: 0.5, ease: 'easeOut' }}
+  >
+    <motion.div
+      animate={{ x: [0, -3, 3, -2, 0], opacity: [1, 0.5, 1, 0.7, 1] }}
+      transition={{ duration: 0.4, times: [0, 0.2, 0.4, 0.6, 1] }}
+    >
+      <AlertCircle className="h-16 w-16 text-muted-foreground" />
+    </motion.div>
+  </motion.div>
+)
+
+const ErrorIcon = ({ errorType }: { errorType: ErrorType }) => {
+  if (errorType === ERROR_TYPE.RENDER) return <GlitchIcon />
+  return <WifiDropIcon />
 }
 
 interface ErrorStateProps {
@@ -54,8 +77,15 @@ interface ErrorStateProps {
   statusCode?: number
   detail?: string | null
   onRetry?: () => void
+  /** Show a "Reload page" button */
+  showReload?: boolean
   /** Custom action content rendered below the message (instead of / in addition to retry) */
   actions?: ReactNode
+  /**
+   * 'card' — dashed border, for inline use within a page (default)
+   * 'page' — borderless with extra padding, for full-page error states
+   */
+  variant?: 'card' | 'page'
 }
 
 const ErrorState = ({
@@ -65,7 +95,9 @@ const ErrorState = ({
   statusCode,
   detail,
   onRetry,
+  showReload = false,
   actions,
+  variant = 'card',
 }: ErrorStateProps) => {
   const def = ERROR_DEFINITIONS[errorType]
   const displayTitle = title ?? def.title
@@ -73,17 +105,21 @@ const ErrorState = ({
   const quip = useMemo(() => pickRandom(def.quips), [def.quips])
   const code = useMemo(() => pickRandom(def.codes), [def.codes])
 
+  const wrapperClass = variant === 'card'
+    ? 'rounded-lg border border-dashed border-border p-12 text-center'
+    : 'py-16 text-center'
+
+  const hasActions = actions || onRetry || showReload
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: variant === 'card' ? 10 : 0 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.3, delay: variant === 'page' ? 0.5 : 0 }}
     >
-      <Stack align="center" gap="md" className="rounded-lg border border-dashed border-border p-12 text-center">
-        {/* Wifi drop animation */}
-        <div className="flex h-16 w-16 items-center justify-center">
-          <WifiDropIcon />
-        </div>
+      <Stack align="center" gap="md" className={wrapperClass}>
+        {/* Icon */}
+        <ErrorIcon errorType={errorType} />
 
         {/* Error code badge */}
         <motion.div
@@ -124,7 +160,7 @@ const ErrorState = ({
 
         <Text variant="muted" className="max-w-md">{displayMessage}</Text>
 
-        {/* API detail */}
+        {/* Detail */}
         {detail && (
           <motion.details
             initial={{ opacity: 0 }}
@@ -142,19 +178,28 @@ const ErrorState = ({
         )}
 
         {/* Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9, duration: 0.3 }}
-        >
-          {actions}
-          {onRetry && (
-            <Button onClick={onRetry} variant="outline">
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Try again
-            </Button>
-          )}
-        </motion.div>
+        {hasActions && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.3 }}
+            className="flex gap-3 pt-2"
+          >
+            {actions}
+            {onRetry && (
+              <Button onClick={onRetry} variant="outline">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Try again
+              </Button>
+            )}
+            {showReload && (
+              <Button onClick={() => window.location.reload()} variant={onRetry ? 'ghost' : 'outline'}>
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Reload page
+              </Button>
+            )}
+          </motion.div>
+        )}
       </Stack>
     </motion.div>
   )

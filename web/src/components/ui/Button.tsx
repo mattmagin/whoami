@@ -28,6 +28,7 @@ const baseStyles = css`
   border: 1px solid transparent;
   cursor: pointer;
   flex-shrink: 0;
+  width: fit-content;
 
   &:disabled {
     pointer-events: none;

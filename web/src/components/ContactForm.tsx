@@ -225,7 +225,7 @@ const ContactForm = () => {
         ref={buttonRef}
         type="submit"
         disabled={isSubmitting}
-        className="w-full sm:w-auto"
+        className="w-full sm:w-fit"
       >
         {isSubmitting ? (
           contactForm.sending

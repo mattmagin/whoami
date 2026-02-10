@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react'
-import { Flex } from '@/components/ui'
+import { Flex, Container } from '@/components/ui'
 import Header from './layout/Header'
 import Footer from './layout/Footer'
 import ErrorBoundary from './ErrorBoundary'
-import RenderErrorFallback from './RenderErrorFallback'
+import ErrorState from './ErrorState'
+import { ERROR_TYPE } from '@/consts'
 
 interface MainContainerProps {
   children: ReactNode
@@ -16,7 +17,15 @@ const MainContainer = ({ children }: MainContainerProps) => {
       <main className="flex-1">
         <ErrorBoundary
           fallback={(error, reset) => (
-            <RenderErrorFallback error={error} reset={reset} />
+            <Container size="sm" padding="lg">
+              <ErrorState
+                errorType={ERROR_TYPE.RENDER}
+                detail={error.message}
+                onRetry={reset}
+                showReload
+                variant="page"
+              />
+            </Container>
           )}
         >
           {children}

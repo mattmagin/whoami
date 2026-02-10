@@ -48,7 +48,7 @@ const Resume = () => {
   return (
     <Container size="md" padding="lg">
       <Flex justify="end" className="mb-6">
-        <Button className="w-fit">
+        <Button>
           <Download className="mr-2 h-4 w-4" />
           {resumeStrings.downloadPdf}
         </Button>
