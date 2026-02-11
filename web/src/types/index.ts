@@ -15,6 +15,7 @@ export interface Post {
     updatedAt: string;
     deletedAt: string | null;
     readingTime: string;
+    featureImageUrl: string | null;
 }
 
 export interface Project {

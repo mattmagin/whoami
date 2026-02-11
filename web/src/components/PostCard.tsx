@@ -22,7 +22,19 @@ const PostCard = ({ post }: PostCardProps) => {
   return (
     <article className="group">
       <Link to={`/blog/${post.slug}`} className="block">
-        <div className="rounded-lg border border-border/50 bg-card p-6 transition-all hover:border-primary/30 hover:shadow-sm">
+        <div className="overflow-hidden rounded-lg border border-border/50 bg-card transition-all hover:border-primary/30 hover:shadow-sm">
+          {/* Feature Image */}
+          {post.featureImageUrl && (
+            <div className="aspect-video overflow-hidden">
+              <img
+                src={post.featureImageUrl}
+                alt={post.title ?? ''}
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
+          )}
+
+          <div className="p-6">
           {/* Tags */}
           <div className="mb-3 flex flex-wrap gap-2">
             {(post.tags ?? []).slice(0, 3).map((tag) => (
@@ -60,6 +72,7 @@ const PostCard = ({ post }: PostCardProps) => {
               {common.readMore}
               <ArrowRight className="h-3 w-3" />
             </span>
+          </div>
           </div>
         </div>
       </Link>

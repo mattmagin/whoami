@@ -20,6 +20,7 @@ const BlogPost = () => {
       title={post?.title ?? null}
       publishedAt={post?.publishedAt ?? null}
       markdownContent={post?.content ?? null}
+      featureImageUrl={post?.featureImageUrl}
       badges={
         (post?.tags ?? []).length > 0 ? (
           <Flex gap="sm" wrap>

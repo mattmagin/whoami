@@ -25,6 +25,16 @@ class ApplicationController < ActionController::API
 
   private
 
+  UUID_REGEX = /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/i
+
+  def find_by_slug_or_id(model, param = params[:id])
+    if param.match?(UUID_REGEX)
+      model.find(param)
+    else
+      model.find_by!(slug: param)
+    end
+  end
+
   def render_error(type, message)
     error = ERRORS.fetch(type) { ERRORS[:server_error] }
     render json: { error: error[:code], message: message }, status: error[:status]

@@ -4,7 +4,7 @@ class PostsController < ApplicationController
   end
 
   def show
-    post = Post.find(params[:id])
+    post = find_by_slug_or_id(Post)
     render json: serialize(post)
 
   rescue ActiveRecord::RecordNotFound

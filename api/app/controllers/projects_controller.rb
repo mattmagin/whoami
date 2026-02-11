@@ -4,9 +4,9 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    project = Project.find(params[:id])
+    project = find_by_slug_or_id(Project)
     render json: serialize(project)
-    
+
   rescue ActiveRecord::RecordNotFound
     render_not_found("Project not found")
   end
