@@ -1,33 +1,18 @@
+import { Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import { ROUTE, ROUTE_DEFINITIONS } from '@/consts'
-import Home from './Home'
-import Resume from './Resume'
-import Blog from './Blog'
-import BlogPost from './BlogPost'
-import Projects from './Projects'
-import Contact from './Contact'
+import { ROUTE_DEFINITIONS } from '@/consts'
 import NotFound from './NotFound'
-
-/** Map route keys to their page components (kept local — components aren't consts) */
-const ROUTE_COMPONENTS: Partial<Record<string, React.ElementType>> = {
-  [ROUTE.HOME]: Home,
-  [ROUTE.RESUME]: Resume,
-  [ROUTE.BLOG]: Blog,
-  [ROUTE.BLOG_POST]: BlogPost,
-  [ROUTE.PROJECTS]: Projects,
-  [ROUTE.CONTACT]: Contact,
-}
 
 const Pages: React.FC = () => {
   return (
-    <Routes>
-      {Object.entries(ROUTE_DEFINITIONS).map(([key, { path }]) => {
-        const Element = ROUTE_COMPONENTS[key]
-        if (!Element) return null
-        return <Route key={path} path={path} element={<Element />} />
-      })}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <Suspense>
+      <Routes>
+        {Object.values(ROUTE_DEFINITIONS).map(({ path, component: Component }) => (
+          <Route key={path} path={path} element={<Component />} />
+        ))}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
   )
 }
 
