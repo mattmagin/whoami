@@ -16,26 +16,30 @@ export interface RouteDefinition {
     /** Key into strings.json `nav` section */
     labelKey: 'home' | 'resume' | 'projects' | 'blog' | 'contact'
     icon?: LucideIcon
-    /** Single-key shortcut (no modifiers) */
-    shortcut?: string
+    /** Whether this route appears in the main navigation bar / command palette */
+    showInMainNavigation?: boolean
+    /** Single-key shortcuts (no modifiers) */
+    shortcuts?: string[]
 }
 
 export const ROUTE_DEFINITIONS: Record<Route, RouteDefinition> = {
-    [ROUTE.HOME]:      { path: '/',          labelKey: 'home',     icon: Home,         shortcut: 'h' },
-    [ROUTE.RESUME]:    { path: '/resume',    labelKey: 'resume',   icon: FileText,     shortcut: 'r' },
-    [ROUTE.PROJECTS]:  { path: '/projects',  labelKey: 'projects', icon: FolderKanban, shortcut: 'p' },
-    [ROUTE.BLOG]:      { path: '/blog',      labelKey: 'blog',     icon: BookOpen,     shortcut: 'b' },
-    [ROUTE.CONTACT]:   { path: '/contact',   labelKey: 'contact',  icon: Mail,         shortcut: 'c' },
+    [ROUTE.HOME]: { path: '/', labelKey: 'home', icon: Home, showInMainNavigation: true, shortcuts: ['h', '1'] },
+    [ROUTE.RESUME]: { path: '/resume', labelKey: 'resume', icon: FileText, showInMainNavigation: true, shortcuts: ['r', '2'] },
+    [ROUTE.PROJECTS]: { path: '/projects', labelKey: 'projects', icon: FolderKanban, showInMainNavigation: true, shortcuts: ['p', '3'] },
+    [ROUTE.BLOG]: { path: '/blog', labelKey: 'blog', icon: BookOpen, showInMainNavigation: true, shortcuts: ['b', '4'] },
+    [ROUTE.CONTACT]: { path: '/contact', labelKey: 'contact', icon: Mail, showInMainNavigation: true, shortcuts: ['c', '5'] },
     [ROUTE.BLOG_POST]: { path: '/blog/:slug', labelKey: 'blog' },
 }
 
-/** Only routes that appear in the nav bar / command palette */
-export const NAV_ROUTES = [ROUTE.HOME, ROUTE.RESUME, ROUTE.PROJECTS, ROUTE.BLOG, ROUTE.CONTACT] as const
+/** Route keys that appear in the main navigation bar / command palette */
+export const NAV_ROUTES = (Object.keys(ROUTE_DEFINITIONS) as Route[]).filter(
+    (r) => ROUTE_DEFINITIONS[r].showInMainNavigation,
+)
 
 /** Shortcut key → path lookup (for the global keyboard handler) */
 export const NAV_SHORTCUTS: Record<string, string> = Object.fromEntries(
     NAV_ROUTES
         .map((r) => ROUTE_DEFINITIONS[r])
-        .filter((d): d is RouteDefinition & { shortcut: string } => !!d.shortcut)
-        .map((d) => [d.shortcut, d.path]),
+        .filter((d): d is RouteDefinition & { shortcuts: string[] } => !!d.shortcuts?.length)
+        .flatMap((d) => d.shortcuts.map((key) => [key, d.path] as const)),
 )
