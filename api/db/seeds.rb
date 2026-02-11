@@ -13,23 +13,24 @@ Resume.destroy_all
 
 # Helper: attach a feature image from db/seeds/images/ if one exists for the given slug.
 # Looks for any common image extension (jpg, jpeg, png, webp, gif).
+# Works for any model with `has_one_attached :feature_image` (Post, Project, etc.)
 SEED_IMAGES_DIR = Rails.root.join('db', 'seeds', 'images')
 IMAGE_EXTENSIONS = %w[.jpg .jpeg .png .webp .gif].freeze
 
-def attach_feature_image(post)
+def attach_feature_image(record)
   IMAGE_EXTENSIONS.each do |ext|
-    path = SEED_IMAGES_DIR.join("#{post.slug}#{ext}")
+    path = SEED_IMAGES_DIR.join("#{record.slug}#{ext}")
     next unless File.exist?(path)
 
-    post.feature_image.attach(
+    record.feature_image.attach(
       io: File.open(path),
-      filename: "#{post.slug}#{ext}",
+      filename: "#{record.slug}#{ext}",
       content_type: Marcel::MimeType.for(extension: ext.delete('.'))
     )
-    puts "    Attached feature image: #{post.slug}#{ext}"
+    puts "    Attached feature image: #{record.slug}#{ext}"
     return
   end
-  puts "    No feature image found for: #{post.slug}"
+  puts "    No feature image found for: #{record.slug}"
 end
 
 # ============================================
@@ -40,7 +41,17 @@ projects_data = [
     slug: "portfolio-tui",
     name: "Portfolio TUI",
     excerpt: "A terminal-based portfolio viewer with smooth animations and keyboard navigation.",
-    description: "A terminal-based portfolio viewer built with Go and Bubble Tea. Features smooth animations, keyboard navigation, and real-time data fetching from a Rails API. Demonstrates how TUIs can be both functional and beautiful.",
+    description: <<~'DESC'.strip,
+      A terminal-based portfolio viewer built with Go and the Charm stack (Bubble Tea, Lip Gloss, and Glamour). The application follows the Elm architecture — Model, Update, View — to manage complex UI state without callbacks or event spaghetti.
+
+      The TUI features multiple views including a post reader with full Markdown rendering, a project showcase with tech-stack badges, and a contact form — all navigable via keyboard shortcuts or arrow keys. Smooth transitions between views are handled with frame-based animation ticks, giving the interface a polished, responsive feel that rivals graphical applications.
+
+      Under the hood, the app communicates with the Portfolio API over REST, fetching posts, projects, and resume data on demand. Responses are cached in memory to keep navigation snappy after the initial load. A Wish-based SSH server wraps the entire application, allowing anyone to connect and browse the portfolio with a single `ssh` command — no installation required.
+
+      Styling is handled entirely through Lip Gloss, with a consistent color palette and adaptive layouts that reflow based on terminal dimensions. Glamour renders Markdown content with syntax highlighting, blockquotes, and styled headings directly in the terminal.
+
+      This project was an exercise in proving that terminal interfaces can be beautiful, accessible, and genuinely enjoyable to use — not just utilitarian tools for power users.
+    DESC
     tech_stack: %w[Go BubbleTea Lipgloss REST],
     github_url: "https://github.com/example/portfolio-tui",
     featured: true,
@@ -50,7 +61,17 @@ projects_data = [
     slug: "portfolio-api",
     name: "Portfolio API",
     excerpt: "RESTful API backend powering the portfolio with Rails 8 in API-only mode.",
-    description: "RESTful API backend powering the portfolio. Built with Rails 8 in API-only mode. Features include blog posts with reading time estimation, project showcases, and a contact form. Deployed with Kamal to a VPS.",
+    description: <<~'DESC'.strip,
+      The RESTful API backend that powers every surface of the portfolio — the React frontend, the terminal UI, and the admin CLI all consume the same endpoints. Built with Rails 8 in API-only mode, it prioritizes clean JSON responses, consistent error handling, and a minimal footprint.
+
+      The API serves blog posts with automatic reading-time estimation calculated from word count, project listings with filterable tech stacks, and a resume endpoint that returns structured YAML-sourced data. Posts support full Markdown content, tagging, and draft/published states. Projects track tech stacks as Postgres array columns for efficient querying.
+
+      Authentication uses a straightforward API-key scheme — admin routes require an `X-API-Key` header validated against bcrypt-hashed keys stored in the database. Each key tracks its last usage timestamp for auditing. Public endpoints are unauthenticated and read-only by design.
+
+      All tables use UUID primary keys to avoid exposing sequential IDs. Blueprinter handles JSON serialization with explicit field declarations, keeping response shapes predictable and decoupled from Active Record internals. Feature images are stored via Active Storage with an S3-compatible backend in production and local disk in development.
+
+      The API includes rate limiting on the contact form endpoint to prevent abuse, input validation with descriptive error messages, and CORS configuration scoped to known frontend origins. Deployment is handled through Kamal, which orchestrates Docker containers on a VPS with zero-downtime rolling deploys and automatic SSL via Let's Encrypt.
+    DESC
     tech_stack: %w[Ruby Rails PostgreSQL Docker Kamal],
     github_url: "https://github.com/example/portfolio-api",
     featured: true,
@@ -60,7 +81,17 @@ projects_data = [
     slug: "task-flow",
     name: "Task Flow",
     excerpt: "A kanban-style task management app with real-time WebSocket updates.",
-    description: "A kanban-style task management app with drag-and-drop interface. Real-time updates via WebSockets keep all connected clients in sync. Supports multiple boards, labels, and due dates.",
+    description: <<~'DESC'.strip,
+      A kanban-style task management application built to explore real-time collaboration patterns on the web. The frontend is a React SPA with TypeScript, featuring a drag-and-drop board interface built on top of dnd-kit. Cards can be rearranged within columns or moved across them, with optimistic UI updates that feel instantaneous.
+
+      The real-time layer is powered by Rails Action Cable over WebSockets. When one user moves a card, creates a task, or updates a label, every other connected client sees the change reflected immediately — no polling required. The server broadcasts granular diffs rather than full board state, keeping payloads small and updates efficient even on slower connections.
+
+      Each workspace supports multiple boards, and boards support customizable columns, color-coded labels, due dates with reminder notifications, assignees, and Markdown-formatted descriptions. A search and filter bar lets users quickly narrow down tasks by label, assignee, or keyword.
+
+      The backend follows a service-object pattern to keep controllers thin. Board state is stored in PostgreSQL with advisory locks to handle concurrent drag operations gracefully — if two users move the same card simultaneously, the server resolves the conflict deterministically and notifies both clients of the final state.
+
+      On the frontend, TanStack Query manages server state with automatic cache invalidation triggered by WebSocket events, so the app stays consistent without manual refetching. The UI is styled with Tailwind CSS and includes keyboard shortcuts for power users who prefer to manage tasks without reaching for the mouse.
+    DESC
     tech_stack: %w[React TypeScript Rails ActionCable PostgreSQL],
     url: "https://taskflow.example.com",
     github_url: "https://github.com/example/task-flow",
@@ -71,7 +102,17 @@ projects_data = [
     slug: "code-review-bot",
     name: "Code Review Bot",
     excerpt: "GitHub App providing automated code review using static analysis.",
-    description: "GitHub App that provides automated code review comments using static analysis. Integrates with CI pipelines to catch common issues before human review. Reduced review cycles by 30% on team projects.",
+    description: <<~'DESC'.strip,
+      A GitHub App that listens for pull request events and runs a suite of static analysis checks against the changed files, posting inline review comments directly on the relevant lines. The goal was to automate the tedious, mechanical parts of code review — style violations, common bug patterns, security anti-patterns — so that human reviewers can focus on architecture and logic.
+
+      The bot is built with Python and FastAPI, receiving GitHub webhook payloads and processing them asynchronously via a task queue. When a PR is opened or updated, the bot clones the repository at the target commit, runs a configurable set of linters and analyzers (including Ruff, Bandit, and custom AST-based rules), and maps findings back to the PR diff. Only issues on changed lines are reported, avoiding the noise of flagging pre-existing problems.
+
+      Configuration is handled through a `.codereviewbot.yml` file in the repository root, allowing teams to enable or disable specific checks, set severity thresholds, and define file-path exclusions. The bot respects `.gitignore` and supports monorepo setups with per-directory configs.
+
+      Results are posted as a single review with inline comments rather than individual comments, keeping notification noise low. A summary comment at the top provides an overview of findings grouped by severity. If no issues are found, the bot approves the PR with a brief confirmation message.
+
+      The entire application runs in a Docker container with health checks and structured JSON logging. In practice, the bot caught roughly 30% of issues that would have otherwise required a human review round-trip, measurably shortening the feedback loop on team projects.
+    DESC
     tech_stack: %w[Python FastAPI GitHub-API Docker],
     github_url: "https://github.com/example/code-review-bot",
     featured: false,
@@ -81,7 +122,17 @@ projects_data = [
     slug: "expense-tracker-cli",
     name: "Expense Tracker CLI",
     excerpt: "Command-line expense tracking with SQLite and beautiful terminal output.",
-    description: "Command-line expense tracking with SQLite storage and beautiful terminal output. Supports categories, recurring expenses, and monthly reports. Syncs to a simple REST API for backup.",
+    description: <<~'DESC'.strip,
+      A command-line expense tracker written in Rust, designed for developers who prefer to manage their finances without leaving the terminal. Expenses are stored locally in an embedded SQLite database, so the tool works offline and starts instantly with no server dependency.
+
+      Adding an expense is a single command: `expense add 42.50 --category groceries --note "Weekly shop"`. The CLI supports a rich set of subcommands for listing, filtering, editing, and deleting entries. Expenses can be tagged with categories, and the tool ships with sensible defaults (food, transport, housing, utilities, entertainment) that are fully customizable.
+
+      Recurring expenses — rent, subscriptions, bills — can be defined once and are automatically projected into future months. The `report` subcommand generates monthly and yearly breakdowns with colored bar charts and category-level summaries rendered directly in the terminal using Unicode block characters. Reports can be exported to CSV for use in spreadsheets.
+
+      An optional `sync` subcommand pushes the local database to a simple REST API for backup and cross-device access. The sync protocol is append-only and conflict-free — each expense carries a UUID and timestamp, and the server merges entries idempotently.
+
+      The project was an exercise in writing ergonomic CLI tools in Rust. It uses `clap` for argument parsing with shell completions, `rusqlite` for the storage layer, and `comfy-table` for formatted terminal output. The binary compiles to a single static executable under 5 MB with no runtime dependencies.
+    DESC
     tech_stack: %w[Rust SQLite REST],
     github_url: "https://github.com/example/expense-tracker",
     featured: false,
@@ -91,7 +142,17 @@ projects_data = [
     slug: "weather-dashboard",
     name: "Weather Dashboard",
     excerpt: "Minimal weather dashboard with geolocation and accessibility-first design.",
-    description: "Minimal weather dashboard aggregating data from multiple APIs. Features geolocation, 7-day forecasts, and severe weather alerts. Designed with accessibility in mind—fully keyboard navigable.",
+    description: <<~'DESC'.strip,
+      A minimal, fast-loading weather dashboard that aggregates data from the OpenWeather and Open-Meteo APIs into a single, clean interface. The app detects the user's location via the Geolocation API on first visit (with a manual city search fallback) and displays current conditions, hourly forecasts for the next 24 hours, and a 7-day outlook.
+
+      The frontend is built with Vue 3 using the Composition API and styled with Tailwind CSS. Weather conditions are represented with animated SVG icons that adapt to time of day — sunny skies at noon, a moonlit clear sky at midnight. Temperature, wind speed, and precipitation values update on a configurable polling interval without full page reloads.
+
+      Severe weather alerts from the National Weather Service API are displayed as a dismissible banner at the top of the page with appropriate urgency styling (yellow for watches, red for warnings). Alert data is fetched separately and cached for 15 minutes to stay within API rate limits.
+
+      Accessibility was a primary design goal. The entire dashboard is navigable via keyboard with clear focus indicators. All weather icons carry descriptive `aria-label` attributes, color contrasts meet WCAG AA standards, and a screen-reader-optimized summary is generated for each forecast card. A high-contrast toggle in the header switches to a simplified palette for users with low vision.
+
+      The app is deployed to Netlify as a static site with serverless functions proxying the weather API calls to keep API keys off the client. Build times are under 10 seconds, and the production bundle is under 80 KB gzipped — a deliberate constraint to keep the dashboard fast on any connection.
+    DESC
     tech_stack: %w[Vue.js Tailwind OpenWeatherAPI Netlify],
     url: "https://weather.example.com",
     featured: false,
@@ -102,6 +163,7 @@ projects_data = [
 projects = {}
 projects_data.each do |project_attrs|
   project = Project.create!(project_attrs)
+  attach_feature_image(project)
   projects[project_attrs[:slug]] = project
   puts "  Created project: #{project_attrs[:name]}"
 end
