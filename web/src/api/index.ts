@@ -70,3 +70,8 @@ export const createContact = async (payload: ContactPayload): Promise<void> => {
         throw await parseApiError(error);
     }
 };
+
+export const getContentVersion = async (): Promise<string> => {
+    const data = await api.get('version').json<{ version: string }>();
+    return data.version;
+};

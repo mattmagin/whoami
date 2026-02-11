@@ -18,7 +18,7 @@ const ContentCard = (props: ContentCardProps) => {
 
     const href = type === 'post' ? `/blog/${item.slug}` : `/projects/${item.slug}`
     const title = type === 'post' ? item.title : item.name
-    const description = type === 'post' ? item.excerpt : item.description
+    const description = item.excerpt
 
     const formattedDate =
         type === 'post' && item.publishedAt
@@ -29,7 +29,7 @@ const ContentCard = (props: ContentCardProps) => {
             })
             : null
 
-    const imageUrl = type === 'post' ? item.featureImageUrl : null
+    const imageUrl = type === 'post' ? item.featureImageUrl : item.imageUrl
     const tags = type === 'post' ? item.tags : null
     const readingTime = type === 'post' ? item.readingTime : null
 
@@ -42,10 +42,10 @@ const ContentCard = (props: ContentCardProps) => {
         <Card className={cn(
             "group border-border/50 transition-all hover:border-primary/30",
             type === 'post' && "gap-4 overflow-hidden",
-            type === 'post' && imageUrl && "pt-0",
+            imageUrl && "overflow-hidden pt-0",
             type === 'project' && "h-full",
         )}>
-            {/* Feature Image (posts) */}
+            {/* Feature Image */}
             {imageUrl && (
                 <AspectRatio ratio={16 / 9} className="overflow-hidden">
                     <img

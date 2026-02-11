@@ -8,7 +8,9 @@
 [ ] Add terminal mode ctrl+` opens terminal view. 
 
 
+[ ] Review the rails schema the might be some double handling going on for the posts / projects.....
 
 <!-- Are these good ideas? -->
 [ ] Redirect git.magin.tech to my github profile
 [ ] Redirect git.magin.tech/portfolio to github portfolio
+

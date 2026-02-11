@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   get "resume" => "resume#index"
+  get "version" => "version#show"
 
   # TODO: add CRUD routes for posts and projects
   

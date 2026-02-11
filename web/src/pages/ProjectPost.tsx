@@ -20,6 +20,7 @@ const ProjectPost = () => {
             title={project?.name ?? null}
             publishedAt={project?.publishedAt ?? null}
             markdownContent={project?.description ?? null}
+            featureImageUrl={project?.imageUrl}
             badges={
                 (project?.featured || (project?.techStack ?? []).length > 0) ? (
                     <Flex gap="sm" wrap>
