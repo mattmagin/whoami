@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import { ArrowLeft, Calendar } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Button, Separator, Text, Stack, Flex, Container } from '@/components/ui'
+import { Button, Separator, Text, Stack, Flex, Container, Skeleton } from '@/components/ui'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
 import ReadingProgress from '@/components/ReadingProgress'
-import LoadingSkeleton from '@/components/LoadingSkeleton'
 import ErrorState from '@/components/ErrorState'
 import { useContent } from '@/providers/ContentProvider'
 import { isApiError } from '@/api'
@@ -58,12 +58,28 @@ const Post = ({
     if (isLoading) {
         return (
             <Container size="sm" padding="lg">
-                <LoadingSkeleton variant="title" className="mb-8" />
-                <LoadingSkeleton variant="text" />
+                <Skeleton className="mb-8 h-10 w-1/2" />
+                <Stack gap="xs">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                    <Skeleton className="h-4 w-4/6" />
+                </Stack>
                 <Stack gap="sm" className="mt-10">
-                    <LoadingSkeleton variant="text" />
-                    <LoadingSkeleton variant="text" />
-                    <LoadingSkeleton variant="text" />
+                    <Stack gap="xs">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-5/6" />
+                        <Skeleton className="h-4 w-4/6" />
+                    </Stack>
+                    <Stack gap="xs">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-5/6" />
+                        <Skeleton className="h-4 w-4/6" />
+                    </Stack>
+                    <Stack gap="xs">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-5/6" />
+                        <Skeleton className="h-4 w-4/6" />
+                    </Stack>
                 </Stack>
             </Container>
         )
@@ -146,13 +162,13 @@ const Post = ({
 
                 {/* Feature Image */}
                 {featureImageUrl && (
-                    <div className="mb-10 overflow-hidden rounded-lg">
+                    <AspectRatio ratio={16 / 9} className="mb-10 overflow-hidden rounded-lg">
                         <img
                             src={featureImageUrl}
                             alt={title ?? ''}
-                            className="h-auto w-full object-cover"
+                            className="h-full w-full object-cover"
                         />
-                    </div>
+                    </AspectRatio>
                 )}
 
                 {/* Content */}

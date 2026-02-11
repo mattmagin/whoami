@@ -4,6 +4,9 @@ export { default as Input } from './Input'
 export { default as Textarea } from './Textarea'
 export { default as Label } from './Label'
 export { default as Separator } from './Separator'
+export { Card, CardHeader, CardFooter, CardTitle, CardAction, CardDescription, CardContent } from './card'
+export { AspectRatio } from './aspect-ratio'
+export { Skeleton } from './skeleton'
 export { default as Text } from './Text'
 
 // Layout components

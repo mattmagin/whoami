@@ -1,7 +1,6 @@
 import { usePosts } from '@/hooks/queries'
-import { Text, Stack, Container } from '@/components/ui'
-import PostCard from '@/components/PostCard'
-import LoadingSkeleton from '@/components/LoadingSkeleton'
+import { Text, Stack, Flex, Container, Skeleton } from '@/components/ui'
+import ContentCard from '@/components/ContentCard'
 import ErrorState from '@/components/ErrorState'
 import { AnimatedSection, AnimatedList, AnimatedListItem } from '@/components/AnimatedSection'
 import { useContent } from '@/providers/ContentProvider'
@@ -14,9 +13,25 @@ const Blog = () => {
   if (isLoading) {
     return (
       <Container size="md" padding="lg">
-        <LoadingSkeleton variant="title" className="mb-4" />
-        <LoadingSkeleton variant="text" className="mb-12" />
-        <LoadingSkeleton variant="card" count={3} />
+        <Skeleton className="mb-4 h-10 w-1/2" />
+        <Stack gap="xs" className="mb-12">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-4 w-4/6" />
+        </Stack>
+        <Stack gap="lg">
+          {Array.from({ length: 3 }, (_, i) => (
+            <Stack key={i} gap="md" className="rounded-lg border border-border p-6">
+              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-2/3" />
+              <Flex gap="xs">
+                <Skeleton className="h-5 w-16" />
+                <Skeleton className="h-5 w-16" />
+              </Flex>
+            </Stack>
+          ))}
+        </Stack>
       </Container>
     )
   }
@@ -55,7 +70,7 @@ const Blog = () => {
       <AnimatedList className="space-y-6">
         {sortedPosts.map((post) => (
           <AnimatedListItem key={post.slug}>
-            <PostCard post={post} />
+            <ContentCard type="post" item={post} />
           </AnimatedListItem>
         ))}
       </AnimatedList>
