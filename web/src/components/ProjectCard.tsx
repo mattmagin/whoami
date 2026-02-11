@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { ExternalLink, Github } from 'lucide-react'
 import Tilt from 'react-parallax-tilt'
 import { Badge, Button, Text } from '@/components/ui'
@@ -24,6 +25,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
       gyroscope={false}
       className="h-full"
     >
+      <Link to={`/projects/${project.slug}`} className="block h-full no-underline">
       <article className="group h-full rounded-lg border border-border/50 bg-card p-6 transition-all hover:border-primary/30 hover:shadow-sm">
         {/* Header */}
         <div className="mb-4">
@@ -52,7 +54,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
         </div>
 
         {/* Links */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
           {project.githubUrl && (
             <Button variant="outline" size="sm" asChild>
               <a
@@ -81,6 +83,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
           )}
         </div>
       </article>
+      </Link>
     </Tilt>
   )
 }

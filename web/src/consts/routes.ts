@@ -6,6 +6,7 @@ const ResumePage = React.lazy(() => import('@/pages/Resume'))
 const ProjectsPage = React.lazy(() => import('@/pages/Projects'))
 const BlogPage = React.lazy(() => import('@/pages/Blog'))
 const BlogPostPage = React.lazy(() => import('@/pages/BlogPost'))
+const ProjectPostPage = React.lazy(() => import('@/pages/ProjectPost'))
 const ContactPage = React.lazy(() => import('@/pages/Contact'))
 
 export const ROUTE = {
@@ -15,6 +16,7 @@ export const ROUTE = {
     BLOG: 'blog',
     CONTACT: 'contact',
     BLOG_POST: 'blog_post',
+    PROJECT_POST: 'project_post',
 } as const
 
 export type Route = typeof ROUTE[keyof typeof ROUTE]
@@ -39,6 +41,7 @@ export const ROUTE_DEFINITIONS: Record<Route, RouteDefinition> = {
     [ROUTE.BLOG]: { path: '/blog', labelKey: 'blog', icon: BookOpen, component: BlogPage, showInMainNavigation: true, shortcuts: ['b', '4'] },
     [ROUTE.CONTACT]: { path: '/contact', labelKey: 'contact', icon: Mail, component: ContactPage, showInMainNavigation: true, shortcuts: ['c', '5'] },
     [ROUTE.BLOG_POST]: { path: '/blog/:slug', labelKey: 'blog', component: BlogPostPage },
+    [ROUTE.PROJECT_POST]: { path: '/projects/:slug', labelKey: 'projects', component: ProjectPostPage },
 }
 
 /** Route keys that appear in the main navigation bar / command palette */
