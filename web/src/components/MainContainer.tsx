@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useLocation } from 'react-router-dom'
 import { Flex, Container } from '@/components/ui'
 import Header from './layout/Header'
 import Footer from './layout/Footer'
@@ -11,9 +12,14 @@ interface MainContainerProps {
 }
 
 const MainContainer = ({ children }: MainContainerProps) => {
+  const location = useLocation()
+  const isHome = location.pathname === '/'
+  const showHeader = !isHome
+  const showFooter = !isHome
+
   return (
     <Flex direction="col" className="min-h-screen">
-      <Header />
+      {showHeader && <Header />}
       <main className="flex-1">
         <ErrorBoundary
           fallback={(error, reset) => (
@@ -31,7 +37,7 @@ const MainContainer = ({ children }: MainContainerProps) => {
           {children}
         </ErrorBoundary>
       </main>
-      <Footer />
+      {showFooter && <Footer />}
     </Flex>
   )
 }
