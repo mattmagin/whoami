@@ -5,6 +5,7 @@ import {
     type ColorTheme,
     type ThemePreference,
 } from '@/consts'
+import useKeyBindings, { type KeyBinding } from '@/hooks/useKeyBindings'
 
 const colorEntries = Object.entries(COLOR_THEME_DEFINITIONS) as [ColorTheme, (typeof COLOR_THEME_DEFINITIONS)[ColorTheme]][]
 const colorKeys = colorEntries.map(([key]) => key)
@@ -90,12 +91,8 @@ const useThemePreview = ({
     }, [open])
 
     // L/R arrow keys to cycle color/theme when their respective items are selected
-    useEffect(() => {
-        if (!open) return
-
-        const handler = (e: KeyboardEvent) => {
-            if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
-
+    const handleArrowCycle = useCallback(
+        (e: KeyboardEvent) => {
             const isAppearance = appearanceRef.current?.getAttribute('aria-selected') === 'true'
             const isTheme = themeRef.current?.getAttribute('aria-selected') === 'true'
 
@@ -104,26 +101,31 @@ const useThemePreview = ({
             e.preventDefault()
             e.stopPropagation()
 
+            const direction = e.key === 'ArrowRight' ? 1 : -1
+
             if (isAppearance) {
                 const idx = colorKeys.indexOf(colorTheme)
-                const next = e.key === 'ArrowRight'
-                    ? colorKeys[(idx + 1) % colorKeys.length]
-                    : colorKeys[(idx - 1 + colorKeys.length) % colorKeys.length]
+                const next = colorKeys[(idx + direction + colorKeys.length) % colorKeys.length]
                 setColorTheme(next)
             }
 
             if (isTheme) {
                 const idx = themePreferenceKeys.indexOf(preference)
-                const next = e.key === 'ArrowRight'
-                    ? themePreferenceKeys[(idx + 1) % themePreferenceKeys.length]
-                    : themePreferenceKeys[(idx - 1 + themePreferenceKeys.length) % themePreferenceKeys.length]
+                const next = themePreferenceKeys[(idx + direction + themePreferenceKeys.length) % themePreferenceKeys.length]
                 setTheme(next)
             }
-        }
+        },
+        [colorTheme, setColorTheme, preference, setTheme, appearanceRef, themeRef],
+    )
 
-        document.addEventListener('keydown', handler)
-        return () => document.removeEventListener('keydown', handler)
-    }, [open, colorTheme, setColorTheme, preference, setTheme, appearanceRef, themeRef])
+    const arrowBindings: KeyBinding[] = open
+        ? [
+            { keys: ['ArrowLeft'], callback: handleArrowCycle, allowInInputs: true },
+            { keys: ['ArrowRight'], callback: handleArrowCycle, allowInInputs: true },
+        ]
+        : []
+
+    useKeyBindings(arrowBindings)
 
     // Preview color/theme when navigating search-only items.
     // Only *applies* previews — reverting is handled solely by the open/close effect.

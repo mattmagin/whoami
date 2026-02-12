@@ -55,8 +55,6 @@
     "projects": {
         "title": "Projects",
         "description": "A collection of personal projects, open-source contributions, and experiments.",
-        "featuredSection": "Featured",
-        "otherSection": "Other Projects",
         "emptyState": "No projects yet. Check back soon!"
     },
     "contact": {
@@ -113,6 +111,11 @@
         "keyboardHint": "Press",
         "keyboardShortcut": "⌘K",
         "keyboardHintSuffix": "for quick nav"
+    },
+    "keyboardGuide": {
+        "navigate": "navigate",
+        "select": "select",
+        "commandPalette": "command palette"
     },
     "footer": {
         "yourName": "Your Name"

@@ -24,3 +24,8 @@ export {
 export {
     useCreateContact,
 } from './mutations'
+
+export {
+    default as useKeyBindings,
+    type KeyBinding,
+} from './useKeyBindings'

@@ -1,12 +1,22 @@
 import { Text, Stack } from '@/components/ui'
+import { Kbd } from '@/components/ui/kbd'
 import TerminalCard from '@/components/TerminalCard'
 import TypewriterText from '@/components/TypewriterText'
 import { useContent } from '@/providers/ContentProvider'
 import { useResume } from '@/hooks/queries'
 
+const isMac = typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.platform)
+const modKey = isMac ? '⌘' : 'Ctrl'
+
 const HeroSection = () => {
-    const { home } = useContent()
+    const { home, keyboardGuide } = useContent()
     const { data: resume } = useResume()
+
+    const shortcuts = [
+        { keys: ['j', 'k'], label: keyboardGuide.navigate },
+        { keys: ['l'], label: keyboardGuide.select },
+        { keys: [`${modKey}+K`], label: keyboardGuide.commandPalette },
+    ]
 
     return (
         <Stack as="section" gap="md">
@@ -25,6 +35,23 @@ const HeroSection = () => {
 
             {/* Terminal mock with SSH command */}
             <TerminalCard className="mt-8 animate-slide-up-delay-3" />
+
+            {/* Keyboard shortcut guide */}
+            <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-2 max-w-sm animate-slide-up-delay-3">
+                {shortcuts.map(({ keys, label }) => (
+                    <div key={label} className="flex items-center gap-2">
+                        <span className="flex items-center gap-1">
+                            {keys.map((k, i) => (
+                                <span key={k} className="flex items-center gap-1">
+                                    {i > 0 && <span className="text-muted-foreground/40 text-xs">/</span>}
+                                    <Kbd>{k}</Kbd>
+                                </span>
+                            ))}
+                        </span>
+                        <span className="text-xs text-muted-foreground">{label}</span>
+                    </div>
+                ))}
+            </div>
         </Stack>
     )
 }

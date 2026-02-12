@@ -35,11 +35,11 @@ export interface RouteDefinition {
 }
 
 export const ROUTE_DEFINITIONS: Record<Route, RouteDefinition> = {
-    [ROUTE.HOME]: { path: '/', labelKey: 'home', icon: Home, component: HomePage, showInMainNavigation: true, shortcuts: ['h', '1'] },
-    [ROUTE.RESUME]: { path: '/resume', labelKey: 'resume', icon: FileText, component: ResumePage, showInMainNavigation: true, shortcuts: ['r', '2'] },
-    [ROUTE.PROJECTS]: { path: '/projects', labelKey: 'projects', icon: FolderKanban, component: ProjectsPage, showInMainNavigation: true, shortcuts: ['p', '3'] },
-    [ROUTE.BLOG]: { path: '/blog', labelKey: 'blog', icon: BookOpen, component: BlogPage, showInMainNavigation: true, shortcuts: ['b', '4'] },
-    [ROUTE.CONTACT]: { path: '/contact', labelKey: 'contact', icon: Mail, component: ContactPage, showInMainNavigation: true, shortcuts: ['c', '5'] },
+    [ROUTE.HOME]: { path: '/', labelKey: 'home', icon: Home, component: HomePage, showInMainNavigation: true, shortcuts: ['0'] },
+    [ROUTE.RESUME]: { path: '/resume', labelKey: 'resume', icon: FileText, component: ResumePage, showInMainNavigation: true, shortcuts: ['1'] },
+    [ROUTE.PROJECTS]: { path: '/projects', labelKey: 'projects', icon: FolderKanban, component: ProjectsPage, showInMainNavigation: true, shortcuts: ['2'] },
+    [ROUTE.BLOG]: { path: '/blog', labelKey: 'blog', icon: BookOpen, component: BlogPage, showInMainNavigation: true, shortcuts: ['3'] },
+    [ROUTE.CONTACT]: { path: '/contact', labelKey: 'contact', icon: Mail, component: ContactPage, showInMainNavigation: true, shortcuts: ['4'] },
     [ROUTE.BLOG_POST]: { path: '/blog/:slug', labelKey: 'blog', component: BlogPostPage },
     [ROUTE.PROJECT_POST]: { path: '/projects/:slug', labelKey: 'projects', component: ProjectPostPage },
 }

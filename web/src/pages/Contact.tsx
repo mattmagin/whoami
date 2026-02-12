@@ -1,16 +1,16 @@
 import { Mail, MapPin, Github, Linkedin, Terminal } from 'lucide-react'
-import { Separator, Text, Stack, Flex, Grid, Container } from '@/components/ui'
+import { ScrollArea, Separator, Text, Stack, Flex, Grid } from '@/components/ui'
 import CopyButton from '@/components/CopyButton'
 import ContactForm from '@/components/ContactForm'
 import { useResume } from '@/hooks/queries'
 import { useContent } from '@/providers/ContentProvider'
 
 const Contact = () => {
-  const { common, contact } = useContent()
+  const { common, contact } = useContent()!
   const { data: resume } = useResume()
 
   return (
-    <Container size="md" padding="lg">
+    <ScrollArea className="h-full">
       {/* Header */}
       <Stack as="header" gap="sm" className="mb-12">
         <Text variant="pageTitle">
@@ -135,7 +135,7 @@ const Contact = () => {
           </Stack>
         </Stack>
       </Grid>
-    </Container>
+    </ScrollArea>
   )
 }
 
