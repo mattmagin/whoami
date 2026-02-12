@@ -1,4 +1,4 @@
-import { Toaster } from 'sonner'
+import { Toaster } from '@/components/ui/sonner'
 import { MainContainer } from '@/components'
 import CommandPalette from '@/components/CommandPalette'
 import ErrorBoundary from '@/components/ErrorBoundary'

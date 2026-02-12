@@ -2,6 +2,7 @@ import { useState, useRef, type FormEvent, type ChangeEvent } from 'react'
 import { Send, CheckCircle, AlertCircle } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import { Button, Input, Label, Textarea, Text, Stack, Flex, Grid } from '@/components/ui'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useContent } from '@/providers/ContentProvider'
 import { useCreateContact } from '@/hooks'
 
@@ -227,10 +228,10 @@ const ContactForm = () => {
       </Stack>
 
       {serverError && (
-        <Flex align="center" gap="sm" className="rounded-md border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-          <AlertCircle className="h-4 w-4 shrink-0" />
-          <span>{serverError}</span>
-        </Flex>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{serverError}</AlertDescription>
+        </Alert>
       )}
 
       <Button

@@ -1,9 +1,18 @@
 import { useState, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Command } from 'cmdk'
+import { Command as CommandPrimitive } from 'cmdk'
 import { useCopyToClipboard } from 'usehooks-ts'
 import { toast } from 'sonner'
 import { Search } from 'lucide-react'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from '@/components/ui/dialog'
+import { Command, CommandList, CommandEmpty, CommandGroup } from '@/components/ui/command'
+import { Kbd } from '@/components/ui/kbd'
 import { useThemeContext } from '@/providers/ThemeProvider'
 import { useContent } from '@/providers/ContentProvider'
 import { STORAGE_KEYS } from '@/consts'
@@ -15,8 +24,6 @@ import ActionsGroup from './ActionsGroup'
 import ThemePickerItem from './ThemePickerItem'
 import ColorPickerItem from './ColorPickerItem'
 import SearchResults from './SearchResults'
-
-const ITEM_CLASS = 'flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-accent aria-selected:bg-accent'
 
 const CommandPalette = () => {
     const [open, setOpen] = useState(false)
@@ -72,103 +79,90 @@ const CommandPalette = () => {
     }, [])
 
     return (
-        <Command.Dialog
-            open={open}
-            onOpenChange={handleOpenChange}
-            value={highlightedValue}
-            onValueChange={setHighlightedValue}
-            label="Command Menu"
-            className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh]"
-        >
-            {/* Backdrop */}
-            <div
-                className="fixed inset-0 bg-background/80 backdrop-blur-sm"
-                onClick={() => setOpen(false)}
-            />
+        <Dialog open={open} onOpenChange={handleOpenChange}>
+            <DialogContent className="overflow-hidden p-0" showCloseButton={false}>
+                <DialogHeader className="sr-only">
+                    <DialogTitle>Command Menu</DialogTitle>
+                    <DialogDescription>{cp.placeholder}</DialogDescription>
+                </DialogHeader>
+                <Command
+                    value={highlightedValue}
+                    onValueChange={setHighlightedValue}
+                    className="[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0"
+                >
+                    {/* Search Input */}
+                    <div className="flex items-center gap-2 border-b px-3">
+                        <Search className="size-4 shrink-0 opacity-50" />
+                        <CommandPrimitive.Input
+                            value={search}
+                            onValueChange={(v) => setSearch(v.trimStart())}
+                            placeholder={cp.placeholder}
+                            className="flex h-12 w-full bg-transparent py-3 text-sm outline-hidden placeholder:text-muted-foreground"
+                        />
+                        <Kbd className="hidden sm:inline-flex">ESC</Kbd>
+                    </div>
 
-            {/* Dialog */}
-            <div className="relative z-50 w-full max-w-lg overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
-                {/* Search Input */}
-                <div className="flex items-center border-b border-border px-4">
-                    <Search className="h-4 w-4 text-muted-foreground" />
-                    <Command.Input
-                        value={search}
-                        onValueChange={(v) => setSearch(v.trimStart())}
-                        placeholder={cp.placeholder}
-                        className="flex-1 bg-transparent py-4 px-3 text-sm outline-none placeholder:text-muted-foreground"
-                    />
-                    <kbd className="hidden rounded bg-muted px-2 py-1 text-xs font-mono text-muted-foreground sm:inline-block">
-                        ESC
-                    </kbd>
-                </div>
+                    {/* Results */}
+                    <CommandList className="max-h-[28rem]">
+                        <CommandEmpty>{cp.noResults}</CommandEmpty>
 
-                {/* Results */}
-                <Command.List className="max-h-[28rem] overflow-y-auto p-2">
-                    <Command.Empty className="py-6 text-center text-sm text-muted-foreground">
-                        {cp.noResults}
-                    </Command.Empty>
-
-                    <NavigationGroup
-                        heading={cp.navigation}
-                        nav={nav}
-                        itemClass={ITEM_CLASS}
-                        onSelect={(path) => runCommand(() => navigate(path))}
-                    />
-
-                    <Command.Group heading={cp.actions} className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                        <ActionsGroup
-                            sshCommand={common.sshCommand}
-                            copySshLabel={cp.copySshCommand}
-                            boringModeLabel={cp.boringMode}
-                            boringMode={boringMode}
-                            itemClass={ITEM_CLASS}
-                            onCopySsh={() => runCommand(() => {
-                                copy(common.sshCommand)
-                                toast(cp.copiedToClipboard)
-                            })}
-                            onToggleBoring={handleToggleBoring}
+                        <NavigationGroup
+                            heading={cp.navigation}
+                            nav={nav}
+                            onSelect={(path) => runCommand(() => navigate(path))}
                         />
 
-                        <ThemePickerItem
-                            ref={themeRef}
-                            preference={preference}
-                            itemClass={ITEM_CLASS}
-                            onSelect={() => { commitTheme(); setOpen(false); setSearch('') }}
-                            onPick={(value) => { commitTheme(); setTheme(value) }}
-                        />
+                        <CommandGroup heading={cp.actions}>
+                            <ActionsGroup
+                                sshCommand={common.sshCommand}
+                                copySshLabel={cp.copySshCommand}
+                                boringModeLabel={cp.boringMode}
+                                boringMode={boringMode}
+                                onCopySsh={() => runCommand(() => {
+                                    copy(common.sshCommand)
+                                    toast(cp.copiedToClipboard)
+                                })}
+                                onToggleBoring={handleToggleBoring}
+                            />
 
-                        <ColorPickerItem
-                            ref={appearanceRef}
-                            colorTheme={colorTheme}
-                            appearanceLabel={cp.appearance}
-                            itemClass={ITEM_CLASS}
-                            onSelect={() => { commitColor(); setOpen(false); setSearch('') }}
-                            onPick={(key) => { commitColor(); setColorTheme(key) }}
-                        />
-                    </Command.Group>
+                            <ThemePickerItem
+                                ref={themeRef}
+                                preference={preference}
+                                onSelect={() => { commitTheme(); setOpen(false); setSearch('') }}
+                                onPick={(value) => { commitTheme(); setTheme(value) }}
+                            />
 
-                    {/* Search-only items — visible only when user is searching */}
-                    {search && (
-                        <SearchResults
-                            colorThemeHeading={cp.colorTheme}
-                            colorTheme={colorTheme}
-                            preference={preference}
-                            itemClass={ITEM_CLASS}
-                            onSelectColor={(key) => { commitColor(); runCommand(() => setColorTheme(key)) }}
-                            onSelectTheme={(value) => { commitTheme(); runCommand(() => setTheme(value)) }}
-                        />
-                    )}
-                </Command.List>
+                            <ColorPickerItem
+                                ref={appearanceRef}
+                                colorTheme={colorTheme}
+                                appearanceLabel={cp.appearance}
+                                onSelect={() => { commitColor(); setOpen(false); setSearch('') }}
+                                onPick={(key) => { commitColor(); setColorTheme(key) }}
+                            />
+                        </CommandGroup>
 
-                {/* Footer */}
-                <div className="flex items-center justify-between border-t border-border px-4 py-2 text-xs text-muted-foreground">
-                    <span>{cp.navigateHint}</span>
-                    <span>
-                        <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono">↵</kbd> {cp.selectHint}
-                    </span>
-                </div>
-            </div>
-        </Command.Dialog>
+                        {/* Search-only items — visible only when user is searching */}
+                        {search && (
+                            <SearchResults
+                                colorThemeHeading={cp.colorTheme}
+                                colorTheme={colorTheme}
+                                preference={preference}
+                                onSelectColor={(key) => { commitColor(); runCommand(() => setColorTheme(key)) }}
+                                onSelectTheme={(value) => { commitTheme(); runCommand(() => setTheme(value)) }}
+                            />
+                        )}
+                    </CommandList>
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between border-t border-border px-4 py-2 text-xs text-muted-foreground">
+                        <span>{cp.navigateHint}</span>
+                        <span>
+                            <Kbd>↵</Kbd> {cp.selectHint}
+                        </span>
+                    </div>
+                </Command>
+            </DialogContent>
+        </Dialog>
     )
 }
 

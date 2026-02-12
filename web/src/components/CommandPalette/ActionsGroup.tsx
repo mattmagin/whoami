@@ -1,42 +1,38 @@
-import { Command } from 'cmdk'
 import { Terminal, Zap, ZapOff } from 'lucide-react'
+import { CommandItem } from '@/components/ui/command'
 
 interface ActionsGroupProps {
   sshCommand: string
   copySshLabel: string
   boringModeLabel: string
   boringMode: boolean
-  itemClass: string
   onCopySsh: () => void
   onToggleBoring: () => void
 }
 
-/** SSH copy and boring-mode toggle items (rendered inside a parent Command.Group) */
+/** SSH copy and boring-mode toggle items (rendered inside a parent CommandGroup) */
 const ActionsGroup = ({
   sshCommand,
   copySshLabel,
   boringModeLabel,
   boringMode,
-  itemClass,
   onCopySsh,
   onToggleBoring,
 }: ActionsGroupProps) => (
   <>
-    <Command.Item
+    <CommandItem
       value="copy ssh command terminal"
       onSelect={onCopySsh}
-      className={itemClass}
     >
       <Terminal className="h-4 w-4" />
       {copySshLabel}
       <span className="ml-auto font-mono text-xs text-muted-foreground">
         {sshCommand}
       </span>
-    </Command.Item>
-    <Command.Item
+    </CommandItem>
+    <CommandItem
       value="toggle boring mode animations"
       onSelect={onToggleBoring}
-      className={itemClass}
     >
       {boringMode ? (
         <ZapOff className="h-4 w-4" />
@@ -47,7 +43,7 @@ const ActionsGroup = ({
       <span className="ml-auto text-xs text-muted-foreground">
         {boringMode ? 'On' : 'Off'}
       </span>
-    </Command.Item>
+    </CommandItem>
   </>
 )
 

@@ -2,6 +2,7 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { queryClient, persistOptions, checkContentVersion } from '@/lib/queryClient'
 import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from '@/providers/ThemeProvider'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import ContentProvider from '@/providers/ContentProvider'
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
@@ -12,11 +13,13 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
             onSuccess={checkContentVersion}
         >
             <ThemeProvider>
-                <BrowserRouter>
-                    <ContentProvider>
-                        {children}
-                    </ContentProvider>
-                </BrowserRouter>
+                <TooltipProvider>
+                    <BrowserRouter>
+                        <ContentProvider>
+                            {children}
+                        </ContentProvider>
+                    </BrowserRouter>
+                </TooltipProvider>
             </ThemeProvider>
         </PersistQueryClientProvider>
     )

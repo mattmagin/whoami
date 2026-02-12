@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { Button, Text, Stack, Flex } from '@/components/ui'
+import { Kbd, KbdGroup } from '@/components/ui/kbd'
 import SshCommand from '@/components/SshCommand'
 import TypewriterText from '@/components/TypewriterText'
 import { useContent } from '@/providers/ContentProvider'
@@ -24,7 +25,7 @@ const HeroSection = () => {
                 {home.greeting}
             </p>
             <Text variant="pageTitle" className="animate-slide-up">
-                {resume?.name}
+                {resume?.name.split(" ")[0]}
             </Text>
             <div className="h-8 text-xl text-primary md:text-2xl animate-slide-up-delay-1">
                 <TypewriterText />
@@ -49,7 +50,7 @@ const HeroSection = () => {
 
             {/* Command palette hint */}
             <p className="text-xs text-muted-foreground animate-slide-up-delay-3">
-                Press <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[11px]">{modKey}+K</kbd> for quick navigation
+                Press <KbdGroup><Kbd>{modKey}</Kbd><Kbd>K</Kbd></KbdGroup> for quick navigation
             </p>
         </Stack>
     )

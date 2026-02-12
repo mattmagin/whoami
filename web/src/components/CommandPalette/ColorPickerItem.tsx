@@ -1,6 +1,6 @@
 import { forwardRef } from 'react'
-import { Command } from 'cmdk'
 import { Palette } from 'lucide-react'
+import { CommandItem } from '@/components/ui/command'
 import { COLOR_THEME_DEFINITIONS, type ColorTheme } from '@/consts'
 
 const colorEntries = Object.entries(COLOR_THEME_DEFINITIONS) as [ColorTheme, (typeof COLOR_THEME_DEFINITIONS)[ColorTheme]][]
@@ -8,21 +8,20 @@ const colorEntries = Object.entries(COLOR_THEME_DEFINITIONS) as [ColorTheme, (ty
 interface ColorPickerItemProps {
   colorTheme: ColorTheme
   appearanceLabel: string
-  itemClass: string
   onSelect: () => void
   onPick: (key: ColorTheme) => void
 }
 
 const ColorPickerItem = forwardRef<HTMLDivElement, ColorPickerItemProps>(
-  ({ colorTheme, appearanceLabel, itemClass, onSelect, onPick }, ref) => {
+  ({ colorTheme, appearanceLabel, onSelect, onPick }, ref) => {
     const currentColorDef = COLOR_THEME_DEFINITIONS[colorTheme]
 
     return (
-      <Command.Item
+      <CommandItem
         ref={ref}
         value="appearance accent color theme palette"
         onSelect={onSelect}
-        className={`group ${itemClass}`}
+        className="group"
       >
         <Palette className="h-4 w-4" />
         {appearanceLabel}
@@ -51,7 +50,7 @@ const ColorPickerItem = forwardRef<HTMLDivElement, ColorPickerItemProps>(
             />
           ))}
         </span>
-      </Command.Item>
+      </CommandItem>
     )
   },
 )

@@ -1,26 +1,25 @@
 import { forwardRef } from 'react'
-import { Command } from 'cmdk'
+import { CommandItem } from '@/components/ui/command'
 import { THEME_OPTIONS, type ThemePreference } from '@/consts'
 
 interface ThemePickerItemProps {
     preference: ThemePreference
-    itemClass: string
     onSelect: () => void
     onPick: (value: ThemePreference) => void
 }
 
 const ThemePickerItem = forwardRef<HTMLDivElement, ThemePickerItemProps>(
-    ({ preference, itemClass, onSelect, onPick }, ref) => {
+    ({ preference, onSelect, onPick }, ref) => {
         const currentOpt = THEME_OPTIONS.find((o) => o.value === preference)
         const CurrentIcon = currentOpt?.icon
         const currentLabel = currentOpt?.label ?? 'System'
 
         return (
-            <Command.Item
+            <CommandItem
                 ref={ref}
                 value="toggle theme dark light system mode"
                 onSelect={onSelect}
-                className={`group ${itemClass}`}
+                className="group"
             >
                 {CurrentIcon && <CurrentIcon className="h-4 w-4" />}
                 Theme
@@ -51,7 +50,7 @@ const ThemePickerItem = forwardRef<HTMLDivElement, ThemePickerItemProps>(
                         </button>
                     ))}
                 </span>
-            </Command.Item>
+            </CommandItem>
         )
     },
 )

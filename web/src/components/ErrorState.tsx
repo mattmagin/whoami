@@ -2,6 +2,7 @@ import { useMemo, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { AlertCircle, RefreshCw, RotateCcw } from 'lucide-react'
 import { Button, Text, Stack, Badge } from '@/components/ui'
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
 import { ERROR_TYPE, ERROR_DEFINITIONS, type ErrorType } from '@/consts'
 
 const pickRandom = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)]
@@ -162,19 +163,23 @@ const ErrorState = ({
 
         {/* Detail */}
         {detail && (
-          <motion.details
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 0.3 }}
             className="w-full max-w-md text-left"
           >
-            <summary className="cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors">
-              Details
-            </summary>
-            <pre className="mt-2 overflow-auto rounded-md bg-muted p-3 font-mono text-xs text-muted-foreground">
-              {detail}
-            </pre>
-          </motion.details>
+            <Collapsible>
+              <CollapsibleTrigger className="cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors">
+                Details
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <pre className="mt-2 overflow-auto rounded-md bg-muted p-3 font-mono text-xs text-muted-foreground">
+                  {detail}
+                </pre>
+              </CollapsibleContent>
+            </Collapsible>
+          </motion.div>
         )}
 
         {/* Actions */}
