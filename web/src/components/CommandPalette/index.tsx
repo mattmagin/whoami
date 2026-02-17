@@ -50,7 +50,7 @@ const CommandPalette = () => {
     // Global keyboard shortcuts
     useCommandPaletteKeys(open, setOpen, navigate)
 
-    // Theme/color preview, revert, cycling, commit
+    // Theme/color preview, revert, commit
     const { commitColor, commitTheme } = useThemePreview({
         open,
         search,
@@ -59,8 +59,6 @@ const CommandPalette = () => {
         colorTheme,
         setTheme,
         setColorTheme,
-        appearanceRef,
-        themeRef,
     })
 
     /** Close palette, clear search, then run the command */

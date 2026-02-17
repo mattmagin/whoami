@@ -37,6 +37,8 @@
         "viewAllPosts": "View All Posts"
     },
     "resume": {
+        "title": "Resume",
+        "description": "Experience, skills, and education.",
         "downloadPdf": "Download PDF"
     },
     "blog": {
@@ -107,15 +109,10 @@
     "tuiEntry": {
         "prompt": ">",
         "buttonText": "enter terminal mode",
-        "hoverHint": "Try the TUI experience!",
+        "hoverHint": "Try the TUI experience! Click to copy command to clipboard.",
         "keyboardHint": "Press",
         "keyboardShortcut": "⌘K",
         "keyboardHintSuffix": "for quick nav"
-    },
-    "keyboardGuide": {
-        "navigate": "navigate",
-        "select": "select",
-        "commandPalette": "command palette"
     },
     "footer": {
         "yourName": "Your Name"

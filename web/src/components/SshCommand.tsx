@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Terminal } from 'lucide-react'
 import { useCopyToClipboard } from 'usehooks-ts'
 import { Flex } from '@/components/ui'
@@ -15,9 +16,14 @@ interface SshCommandProps {
 const SshCommand = ({ showHint = false, showTooltip = false, className }: SshCommandProps) => {
     const { common, home, tuiEntry } = useContent()
     const [, copy] = useCopyToClipboard()
+    const [copied, setCopied] = useState(false)
 
-    const handleCopy = () => {
-        copy(common.sshCommand)
+    const handleCopy = async () => {
+        const success = await copy(common.sshCommand)
+        if (success) {
+            setCopied(true)
+            setTimeout(() => setCopied(false), 2000)
+        }
     }
 
     const commandBar = (
@@ -29,7 +35,7 @@ const SshCommand = ({ showHint = false, showTooltip = false, className }: SshCom
         >
             <Terminal className="h-4 w-4" />
             <span>{showHint ? `${home.sshHint} ` : ''}{common.sshCommand}</span>
-            <CopyButton text={common.sshCommand} className="h-8 w-8" />
+            <CopyButton text={common.sshCommand} copied={copied} onCopy={handleCopy} className="h-8 w-8" />
         </Flex>
     )
 

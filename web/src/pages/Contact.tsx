@@ -11,16 +11,6 @@ const Contact = () => {
 
   return (
     <ScrollArea className="h-full">
-      {/* Header */}
-      <Stack as="header" gap="sm" className="mb-12">
-        <Text variant="pageTitle">
-          {contact.title}
-        </Text>
-        <Text variant="body">
-          {contact.description}
-        </Text>
-      </Stack>
-
       <Grid cols={{ base: 1, lg: 2 }} gap="xl">
         {/* Contact Form */}
         <Stack as="section" gap="lg">

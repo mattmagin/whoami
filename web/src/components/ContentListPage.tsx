@@ -1,21 +1,15 @@
-import { useCallback, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { UseQueryResult } from '@tanstack/react-query'
 import { Text, Stack, Flex, Skeleton, ScrollArea } from '@/components/ui'
 import ListEntry from '@/components/ListEntry'
 import ErrorState from '@/components/ErrorState'
-import { AnimatedSection, AnimatedList, AnimatedListItem } from '@/components/AnimatedSection'
-import useKeyBindings, { type KeyBinding } from '@/hooks/useKeyBindings'
+import { AnimatedList, AnimatedListItem } from '@/components/AnimatedSection'
 import { isApiError } from '@/api'
 import type { Post, Project } from '@/types'
 
 type ContentItem = Post | Project
 
 interface ContentListPageProps<T extends ContentItem> {
-    /** Page title */
-    title: string
-    /** Page description */
-    description: string
     /** Empty state message */
     emptyState: string
     /** TanStack Query result for the list */
@@ -29,8 +23,6 @@ interface ContentListPageProps<T extends ContentItem> {
 }
 
 const ContentListPage = <T extends ContentItem>({
-    title,
-    description,
     emptyState,
     query,
     sort,
@@ -39,45 +31,9 @@ const ContentListPage = <T extends ContentItem>({
 }: ContentListPageProps<T>) => {
     const { data, isLoading, error, refetch } = query
     const navigate = useNavigate()
-    const [activeIndex, setActiveIndex] = useState(-1)
-    const itemRefs = useRef<(HTMLElement | null)[]>([])
 
     const sorted = [...(data ?? [])].sort(sort)
     const count = sorted.length
-
-    const activateAndScroll = useCallback((index: number) => {
-        setActiveIndex(index)
-        itemRefs.current[index]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
-    }, [])
-
-    const activateNext = () => {
-        const next = activeIndex < 0 ? 0 : (activeIndex + 1) % count
-        activateAndScroll(next)
-    }
-    const activatePrev = () => {
-        const prev = activeIndex < 0 ? count - 1 : (activeIndex - 1 + count) % count
-        activateAndScroll(prev)
-    }
-    const selectActive = () => {
-        if (activeIndex >= 0 && activeIndex < count) {
-            const item = sorted[activeIndex]
-            if (item) navigate(getHref(item))
-        }
-    }
-
-    const bindings: KeyBinding[] = count > 0
-        ? [
-            { keys: ['ArrowDown'], callback: activateNext, preventDefault: true },
-            { keys: ['j'], callback: activateNext, preventDefault: true },
-            { keys: ['ArrowUp'], callback: activatePrev, preventDefault: true },
-            { keys: ['k'], callback: activatePrev, preventDefault: true },
-            { keys: ['Enter'], callback: selectActive },
-            { keys: ['ArrowRight'], callback: selectActive },
-            { keys: ['l'], callback: selectActive },
-        ]
-        : []
-
-    useKeyBindings(bindings)
 
     if (isLoading) {
         return (
@@ -116,27 +72,14 @@ const ContentListPage = <T extends ContentItem>({
 
     return (
         <div className="flex h-full flex-col">
-            {/* Fixed header */}
-            <div className="shrink-0 pb-6">
-                <AnimatedSection>
-                    <Stack as="header" gap="sm">
-                        <Text variant="pageTitle">{title}</Text>
-                        <Text variant="body">{description}</Text>
-                    </Stack>
-                </AnimatedSection>
-            </div>
-
             {/* Scrollable list */}
             <div className="flex-1 min-h-0">
                 <ScrollArea className="h-full">
                     <AnimatedList className="flex flex-col gap-2">
-                        {sorted.map((item, index) => (
+                        {sorted.map((item) => (
                             <AnimatedListItem key={item.slug}>
                                 <ListEntry
-                                    ref={(el) => { itemRefs.current[index] = el }}
                                     {...getEntryProps(item)}
-                                    active={activeIndex === index}
-                                    onActivate={() => setActiveIndex(index)}
                                 />
                             </AnimatedListItem>
                         ))}

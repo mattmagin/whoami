@@ -9,8 +9,6 @@ const Blog = () => {
 
   return (
     <ContentListPage<Post>
-      title={blog.title}
-      description={blog.description}
       emptyState={blog.emptyState}
       query={query}
       sort={(a, b) => new Date(b.publishedAt ?? 0).getTime() - new Date(a.publishedAt ?? 0).getTime()}

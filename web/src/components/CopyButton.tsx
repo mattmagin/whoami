@@ -6,17 +6,27 @@ import { Button } from '@/components/ui'
 interface CopyButtonProps {
   text: string
   className?: string
+  /** When provided, the parent controls the copied state and handles the copy action. */
+  copied?: boolean
+  onCopy?: () => void
 }
 
-const CopyButton = ({ text, className }: CopyButtonProps) => {
+const CopyButton = ({ text, className, copied: externalCopied, onCopy }: CopyButtonProps) => {
   const [, copy] = useCopyToClipboard()
-  const [copied, setCopied] = useState(false)
+  const [internalCopied, setInternalCopied] = useState(false)
 
-  async function handleCopy() {
-    const success = await copy(text)
-    if (success) {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+  const copied = externalCopied ?? internalCopied
+
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (onCopy) {
+      onCopy()
+    } else {
+      const success = await copy(text)
+      if (success) {
+        setInternalCopied(true)
+        setTimeout(() => setInternalCopied(false), 2000)
+      }
     }
   }
 

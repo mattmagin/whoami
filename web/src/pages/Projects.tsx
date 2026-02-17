@@ -9,8 +9,6 @@ const Projects = () => {
 
   return (
     <ContentListPage<Project>
-      title={projectsStrings.title}
-      description={projectsStrings.description}
       emptyState={projectsStrings.emptyState}
       query={query}
       sort={(a, b) => (a.name ?? '').localeCompare(b.name ?? '')}

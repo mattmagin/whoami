@@ -1,15 +1,12 @@
-import { useEffect, useMemo, useCallback, useRef, type RefObject } from 'react'
+import { useEffect, useMemo, useCallback, useRef } from 'react'
 import {
     THEME_OPTIONS,
     COLOR_THEME_DEFINITIONS,
     type ColorTheme,
     type ThemePreference,
 } from '@/consts'
-import useKeyBindings, { type KeyBinding } from '@/hooks/useKeyBindings'
 
 const colorEntries = Object.entries(COLOR_THEME_DEFINITIONS) as [ColorTheme, (typeof COLOR_THEME_DEFINITIONS)[ColorTheme]][]
-const colorKeys = colorEntries.map(([key]) => key)
-const themePreferenceKeys = THEME_OPTIONS.map((o) => o.value)
 
 interface UseThemePreviewOptions {
     open: boolean
@@ -19,8 +16,6 @@ interface UseThemePreviewOptions {
     colorTheme: ColorTheme
     setTheme: (pref: ThemePreference) => void
     setColorTheme: (key: ColorTheme) => void
-    appearanceRef: RefObject<HTMLDivElement | null>
-    themeRef: RefObject<HTMLDivElement | null>
 }
 
 interface UseThemePreviewReturn {
@@ -34,7 +29,6 @@ interface UseThemePreviewReturn {
  *
  * - Snapshots current values when the palette opens
  * - Reverts uncommitted changes when the palette closes
- * - Cycles color/theme with left/right arrow keys when their items are selected
  * - Previews color/theme when navigating search-only items
  * - Exposes `commitColor` / `commitTheme` so the caller can mark a change as intentional
  */
@@ -46,8 +40,6 @@ const useThemePreview = ({
     colorTheme,
     setTheme,
     setColorTheme,
-    appearanceRef,
-    themeRef,
 }: UseThemePreviewOptions): UseThemePreviewReturn => {
     const originalColorRef = useRef<ColorTheme>(colorTheme)
     const colorCommittedRef = useRef(false)
@@ -89,43 +81,6 @@ const useThemePreview = ({
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open])
-
-    // L/R arrow keys to cycle color/theme when their respective items are selected
-    const handleArrowCycle = useCallback(
-        (e: KeyboardEvent) => {
-            const isAppearance = appearanceRef.current?.getAttribute('aria-selected') === 'true'
-            const isTheme = themeRef.current?.getAttribute('aria-selected') === 'true'
-
-            if (!isAppearance && !isTheme) return
-
-            e.preventDefault()
-            e.stopPropagation()
-
-            const direction = e.key === 'ArrowRight' ? 1 : -1
-
-            if (isAppearance) {
-                const idx = colorKeys.indexOf(colorTheme)
-                const next = colorKeys[(idx + direction + colorKeys.length) % colorKeys.length]
-                setColorTheme(next)
-            }
-
-            if (isTheme) {
-                const idx = themePreferenceKeys.indexOf(preference)
-                const next = themePreferenceKeys[(idx + direction + themePreferenceKeys.length) % themePreferenceKeys.length]
-                setTheme(next)
-            }
-        },
-        [colorTheme, setColorTheme, preference, setTheme, appearanceRef, themeRef],
-    )
-
-    const arrowBindings: KeyBinding[] = open
-        ? [
-            { keys: ['ArrowLeft'], callback: handleArrowCycle, allowInInputs: true },
-            { keys: ['ArrowRight'], callback: handleArrowCycle, allowInInputs: true },
-        ]
-        : []
-
-    useKeyBindings(arrowBindings)
 
     // Preview color/theme when navigating search-only items.
     // Only *applies* previews — reverting is handled solely by the open/close effect.

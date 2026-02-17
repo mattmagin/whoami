@@ -1,4 +1,3 @@
-import { forwardRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Calendar, Clock, ExternalLink, Github } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -6,19 +5,13 @@ import { Badge, Button, Text } from '@/components/ui'
 import type { Post, Project } from '@/types'
 import { useContent } from '@/providers/ContentProvider'
 
-type ListEntryProps = (
+type ListEntryProps =
     | { type: 'post'; item: Post }
     | { type: 'project'; item: Project }
-) & {
-    /** Whether this entry is the single active item in the list */
-    active?: boolean
-    /** Called when the mouse moves over this entry */
-    onActivate?: () => void
-}
 
-const ListEntry = forwardRef<HTMLElement, ListEntryProps>((props, ref) => {
+const ListEntry = (props: ListEntryProps) => {
     const { common } = useContent()!
-    const { type, item, active = false, onActivate } = props
+    const { type, item } = props
 
     const href = type === 'post' ? `/blog/${item.slug}` : `/projects/${item.slug}`
     const title = type === 'post' ? item.title : item.name
@@ -42,13 +35,9 @@ const ListEntry = forwardRef<HTMLElement, ListEntryProps>((props, ref) => {
 
     return (
         <article
-            ref={ref as React.Ref<HTMLElement>}
-            onMouseMove={onActivate}
             className={cn(
                 'group rounded-lg border-l-2 transition-all duration-200',
-                active
-                    ? 'border-l-primary bg-primary/5 pl-5'
-                    : 'border-l-transparent pl-4',
+                'border-l-transparent pl-4',
             )}
         >
             <Link to={href} className="flex gap-5 py-4 no-underline">
@@ -149,7 +138,6 @@ const ListEntry = forwardRef<HTMLElement, ListEntryProps>((props, ref) => {
             )}
         </article>
     )
-})
-ListEntry.displayName = 'ListEntry'
+}
 
 export default ListEntry

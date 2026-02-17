@@ -18,7 +18,8 @@ const SideNav = ({ currentRoute, onNavigate, className }: SideNavProps) => {
     return (
         <nav
             className={cn(
-                'hidden lg:flex flex-col gap-5 shrink-0 border-l border-primary/30 pl-6',
+                'hidden lg:flex flex-col gap-5 shrink-0 border-l pl-6 transition-colors duration-200',
+                'border-primary/30',
                 className,
             )}
         >
