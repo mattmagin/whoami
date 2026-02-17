@@ -7,86 +7,72 @@
 
 ## Project Status
 
-- [ ] Phase 1: Rails API
-- [ ] Phase 2: Go SSH/TUI (public)
-- [ ] Phase 3: React Frontend
-- [ ] Phase 4: Docker Integration
-- [ ] Phase 5: Terraform/AWS
+- [x] Phase 1: Hono API (migrated from Rails)
+- [ ] Phase 2: Rust TUI (public)
+- [x] Phase 3: React Frontend
+- [x] Phase 4: Docker Integration
+- [x] Phase 5: Terraform/Railway
 - [ ] Phase 6: CI/CD + GitHub Mirror
 - [ ] Phase 7: Admin CLI (local TUI for editing content)
 
 ## Repository Structure
 
-- `/api/`: Ruby on Rails API application (API mode)
-- `/tui/`: Go-based SSH server and Terminal UI (Bubble Tea + Wish)
-- `/admin/`: Local Go CLI for content management (reuses TUI components)
-- `/web/`: React frontend with TypeScript, Vite, shadcn/ui, Tailwind
-- `/infrastructure/`: Terraform modules for AWS (VPC, EC2, RDS, S3, CloudFront)
-- `/content/`: Static content files (resume.md)
+- `/web/`: Full-stack application — React frontend + Hono API server (Bun runtime)
+  - `/web/src/`: React frontend with TypeScript, Vite, shadcn/ui, Tailwind
+  - `/web/server/`: Hono API server with Drizzle ORM (PostgreSQL)
+  - `/web/content/`: Static content files (resume.yaml)
+- `/tui/`: Rust-based Terminal UI (ratatui + tui-realm)
+- `/infra/`: Terraform for Railway (project, services, env vars)
+- `/admin/`: (future) Local CLI for content management
 
 ## Build & Run Commands
 
-### Root Level
-- `docker-compose up`: Run all services locally (Postgres, API, TUI, Web)
-- `docker-compose up -d db`: Run just Postgres for local dev
-- `make help`: Show all available commands
+### Web (`/web`) — Full-Stack (Frontend + API)
+- `bun install`: Install dependencies
+- `bun run dev`: Run frontend (Vite) + API server (Hono) concurrently
+- `bun run dev:web`: Run only the Vite dev server (port 5173)
+- `bun run dev:server`: Run only the Hono API server (port 3001)
+- `bun run build`: TypeScript check + Vite production build
+- `bun run start`: Run production server (serves SPA + API from single process)
+- `bun run lint`: Run ESLint
+- `bun run db:generate`: Generate Drizzle migration files from schema changes
+- `bun run db:migrate`: Run Drizzle migrations
+- `bun run db:push`: Push schema changes directly (dev only)
+- `bun run db:seed`: Seed database with sample data
+- `bun run db:studio`: Open Drizzle Studio (database browser)
+- `bun run db:migrate:rails`: Run one-time Rails→Drizzle transition migration
 
-### Rails API (`/api`)
-- `bundle install`: Install dependencies
-- `rails db:create db:migrate`: Set up database
-- `rails db:seed`: Seed sample data
-- `rails server`: Run API server (port 3000)
-- `bundle exec rspec`: Run tests
-- `rails console`: Interactive Rails console
-- `rake admin:create_key[name]`: Generate new API key
+### Rust TUI (`/tui`)
+- `cargo build`: Build the TUI binary
+- `cargo run`: Run the TUI locally
+- Uses compile-time embedded `content.json` — independent of the API
 
-### Go TUI (`/tui`)
-- `go mod download`: Install dependencies
-- `go run ./cmd/server`: Run SSH server locally
-- `go test ./...`: Run all tests
-- `go build -o server ./cmd/server`: Build binary
-- `make run`: Build and run
-- `make test`: Run tests with race detection
-
-### Admin CLI (`/admin`)
-- `go run ./cmd/admin`: Run admin CLI
-- `go build -o admin ./cmd/admin`: Build binary
-- Requires `ADMIN_API_URL` and `ADMIN_API_KEY` env vars
-- Creates/edits/deletes posts and projects via API
-
-### React Frontend (`/web`)
-- `npm install`: Install dependencies
-- `npm run dev`: Run dev server (port 5173)
-- `npm run build`: Production build
-- `npm run lint`: Run ESLint
-- `npm run preview`: Preview production build
-
-### Terraform (`/infrastructure`)
+### Terraform (`/infra`)
 - `terraform init`: Initialize providers
-- `terraform plan -var-file=environments/dev.tfvars`: Preview changes
-- `terraform apply -var-file=environments/dev.tfvars`: Apply changes
+- `terraform plan -var-file=terraform.tfvars`: Preview changes
+- `terraform apply -var-file=terraform.tfvars`: Apply changes
 - `terraform destroy`: Tear down infrastructure
 
 ## Code Style Guidelines
 
-### Rails API
-- **Controllers**: Thin controllers, business logic in models/services
-- **Serialization**: Use Blueprinter for JSON responses
-- **Authentication**: API key via `X-API-Key` header for admin routes
-- **Scopes**: Use Active Record scopes (e.g., `Post.published`)
-- **UUIDs**: All tables use UUID primary keys
-- **Testing**: RSpec with FactoryBot
+### Hono API (`/web/server`)
+- **Runtime**: Bun
+- **Framework**: Hono with typed routes
+- **ORM**: Drizzle ORM with PostgreSQL
+- **Schema**: Defined in `server/db/schema.ts` — single source of truth for DB types
+- **Serialization**: Direct JSON responses with camelCase keys (no transform layer)
+- **UUIDs**: All tables use UUID primary keys (gen_random_uuid())
+- **Email**: Resend for transactional email (contact form notifications)
+- **Validation**: Inline validation in route handlers
+- **Error format**: `{ error: string, message: string }` with appropriate HTTP status
 
-### Go TUI
-- **Imports**: Standard library first, external deps, then local packages
-- **Errors**: Explicit error returns with context, no panic in library code
-- **Naming**: PascalCase for exported, camelCase for private
-- **Packages**: Organized by domain (`api/`, `ssh/`, `tui/`, `tui/views/`)
-- **Bubble Tea**: Model-View-Update pattern, keep models small
-- **Styling**: Use Lip Gloss for consistent terminal styling
-- **Markdown**: Render with Glamour
+### Rust TUI
+- **Framework**: ratatui + tui-realm (component-based)
+- **Content**: Static `content.json` embedded at compile time
+- **Architecture**: Model-View-Update pattern
+- **Styling**: ratatui styles with consistent color palette
 
-### React Frontend
+### React Frontend (`/web/src`)
 - **Components**: Functional components with TypeScript props
 - **Functions**: Use arrow function syntax (`const fn = () => {}`) instead of standard function declarations
 - **Exports**: Use `export default` for files with a single main component matching the filename (e.g., `PostCard.tsx` exports `PostCard`). Use named exports for files with multiple exports (e.g., `AnimatedSection.tsx` with 3 components, or `ThemeContext.tsx` with multiple hooks)
@@ -94,7 +80,8 @@
 - **State**: TanStack Query for server state, useState for local
 - **Styling**: Tailwind CSS + shadcn/ui components
 - **shadcn/ui**: Do not modify auto-generated components in `/src/components/ui/` — these may be regenerated
-- **API Calls**: Centralized in `/src/lib/api.ts`
+- **API Calls**: Centralized in `/src/api/index.ts`, using relative `/api/*` paths
+- **Types**: Defined in `/src/types/index.ts` — no auto-generated types
 - **Routing**: React Router with lazy loading
 - **Forms**: React Hook Form with Zod validation
 - **DRY Constants**: When a value, set of options, or definition (routes, theme options, feature flags, etc.) is used in more than one file, it **must** be extracted into `/src/consts/` as a single source of truth. Follow this pattern:
@@ -105,67 +92,59 @@
   5. Re-export everything through `consts/index.ts` so consumers import from `@/consts`.
   6. **Never** duplicate these values locally in components — always import from the central const file.
 
-### Terraform
-- **Modules**: Separate modules for networking, database, compute, storage
+### Terraform (`/infra`)
+- **Provider**: `terraform-community-providers/railway`
 - **Variables**: All configurable values in variables.tf
-- **Environments**: Use .tfvars files for dev/prod
-- **State**: Remote state in S3 with locking
-- **Naming**: Consistent `${project_name}-${resource}` pattern
+- **Secrets**: Use .tfvars files (gitignored) for tokens, database URLs, API keys
+- **Resources**: Project, web service, Postgres service, environment variables
+- **Naming**: Consistent `whoami-{resource}` pattern
 
 ## Environment Variables
 
-### API
+### Web (API Server)
 ```
 DATABASE_URL=postgres://user:pass@host:5432/dbname
-RAILS_ENV=development|production
-SECRET_KEY_BASE=<generated>
-```
-
-### TUI
-```
-API_URL=http://localhost:3000
-SSH_HOST_KEY_PATH=./host_key
-SSH_PORT=22
-```
-
-### Web
-```
-VITE_API_URL=http://localhost:3000
+# OR individual vars:
+DATABASE_USER=whoami
+DATABASE_PASSWORD=shhhhItsASecret
+DATABASE_HOST=127.0.0.1
+DATABASE_PORT=5434
+DATABASE_NAME=whoami_development
+PORT=3001
+NODE_ENV=development|production
+RESEND_API_KEY=<key>
+RESEND_FROM_EMAIL=Portfolio <noreply@yourdomain.com>
+CONTACT_NOTIFICATION_EMAIL=you@example.com
 ```
 
 ### Terraform
 ```
-AWS_ACCESS_KEY_ID=<key>
-AWS_SECRET_ACCESS_KEY=<secret>
-TF_VAR_db_password=<password>
+RAILWAY_TOKEN=<token>  # or set in terraform.tfvars
 ```
 
 ## API Endpoints
 
+All served from the Hono server at `/api/*`:
+
 ### Public
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/api/resume` | Resume content + metadata |
-| GET | `/api/posts` | Published blog posts |
-| GET | `/api/posts/:slug` | Single post |
+| GET | `/api/resume` | Resume content (parsed YAML) |
+| GET | `/api/posts` | All blog posts |
+| GET | `/api/posts/:slug` | Single post (by slug or UUID) |
 | GET | `/api/projects` | All projects |
-| GET | `/api/projects/:slug` | Single project |
+| GET | `/api/projects/:slug` | Single project (by slug or UUID) |
 | POST | `/api/contacts` | Submit contact form |
-
-### Admin (requires `X-API-Key` header)
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/admin/posts` | All posts (incl. drafts) |
-| POST | `/api/admin/posts` | Create post |
-| PATCH | `/api/admin/posts/:id` | Update post |
-| DELETE | `/api/admin/posts/:id` | Delete post |
+| GET | `/api/version` | Content version hash (cache invalidation) |
 
 ## Database Schema
 
-- `posts`: id, slug, title, content (markdown), excerpt, published, published_at
-- `projects`: id, slug, name, description, tech_stack[], url, github_url, featured
-- `contacts`: id, name, email, message, read
-- `api_keys`: id, key_hash, name, last_used_at
+Managed by Drizzle ORM. Schema defined in `web/server/db/schema.ts`.
+
+- `posts`: id (uuid), slug, title, content (markdown), excerpt, tags[], feature_image_url, project_id, published_at, deleted_at, timestamps
+- `projects`: id (uuid), slug, name, description, excerpt, tech_stack[], url, github_url, image_url, featured, published_at, deleted_at, timestamps
+- `contacts`: id (uuid), name, email, message, timestamps
+- `resumes`: id (uuid), slug, data (YAML text), timestamps
 
 ## Git Workflow
 
@@ -176,8 +155,9 @@ TF_VAR_db_password=<password>
 
 ## Deployment
 
-- **Web**: S3 + CloudFront (static)
-- **API + TUI**: EC2 with Docker
-- **Database**: RDS PostgreSQL
-- **DNS**: Route53
+- **Platform**: Railway
+- **Web + API**: Single Bun process serving React SPA + Hono API (Dockerized)
+- **Database**: Railway-managed PostgreSQL
+- **IaC**: Terraform (`/infra`) manages Railway project, services, and env vars
+- **Docker**: Multi-stage Bun build (`web/Dockerfile`)
 - **CI/CD**: GitLab CI → auto-deploy on main

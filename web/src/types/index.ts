@@ -1,8 +1,4 @@
-// Re-export generated API types
-export type { Post as PostResponse, Project as ProjectResponse } from './generated';
-
-// Transformed types with camelCase keys for frontend use
-// These types mirror the generated API types but with camelCase keys
+// Post type matching the Hono API response shape (camelCase)
 export interface Post {
     id: string;
     slug: string;
