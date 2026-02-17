@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import styled from '@emotion/styled'
 import { Separator as SeparatorPrimitive } from 'radix-ui'
 import { themeVars } from '@/theme'
@@ -18,7 +18,7 @@ const StyledSeparator = styled(SeparatorPrimitive.Root)`
   }
 `
 
-export interface SeparatorProps extends React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root> {}
+export interface SeparatorProps extends React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root> { }
 
 const Separator = React.forwardRef<
   React.ComponentRef<typeof SeparatorPrimitive.Root>,

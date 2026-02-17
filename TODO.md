@@ -13,4 +13,3 @@
 <!-- Are these good ideas? -->
 [ ] Redirect git.magin.tech to my github profile
 [ ] Redirect git.magin.tech/portfolio to github portfolio
-

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import styled from '@emotion/styled'
 import { Label as LabelPrimitive } from 'radix-ui'
 import { themeVars } from '@/theme'
@@ -27,7 +27,7 @@ const StyledLabel = styled(LabelPrimitive.Root)`
   }
 `
 
-export interface LabelProps extends React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> {}
+export interface LabelProps extends React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> { }
 
 const Label = React.forwardRef<
   React.ComponentRef<typeof LabelPrimitive.Root>,

@@ -15,8 +15,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:seed": "bun run server/db/seed.ts",
-    "db:studio": "drizzle-kit studio",
-    "db:migrate:rails": "bun run server/db/migrate.ts"
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -32,7 +31,6 @@
     "drizzle-orm": "^0.45.1",
     "framer-motion": "^12.31.1",
     "hono": "^4.11.9",
-    "js-yaml": "^4.1.1",
     "ky": "^1.14.3",
     "lucide-react": "^0.563.0",
     "postgres": "^3.4.8",
@@ -53,7 +51,6 @@
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.18",
     "@types/canvas-confetti": "^1.9.0",
-    "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.10.10",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",

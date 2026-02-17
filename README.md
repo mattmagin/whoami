@@ -39,23 +39,19 @@ $ ssh yoursite.com
 | Layer | Technology |
 |-------|------------|
 | **Frontend** | React, TypeScript, Vite, Tailwind, shadcn/ui |
-| **API** | Ruby on Rails (API mode), PostgreSQL |
-| **SSH/TUI** | Go, Bubble Tea, Wish, Lip Gloss, Glamour |
-| **Infrastructure** | Terraform, AWS (EC2, RDS, S3, CloudFront) |
+| **API** | Hono (Bun), PostgreSQL |
+| **SSH/TUI** | Rust, Ratatui, Tuirealm, russh |
+| **Infrastructure** | Terraform, Railway |
 | **CI/CD** | GitLab CI, Docker |
 
 ## 📁 Project Structure
 
 ```
 .
-├── api/                 # Rails API backend
-├── tui/                 # Go SSH server + Terminal UI (public)
-├── admin/               # Go CLI for content management (local)
-├── web/                 # React frontend
-├── infrastructure/      # Terraform AWS modules
-├── content/            
-│   └── resume.md        # Your resume (markdown)
-├── docker-compose.yml   # Local development
+├── web/                 # React frontend + Hono API
+├── tui/                 # Rust SSH server + Terminal UI (public)
+├── admin/               # Future local CLI for content management
+├── infra/               # Terraform Railway resources
 └── .gitlab-ci.yml       # CI/CD pipeline
 ```
 
@@ -64,9 +60,9 @@ $ ssh yoursite.com
 ### Prerequisites
 
 - Docker & Docker Compose
-- Ruby 3.3+ (for API development)
-- Go 1.22+ (for TUI development)
-- Node 20+ (for web development)
+- Bun 1.x (for web/API development)
+- Rust stable (for TUI development)
+- Node 20+ (optional for web tooling)
 - Terraform 1.5+ (for infrastructure)
 
 ### Local Development
@@ -81,27 +77,21 @@ docker-compose up
 
 # Access:
 # - Web:  http://localhost:5173
-# - API:  http://localhost:3000
+# - API:  http://localhost:3001
 # - SSH:  ssh -p 2222 localhost
 ```
 
 ### Individual Services
 
 ```bash
-# Rails API
-cd api
-bundle install
-rails db:setup
-rails server
-
-# Go TUI
+# Rust SSH TUI
 cd tui
-go run ./cmd/server
+cargo run --bin ssh-server
 
 # React Frontend
 cd web
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 ## 🔧 Configuration
@@ -109,8 +99,6 @@ npm run dev
 Copy the example env files and configure:
 
 ```bash
-cp api/.env.example api/.env
-cp tui/.env.example tui/.env
 cp web/.env.example web/.env
 ```
 
@@ -121,24 +109,23 @@ See [AGENTS.md](./AGENTS.md) for full environment variable reference.
 Infrastructure is managed with Terraform:
 
 ```bash
-cd infrastructure
+cd infra
 
 # Initialize
 terraform init
 
 # Preview changes
-terraform plan -var-file=environments/dev.tfvars
+terraform plan -var-file=terraform.tfvars
 
 # Apply
-terraform apply -var-file=environments/dev.tfvars
+terraform apply -var-file=terraform.tfvars
 ```
 
-### AWS Resources
+### Railway Resources
 
-- **EC2** — Runs Rails API + Go SSH server
-- **RDS** — PostgreSQL database
-- **S3 + CloudFront** — React static site hosting
-- **Route53** — DNS management
+- **web** — Bun server (React SPA + Hono API)
+- **tui** — Rust SSH server (`russh`) for terminal portfolio access
+- **postgres** — Managed PostgreSQL service
 
 ## 📡 API
 
@@ -177,49 +164,49 @@ linkedin: yourusername
 ### Theming
 
 - **Web**: Customize in `web/tailwind.config.js`
-- **TUI**: Modify styles in `tui/internal/tui/styles.go`
+- **TUI**: Modify styles in `tui/src/styles.rs`
 
 ## 🧪 Testing
 
 ```bash
 # All tests
-docker-compose run --rm api bundle exec rspec
-docker-compose run --rm tui go test ./...
-docker-compose run --rm web npm test
+cd tui && cargo test
+cd web && bun test
 
 # Individual
-cd api && bundle exec rspec
-cd tui && go test ./...
-cd web && npm test
+cd tui && cargo test
+cd web && bun test
 ```
 
 ## 📦 Deployment
 
-Deployments are automated via GitLab CI on merge to `main`:
+Deployments are currently managed manually in Railway while infrastructure automation is being reworked:
 
-1. Tests run on all merge requests
-2. Docker images built and pushed
-3. Terraform applies infrastructure changes
-4. Services deployed to EC2
-5. React app synced to S3, CloudFront invalidated
+1. Tests run in GitHub Actions (`ci.yml`) on pull requests and `main`
+2. Services are configured/deployed manually in Railway
 
 ### Manual Deploy
 
 ```bash
 # Build images
-docker build -t yoursite/api ./api
+docker build -t yoursite/web ./web
 docker build -t yoursite/tui ./tui
 
-# Deploy web
-cd web && npm run build
-aws s3 sync dist/ s3://your-bucket --delete
+# Connect to SSH TUI after deploy
+ssh -p <railway-tcp-port> <railway-generated-domain>
 ```
+
+### GitHub Actions CI
+
+This repository now includes:
+
+- `.github/workflows/ci.yml` for web and TUI checks on pushes and pull requests.
 
 ## 🗺 Roadmap
 
 - [x] Project setup
-- [ ] Rails API with PostgreSQL
-- [ ] Go SSH/TUI server (public)
+- [x] Hono API with PostgreSQL
+- [x] Rust SSH/TUI server (public)
 - [ ] React frontend with terminal aesthetic
 - [ ] Docker containerization
 - [ ] Terraform AWS infrastructure

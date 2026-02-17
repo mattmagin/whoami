@@ -40,7 +40,6 @@
 - `bun run db:push`: Push schema changes directly (dev only)
 - `bun run db:seed`: Seed database with sample data
 - `bun run db:studio`: Open Drizzle Studio (database browser)
-- `bun run db:migrate:rails`: Run one-time Rails→Drizzle transition migration
 
 ### Rust TUI (`/tui`)
 - `cargo build`: Build the TUI binary

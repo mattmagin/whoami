@@ -14,19 +14,19 @@ app.use('*', logger());
 
 // API routes
 const api = new Hono()
-  .route('/posts', posts)
-  .route('/projects', projects)
-  .route('/resume', resume)
-  .route('/contacts', contacts)
-  .route('/version', version);
+    .route('/posts', posts)
+    .route('/projects', projects)
+    .route('/resume', resume)
+    .route('/contacts', contacts)
+    .route('/version', version);
 
 app.route('/api', api);
 
 // In production, serve the built React SPA
 if (process.env.NODE_ENV === 'production') {
-  app.use('/*', serveStatic({ root: './dist' }));
-  // SPA fallback: serve index.html for any non-API, non-static route
-  app.get('/*', serveStatic({ path: './dist/index.html' }));
+    app.use('/*', serveStatic({ root: './dist' }));
+    // SPA fallback: serve index.html for any non-API, non-static route
+    app.get('/*', serveStatic({ path: './dist/index.html' }));
 }
 
 const port = parseInt(process.env.PORT ?? '3001', 10);
@@ -34,6 +34,6 @@ const port = parseInt(process.env.PORT ?? '3001', 10);
 console.log(`Server running on http://localhost:${port}`);
 
 export default {
-  port,
-  fetch: app.fetch,
+    port,
+    fetch: app.fetch,
 };

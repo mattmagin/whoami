@@ -1,8 +1,8 @@
-import * as React from 'react'
+import React from 'react'
 import styled from '@emotion/styled'
 import { themeVars } from '@/theme'
 
-export interface TextareaProps extends React.ComponentPropsWithoutRef<'textarea'> {}
+export interface TextareaProps extends React.ComponentPropsWithoutRef<'textarea'> { }
 
 const StyledTextarea = styled.textarea`
   display: flex;
