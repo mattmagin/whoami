@@ -29,6 +29,28 @@ cargo run
 cargo build --release
 ```
 
+## SSH Server Mode
+
+The crate now includes an SSH server binary powered by `russh` for public portfolio access.
+
+```bash
+# Run SSH server locally (anonymous guest sessions)
+cargo run --bin ssh-server
+
+# Connect from another terminal
+ssh -p 2222 localhost
+```
+
+### SSH hardening env vars
+
+All limits are optional and have safe defaults:
+
+- `PORT` (default `2222`)
+- `SSH_MAX_SESSIONS` (default `40`)
+- `SSH_RATE_LIMIT_PER_MIN` (default `30`)
+- `SSH_IDLE_TIMEOUT_SECS` (default `180`)
+- `SSH_MAX_SESSION_SECS` (default `900`)
+
 ## Keyboard Navigation
 
 ### Global

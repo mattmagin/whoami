@@ -1,0 +1,20 @@
+FROM rust:1.85-bookworm AS builder
+WORKDIR /app
+
+COPY Cargo.toml Cargo.lock ./
+COPY src ./src
+COPY content.json ./content.json
+
+RUN cargo build --release --bin ssh-server --bin tui
+
+FROM debian:bookworm-slim
+WORKDIR /app
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /app/target/release/ssh-server /usr/local/bin/ssh-server
+
+EXPOSE 2222
+CMD ["ssh-server"]
