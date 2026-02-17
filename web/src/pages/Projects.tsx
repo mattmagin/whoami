@@ -12,7 +12,6 @@ const Projects = () => {
       emptyState={projectsStrings.emptyState}
       query={query}
       sort={(a, b) => (a.name ?? '').localeCompare(b.name ?? '')}
-      getHref={(project) => `/projects/${project.slug}`}
       getEntryProps={(project) => ({ type: 'project', item: project })}
     />
   )

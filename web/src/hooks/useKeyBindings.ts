@@ -103,7 +103,10 @@ const matchesBinding = (e: KeyboardEvent, keys: string[]): boolean => {
  */
 const useKeyBindings = (bindings: KeyBinding[]): void => {
     const ref = useRef(bindings)
-    ref.current = bindings
+
+    useEffect(() => {
+        ref.current = bindings
+    })
 
     useEffect(() => {
         const handler = (e: KeyboardEvent) => {

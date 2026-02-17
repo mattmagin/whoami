@@ -1,4 +1,4 @@
-import { type ReactNode, useState, useEffect, useCallback } from 'react'
+import { type ReactNode, useState, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Container } from '@/components/ui'
 import SideNav from '@/components/SideNav'

@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import type { UseQueryResult } from '@tanstack/react-query'
 import { Text, Stack, Flex, Skeleton, ScrollArea } from '@/components/ui'
 import ListEntry from '@/components/ListEntry'
@@ -16,8 +15,6 @@ interface ContentListPageProps<T extends ContentItem> {
     query: UseQueryResult<T[], Error>
     /** Sort comparator for the items */
     sort: (a: T, b: T) => number
-    /** Derive the navigation path for a given item */
-    getHref: (item: T) => string
     /** Props to spread onto each ListEntry (type + item) */
     getEntryProps: (item: T) => { type: 'post'; item: Post } | { type: 'project'; item: Project }
 }
@@ -26,11 +23,9 @@ const ContentListPage = <T extends ContentItem>({
     emptyState,
     query,
     sort,
-    getHref,
     getEntryProps,
 }: ContentListPageProps<T>) => {
     const { data, isLoading, error, refetch } = query
-    const navigate = useNavigate()
 
     const sorted = [...(data ?? [])].sort(sort)
     const count = sorted.length

@@ -4,7 +4,6 @@ import {
     type Theme,
     type ThemeKey,
     type LoggerStyleConfig,
-    type LoggerStylePreset,
 } from '@/theme'
 
 interface LoggerOptions {

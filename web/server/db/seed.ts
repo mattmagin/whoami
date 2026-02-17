@@ -626,7 +626,7 @@ module ReadingTime
 
   def self.format(content)
     minutes = estimate(content)
-    "\#{minutes} min read"
+    "#{minutes} min read"
   end
 end
 \`\`\`
@@ -669,7 +669,7 @@ RSpec.describe ReadingTime do
     it "counts code blocks at a slower rate" do
       prose = "word " * 100  # 0.5 min at 200 WPM
       code = "\`\`\`ruby\\n" + ("code " * 100) + "\\n\`\`\`"  # 2 min at 50 WPM
-      content = "\#{prose}\\n\#{code}"
+      content = "#{prose}\\n#{code}"
       expect(described_class.estimate(content)).to eq(3)
     end
 

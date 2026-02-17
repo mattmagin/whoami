@@ -147,15 +147,20 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [resolvedKey, setResolvedKey] = useState<ThemeKey>(() => resolveTheme(preference))
   const [colorThemeKey, setColorThemeKey] = useState<ColorTheme>(getInitialColorTheme)
 
-  // Listen for OS colour-scheme changes when preference is 'system'
-  useEffect(() => {
-    if (preference !== THEME_PREFERENCE.SYSTEM) {
-      setResolvedKey(preference as ThemeKey)
-      return
-    }
+  // Adjust resolved key during render when preference changes
+  const [prevPreference, setPrevPreference] = useState(preference)
+  if (preference !== prevPreference) {
+    setPrevPreference(preference)
+    setResolvedKey(
+      preference !== THEME_PREFERENCE.SYSTEM
+        ? (preference as ThemeKey)
+        : getSystemTheme(),
+    )
+  }
 
-    // Immediately resolve once
-    setResolvedKey(getSystemTheme())
+  // Subscribe to OS theme changes when preference is 'system'
+  useEffect(() => {
+    if (preference !== THEME_PREFERENCE.SYSTEM) return
 
     const mql = window.matchMedia('(prefers-color-scheme: dark)')
     const handler = (e: MediaQueryListEvent) => {
@@ -226,6 +231,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useThemeContext = () => {
   const context = useContext(ThemeContext)
   if (context === undefined) {
@@ -235,10 +241,12 @@ export const useThemeContext = () => {
 }
 
 // Alias for convenience - can use either useTheme or useThemeContext
+// eslint-disable-next-line react-refresh/only-export-components
 export const useTheme = () => {
   return useThemeContext()
 }
 
 // Re-export theme types and utilities for convenience
 export type { Theme, ThemeKey, ThemeColors, ThemeFonts, ThemeRadii, ColorPalette } from '@/theme'
+// eslint-disable-next-line react-refresh/only-export-components
 export { themes, getTheme, lightTheme, darkTheme } from '@/theme'

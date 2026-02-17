@@ -29,7 +29,6 @@ const useTypewriter = (
 
     useEffect(() => {
         if (target === displayedRef.current) {
-            setIsAnimating(false)
             return
         }
 
@@ -124,7 +123,6 @@ export const usePageTypewriter = (
             targetHeading === headingRef.current &&
             targetSubheading === subheadingRef.current
         ) {
-            setIsAnimating(false)
             return
         }
 

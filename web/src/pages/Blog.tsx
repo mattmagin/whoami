@@ -12,7 +12,6 @@ const Blog = () => {
       emptyState={blog.emptyState}
       query={query}
       sort={(a, b) => new Date(b.publishedAt ?? 0).getTime() - new Date(a.publishedAt ?? 0).getTime()}
-      getHref={(post) => `/blog/${post.slug}`}
       getEntryProps={(post) => ({ type: 'post', item: post })}
     />
   )

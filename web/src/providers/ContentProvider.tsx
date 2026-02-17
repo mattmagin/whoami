@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react'
+import { createContext, useContext, useState, useCallback } from 'react'
 import { useLocation, matchPath } from 'react-router-dom'
 import { useResume, type ResumeData } from '@/hooks/queries'
 import { ROUTE_DEFINITIONS } from '@/consts'
@@ -47,10 +47,12 @@ const ContentProvider = ({ children }: { children: React.ReactNode }) => {
     // Override state — set by pages that need custom headings (e.g. Resume)
     const [override, setOverride] = useState<{ heading: string | false; subheading: string } | null>(null)
 
-    // Clear overrides when the route changes
-    useEffect(() => {
+    // Clear overrides when the route changes (render-time adjustment)
+    const [prevPathname, setPrevPathname] = useState(pathname)
+    if (pathname !== prevPathname) {
+        setPrevPathname(pathname)
         setOverride(null)
-    }, [pathname])
+    }
 
     const setPageHeader = useCallback((heading: string | false, subheading?: string) => {
         setOverride({ heading, subheading: subheading ?? '' })
@@ -76,6 +78,7 @@ const ContentProvider = ({ children }: { children: React.ReactNode }) => {
     )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useContent = () => {
     return useContext(ContentContext)
 }
