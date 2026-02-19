@@ -2,10 +2,16 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
 
-const connectionString = process.env.DATABASE_URL
-    ?? `postgres://${process.env.DATABASE_USER ?? 'whoami'}:${process.env.DATABASE_PASSWORD ?? 'shhhhItsASecret'}@${process.env.DATABASE_HOST ?? '127.0.0.1'}:${process.env.DATABASE_PORT ?? '5434'}/${process.env.DATABASE_NAME ?? 'whoami_development'}`;
+// DATABASE_URL is set in .env (dev defaults) and overridden via .env.local or environment.
+// In production, require it to be explicitly set.
+if (process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL) {
+    throw new Error(
+        'DATABASE_URL environment variable is required in production. ' +
+        'Set it to your PostgreSQL connection string.',
+    );
+}
 
-const client = postgres(connectionString);
+const client = postgres(process.env.DATABASE_URL!);
 
 export const db = drizzle(client, { schema });
 

@@ -1,3 +1,6 @@
+# Allow committed .env (dev defaults); .env.local remains ignored via *.local
+!.env
+
 # Logs
 logs
 *.log
