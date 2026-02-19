@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti'
 import { Button, Input, Label, Textarea, Text, Stack, Flex, Grid } from '@/components/ui'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useCreateContact } from '@/hooks'
+import { CONTACT_LIMITS } from '@/consts'
 
 interface FormErrors {
   name?: string
@@ -76,13 +77,16 @@ const ContactForm = () => {
     switch (name) {
       case 'name':
         if (!value.trim()) return 'Please enter your name'
+        if (value.trim().length > CONTACT_LIMITS.name) return `Name must be ${CONTACT_LIMITS.name} characters or fewer`
         return undefined
       case 'email':
         if (!value.trim()) return 'Please enter your email address'
+        if (value.trim().length > CONTACT_LIMITS.email) return `Email must be ${CONTACT_LIMITS.email} characters or fewer`
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Please enter a valid email address'
         return undefined
       case 'message':
         if (!value.trim()) return 'Please enter a message'
+        if (value.trim().length > CONTACT_LIMITS.message) return `Message must be ${CONTACT_LIMITS.message.toLocaleString()} characters or fewer`
         return undefined
       default:
         return undefined
@@ -116,6 +120,11 @@ const ContactForm = () => {
     setTouched(prev => ({ ...prev, [name]: true }))
     setErrors(prev => ({ ...prev, [name]: validateField(name as keyof FormValues, value) }))
   }
+
+  /** Character count display for the message field */
+  const messageLength = values.message.trim().length
+  const messageNearLimit = messageLength > CONTACT_LIMITS.message * 0.9
+  const messageOverLimit = messageLength > CONTACT_LIMITS.message
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -164,90 +173,104 @@ const ContactForm = () => {
   }
 
   return (
-    <Stack as="form" gap="lg" onSubmit={handleSubmit} noValidate>
-      <Grid cols={{ base: 1, sm: 2 }} gap="lg">
+    <form onSubmit={handleSubmit} noValidate>
+      <Stack gap="lg">
+        <Grid cols={{ base: 1, sm: 2 }} gap="lg">
+          <Stack gap="xs">
+            <Label htmlFor="name">Name</Label>
+            <div className="relative">
+              <Input
+                id="name"
+                name="name"
+                placeholder="Your name"
+                maxLength={CONTACT_LIMITS.name}
+                value={values.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                disabled={isSubmitting}
+                aria-invalid={!!errors.name}
+                aria-describedby={errors.name ? 'name-error' : undefined}
+                className={errors.name ? 'border-destructive focus-visible:ring-destructive' : ''}
+              />
+              <ValidationTooltip message={firstErrorField === 'name' ? errors.name : undefined} id="name-error" />
+            </div>
+          </Stack>
+          <Stack gap="xs">
+            <Label htmlFor="email">Email</Label>
+            <div className="relative">
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                maxLength={CONTACT_LIMITS.email}
+                value={values.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                disabled={isSubmitting}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'email-error' : undefined}
+                className={errors.email ? 'border-destructive focus-visible:ring-destructive' : ''}
+              />
+              <ValidationTooltip message={firstErrorField === 'email' ? errors.email : undefined} id="email-error" />
+            </div>
+          </Stack>
+        </Grid>
+
         <Stack gap="xs">
-          <Label htmlFor="name">Name</Label>
+          <Flex justify="between" align="center">
+            <Label htmlFor="message">Message</Label>
+            {messageNearLimit && (
+              <Text
+                variant="muted"
+                className={`text-xs tabular-nums ${messageOverLimit ? 'text-destructive' : ''}`}
+              >
+                {messageLength.toLocaleString()}/{CONTACT_LIMITS.message.toLocaleString()}
+              </Text>
+            )}
+          </Flex>
           <div className="relative">
-            <Input
-              id="name"
-              name="name"
-              placeholder="Your name"
-              value={values.name}
+            <Textarea
+              id="message"
+              name="message"
+              placeholder="What would you like to discuss?"
+              rows={6}
+              value={values.message}
               onChange={handleChange}
               onBlur={handleBlur}
               disabled={isSubmitting}
-              aria-invalid={!!errors.name}
-              aria-describedby={errors.name ? 'name-error' : undefined}
-              className={errors.name ? 'border-destructive focus-visible:ring-destructive' : ''}
+              aria-invalid={!!errors.message}
+              aria-describedby={errors.message ? 'message-error' : undefined}
+              className={`resize-none ${errors.message ? 'border-destructive focus-visible:ring-destructive' : ''}`}
             />
-            <ValidationTooltip message={firstErrorField === 'name' ? errors.name : undefined} id="name-error" />
+            <ValidationTooltip message={firstErrorField === 'message' ? errors.message : undefined} id="message-error" />
           </div>
         </Stack>
-        <Stack gap="xs">
-          <Label htmlFor="email">Email</Label>
-          <div className="relative">
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              value={values.email}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              disabled={isSubmitting}
-              aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? 'email-error' : undefined}
-              className={errors.email ? 'border-destructive focus-visible:ring-destructive' : ''}
-            />
-            <ValidationTooltip message={firstErrorField === 'email' ? errors.email : undefined} id="email-error" />
-          </div>
-        </Stack>
-      </Grid>
 
-      <Stack gap="xs">
-        <Label htmlFor="message">Message</Label>
-        <div className="relative">
-          <Textarea
-            id="message"
-            name="message"
-            placeholder="What would you like to discuss?"
-            rows={6}
-            value={values.message}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            disabled={isSubmitting}
-            aria-invalid={!!errors.message}
-            aria-describedby={errors.message ? 'message-error' : undefined}
-            className={`resize-none ${errors.message ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-          />
-          <ValidationTooltip message={firstErrorField === 'message' ? errors.message : undefined} id="message-error" />
-        </div>
-      </Stack>
-
-      {serverError && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{serverError}</AlertDescription>
-        </Alert>
-      )}
-
-      <Button
-        ref={buttonRef}
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full sm:w-fit"
-      >
-        {isSubmitting ? (
-          'Sending...'
-        ) : (
-          <>
-            Send Message
-            <Send className="ml-2 h-4 w-4" />
-          </>
+        {serverError && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{serverError}</AlertDescription>
+          </Alert>
         )}
-      </Button>
-    </Stack>
+
+        <Button
+          ref={buttonRef}
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full sm:w-fit"
+        >
+          {isSubmitting ? (
+            'Sending...'
+          ) : (
+            <>
+              Send Message
+              <Send className="ml-2 h-4 w-4" />
+            </>
+          )}
+        </Button>
+      </Stack>
+    </form>
   )
 }
 

@@ -1,3 +1,4 @@
+export * from './contact'
 export * from './errors'
 export * from './localStorage'
 export * from './routes'
