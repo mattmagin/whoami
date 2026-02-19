@@ -4,9 +4,9 @@ import { css } from '@emotion/react'
 import { Slot } from 'radix-ui'
 import { themeVars } from '@/theme'
 
-export type BadgeVariant = 'primary' | 'secondary' | 'destructive' | 'outline' | 'ghost' | 'link'
+type BadgeVariant = 'primary' | 'secondary' | 'destructive' | 'outline' | 'ghost' | 'link'
 
-export interface BadgeProps extends React.ComponentPropsWithoutRef<'span'> {
+interface BadgeProps extends React.ComponentPropsWithoutRef<'span'> {
   variant?: BadgeVariant
   asChild?: boolean
 }
@@ -126,10 +126,5 @@ const Badge = React.forwardRef<React.ComponentRef<'span'>, BadgeProps>(
   }
 )
 Badge.displayName = 'Badge'
-
-// Export badgeVariants type for API compatibility
-export const badgeVariants = {
-  variant: ['primary', 'secondary', 'destructive', 'outline', 'ghost', 'link'] as const,
-}
 
 export default Badge

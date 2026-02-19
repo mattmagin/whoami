@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { eq, count, desc, asc } from 'drizzle-orm';
+import { eq, count, desc } from 'drizzle-orm';
 import { db, schema } from '../db';
 import { formatReadingTime } from '../lib/reading-time';
 

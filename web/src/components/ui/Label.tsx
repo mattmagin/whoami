@@ -27,7 +27,7 @@ const StyledLabel = styled(LabelPrimitive.Root)`
   }
 `
 
-export interface LabelProps extends React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> { }
+type LabelProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 
 const Label = React.forwardRef<
   React.ComponentRef<typeof LabelPrimitive.Root>,

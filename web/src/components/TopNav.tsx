@@ -78,12 +78,16 @@ const TopNav = ({ currentRoute, onNavigate, className }: TopNavProps) => {
     }, [currentRoute])
 
     useEffect(() => {
-        updateIndicator()
+        // Defer initial measurement to avoid synchronous setState in the effect body
+        const frame = requestAnimationFrame(updateIndicator)
         // Re-measure on resize (e.g. zoom changes)
         window.addEventListener('resize', updateIndicator)
         // Re-measure after fonts finish loading (prevents indicator misalignment)
         document.fonts.ready.then(updateIndicator)
-        return () => window.removeEventListener('resize', updateIndicator)
+        return () => {
+            cancelAnimationFrame(frame)
+            window.removeEventListener('resize', updateIndicator)
+        }
     }, [updateIndicator])
 
     const handleNav = (path: string) => {

@@ -10,11 +10,13 @@ import { useState, useEffect } from 'react'
 const useDeferredLoading = (isLoading: boolean, delay = 200): boolean => {
     const [showLoading, setShowLoading] = useState(false)
 
+    // Immediately hide skeleton when loading finishes (state-from-props pattern)
+    if (!isLoading && showLoading) {
+        setShowLoading(false)
+    }
+
     useEffect(() => {
-        if (!isLoading) {
-            setShowLoading(false)
-            return
-        }
+        if (!isLoading) return
 
         const timer = setTimeout(() => setShowLoading(true), delay)
         return () => clearTimeout(timer)

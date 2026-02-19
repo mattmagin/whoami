@@ -1,4 +1,4 @@
-import { Mail, MapPin, Github, Linkedin } from 'lucide-react'
+import { Mail, Github, Linkedin } from 'lucide-react'
 import { Text, Stack, Flex, Grid } from '@/components/ui'
 import ContactForm from '@/components/ContactForm'
 import PageHeader from '@/components/PageHeader'

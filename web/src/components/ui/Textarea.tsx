@@ -2,7 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { themeVars } from '@/theme'
 
-export interface TextareaProps extends React.ComponentPropsWithoutRef<'textarea'> { }
+type TextareaProps = React.ComponentPropsWithoutRef<'textarea'>
 
 const StyledTextarea = styled.textarea`
   display: flex;

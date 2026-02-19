@@ -2,7 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { themeVars } from '@/theme'
 
-export interface InputProps extends React.ComponentPropsWithoutRef<'input'> { }
+type InputProps = React.ComponentPropsWithoutRef<'input'>
 
 const StyledInput = styled.input`
   height: 2.25rem;

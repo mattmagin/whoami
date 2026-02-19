@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import { themeVars } from '@/theme'
 
-export type TextVariant =
+type TextVariant =
     | 'pageTitle'
     | 'sectionTitle'
     | 'cardTitle'
@@ -13,7 +13,7 @@ export type TextVariant =
     | 'muted'
     | 'label'
 
-export type TextElement = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div' | 'li'
+type TextElement = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div' | 'li'
 
 // Map variants to their default HTML elements
 const defaultElements: Record<TextVariant, TextElement> = {
@@ -27,13 +27,11 @@ const defaultElements: Record<TextVariant, TextElement> = {
     label: 'span',
 }
 
-// Base styles shared across all text variants
 const baseStyles = css`
     margin: 0;
     padding: 0;
 `
 
-// Variant-specific styles
 const variantStyles = {
     pageTitle: css`
         font-family: ${themeVars.fonts.serif};
@@ -184,7 +182,7 @@ const StyledElements = {
     li: StyledLi,
 }
 
-export interface TextProps extends React.HTMLAttributes<HTMLElement> {
+interface TextProps extends React.HTMLAttributes<HTMLElement> {
     variant?: TextVariant
     as?: TextElement
     children: React.ReactNode
@@ -211,11 +209,5 @@ const Text = React.forwardRef<HTMLElement, TextProps>(
     }
 )
 Text.displayName = 'Text'
-
-// Export textVariants for API compatibility
-export const textVariants = {
-    variant: ['pageTitle', 'sectionTitle', 'cardTitle', 'subtitle', 'body', 'bodySmall', 'muted', 'label'] as const,
-    element: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span', 'div', 'li'] as const,
-}
 
 export default Text

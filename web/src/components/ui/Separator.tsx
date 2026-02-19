@@ -18,7 +18,7 @@ const StyledSeparator = styled(SeparatorPrimitive.Root)`
   }
 `
 
-export interface SeparatorProps extends React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root> { }
+type SeparatorProps = React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>
 
 const Separator = React.forwardRef<
   React.ComponentRef<typeof SeparatorPrimitive.Root>,

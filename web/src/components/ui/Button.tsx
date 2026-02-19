@@ -4,10 +4,10 @@ import { css } from '@emotion/react'
 import { Slot } from 'radix-ui'
 import { themeVars } from '@/theme'
 
-export type ButtonVariant = 'primary' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
-export type ButtonSize = 'md' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg'
+type ButtonVariant = 'primary' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
+type ButtonSize = 'md' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg'
 
-export interface ButtonProps extends React.ComponentPropsWithoutRef<'button'> {
+interface ButtonProps extends React.ComponentPropsWithoutRef<'button'> {
   variant?: ButtonVariant
   size?: ButtonSize
   asChild?: boolean
@@ -216,12 +216,7 @@ const Button = React.forwardRef<React.ComponentRef<'button'>, ButtonProps>(
     )
   }
 )
-Button.displayName = 'Button'
 
-// Export buttonVariants type for API compatibility
-export const buttonVariants = {
-  variant: ['primary', 'destructive', 'outline', 'secondary', 'ghost', 'link'] as const,
-  size: ['md', 'xs', 'sm', 'lg', 'icon', 'icon-xs', 'icon-sm', 'icon-lg'] as const,
-}
+Button.displayName = 'Button'
 
 export default Button
