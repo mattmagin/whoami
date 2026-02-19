@@ -9,8 +9,8 @@ import { useResume } from '@/hooks/queries'
 
 const useModifierKey = () =>
     useMemo(() => {
-        if (typeof navigator === 'undefined') return '⌘'
-        return /mac|iphone|ipad|ipod/i.test(navigator.userAgent) ? '⌘' : 'Ctrl'
+        if (typeof navigator === 'undefined') return 'Ctrl'
+        return /mac|iphone|ipad|ipod/i.test(navigator.userAgent) ? 'Cmd' : 'Ctrl'
     }, [])
 
 const HeroSection = () => {
