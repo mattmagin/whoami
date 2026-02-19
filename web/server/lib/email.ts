@@ -1,14 +1,25 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
+import type { Transporter } from 'nodemailer';
 
-let resend: Resend | null = null;
+let transporter: Transporter | null = null;
 
-const getResend = (): Resend | null => {
-    if (!resend) {
-        const key = process.env.RESEND_API_KEY;
-        if (!key) return null;
-        resend = new Resend(key);
+const getTransporter = (): Transporter | null => {
+    if (!transporter) {
+        const host = process.env.SMTP_HOST;
+        const port = parseInt(process.env.SMTP_PORT ?? '587', 10);
+        const user = process.env.SMTP_USER;
+        const pass = process.env.SMTP_PASS;
+
+        if (!host || !user || !pass) return null;
+
+        transporter = nodemailer.createTransport({
+            host,
+            port,
+            secure: port === 465,
+            auth: { user, pass },
+        });
     }
-    return resend;
+    return transporter;
 };
 
 interface ContactNotification {
@@ -24,14 +35,14 @@ export const sendContactNotification = async (contact: ContactNotification): Pro
         return;
     }
 
-    const client = getResend();
-    if (!client) {
-        console.warn('[email] RESEND_API_KEY not set, skipping notification');
+    const transport = getTransporter();
+    if (!transport) {
+        console.warn('[email] SMTP not configured (SMTP_HOST, SMTP_USER, SMTP_PASS required), skipping notification');
         return;
     }
 
-    await client.emails.send({
-        from: process.env.RESEND_FROM_EMAIL ?? 'Portfolio <noreply@resend.dev>',
+    await transport.sendMail({
+        from: process.env.SMTP_FROM ?? 'Portfolio <noreply@example.com>',
         to,
         replyTo: contact.email,
         subject: `New contact message from ${contact.name}`,

@@ -31,8 +31,11 @@ If creating from scratch:
 
 Optional (if contact email is enabled):
 
-- `RESEND_API_KEY`
-- `RESEND_FROM_EMAIL`
+- `SMTP_HOST`
+- `SMTP_PORT`
+- `SMTP_USER`
+- `SMTP_PASS`
+- `SMTP_FROM`
 - `CONTACT_NOTIFICATION_EMAIL`
 
 ### `tui` service

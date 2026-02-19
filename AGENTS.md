@@ -61,7 +61,7 @@
 - **Schema**: Defined in `server/db/schema.ts` — single source of truth for DB types
 - **Serialization**: Direct JSON responses with camelCase keys (no transform layer)
 - **UUIDs**: All tables use UUID primary keys (gen_random_uuid())
-- **Email**: Resend for transactional email (contact form notifications)
+- **Email**: Nodemailer via SMTP for transactional email (contact form notifications)
 - **Validation**: Inline validation in route handlers
 - **Error format**: `{ error: string, message: string }` with appropriate HTTP status
 
@@ -111,8 +111,11 @@ DATABASE_PORT=5434
 DATABASE_NAME=whoami_development
 PORT=3001
 NODE_ENV=development|production
-RESEND_API_KEY=<key>
-RESEND_FROM_EMAIL=Portfolio <noreply@yourdomain.com>
+SMTP_HOST=smtp-relay.brevo.com
+SMTP_PORT=587
+SMTP_USER=<smtp-username>
+SMTP_PASS=<smtp-password>
+SMTP_FROM=Portfolio <noreply@yourdomain.com>
 CONTACT_NOTIFICATION_EMAIL=you@example.com
 ```
 
