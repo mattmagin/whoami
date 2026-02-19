@@ -26,9 +26,6 @@ COPY --from=builder /app/dist ./dist
 # Copy server source (Bun runs TypeScript directly)
 COPY server ./server
 
-# Copy static content
-COPY content ./content
-
 ENV NODE_ENV=production
 
 # Railway injects PORT at runtime; default to 3001
