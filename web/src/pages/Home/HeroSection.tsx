@@ -6,11 +6,11 @@ import { Kbd, KbdGroup } from '@/components/ui/kbd'
 import SshCommand from '@/components/SshCommand'
 import TypewriterText from '@/components/TypewriterText'
 import { useResume } from '@/hooks/queries'
+import { getModifierKey } from '@/lib/utils'
 
 const useModifierKey = () =>
     useMemo(() => {
-        if (typeof navigator === 'undefined') return 'Ctrl'
-        return /mac|iphone|ipad|ipod/i.test(navigator.userAgent) ? 'Cmd' : 'Ctrl'
+        return getModifierKey()
     }, [])
 
 const HeroSection = () => {
