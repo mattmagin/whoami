@@ -7,11 +7,11 @@
 
 ## Project Status
 
-- [x] Phase 1: Hono API (migrated from Rails)
+- [x] Phase 1: Hono API
 - [ ] Phase 2: Rust TUI (public)
 - [x] Phase 3: React Frontend
 - [x] Phase 4: Docker Integration
-- [x] Phase 5: Terraform/Railway
+- [ ] Phase 5: Terraform/Railway
 - [ ] Phase 6: CI/CD + GitHub Mirror
 - [ ] Phase 7: Admin CLI (local TUI for editing content)
 
