@@ -1,13 +1,13 @@
 import { type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
-import { ArrowLeft, Calendar } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Calendar } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Button, Separator, Text, Stack, Flex, Container, Skeleton } from '@/components/ui'
+import { Separator, Text, Stack, Flex, Container, Skeleton } from '@/components/ui'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
-import ReadingProgress from '@/components/ReadingProgress'
 import ErrorState from '@/components/ErrorState'
-import { useContent } from '@/providers/ContentProvider'
+import { useDeferredLoading } from '@/hooks'
+import useKeyBindings from '@/hooks/useKeyBindings'
 import { isApiError } from '@/api'
 import { ERROR_TYPE, ERROR_DEFINITIONS } from '@/consts'
 
@@ -16,10 +16,6 @@ interface PostProps {
     isLoading: boolean
     error: Error | null
     refetch: () => void
-
-    /** Back navigation */
-    backTo: string
-    backLabel: string
 
     /** Content (null = not found) */
     title: string | null
@@ -34,16 +30,12 @@ interface PostProps {
     meta?: ReactNode
     headerExtras?: ReactNode
 
-    /** Footer */
-    footerText: string
 }
 
 const Post = ({
     isLoading,
     error,
     refetch,
-    backTo,
-    backLabel,
     title,
     publishedAt,
     markdownContent,
@@ -51,11 +43,18 @@ const Post = ({
     badges,
     meta,
     headerExtras,
-    footerText,
 }: PostProps) => {
-    const { common } = useContent()
+    const navigate = useNavigate()
+    const showLoading = useDeferredLoading(isLoading)
 
-    if (isLoading) {
+    useKeyBindings([
+        {
+            keys: ['Backspace'],
+            callback: () => navigate(-1),
+        },
+    ])
+
+    if (showLoading) {
         return (
             <Container size="sm" padding="lg">
                 <Skeleton className="mb-8 h-10 w-1/2" />
@@ -85,6 +84,10 @@ const Post = ({
         )
     }
 
+    // Deferred period: loading but skeleton not yet visible — render nothing
+    // (the page slide-up animation masks this brief empty frame)
+    if (isLoading) return null
+
     if (error) {
         return (
             <Container size="sm" padding="lg">
@@ -104,15 +107,9 @@ const Post = ({
                 <Text variant="pageTitle" className="mb-4">
                     {notFound.title}
                 </Text>
-                <Text variant="muted" as="p" className="mb-8">
+                <Text variant="muted" as="p">
                     {notFound.message}
                 </Text>
-                <Button asChild>
-                    <Link to={backTo}>
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        {backLabel}
-                    </Link>
-                </Button>
             </Container>
         )
     }
@@ -126,73 +123,50 @@ const Post = ({
         : null
 
     return (
-        <>
-            <ReadingProgress />
-            <Container size="sm" padding="lg">
-                {/* Back Link */}
-                <Button variant="ghost" asChild className="mb-8 -ml-4">
-                    <Link to={backTo}>
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        {backLabel}
-                    </Link>
-                </Button>
+        <Container size="sm" padding="none">
+            {/* Header */}
+            <Stack as="header" gap="md" className="mb-10">
+                <Text variant="pageTitle">
+                    {title}
+                </Text>
 
-                {/* Header */}
-                <Stack as="header" gap="md" className="mb-10">
-                    {badges}
+                {badges}
 
-                    <Text variant="pageTitle">
-                        {title}
-                    </Text>
-
-                    <Flex align="center" gap="md" className="text-sm text-muted-foreground">
-                        {formattedDate && (
-                            <Flex align="center" gap="xs">
-                                <Calendar className="h-4 w-4" />
-                                <span>{formattedDate}</span>
-                            </Flex>
-                        )}
-                        {meta}
-                    </Flex>
-
-                    {headerExtras}
-                </Stack>
-
-                <Separator className="mb-10" />
-
-                {/* Feature Image */}
-                {featureImageUrl && (
-                    <AspectRatio ratio={16 / 9} className="mb-10 overflow-hidden rounded-lg">
-                        <img
-                            src={featureImageUrl}
-                            alt={title ?? ''}
-                            className="h-full w-full object-cover"
-                        />
-                    </AspectRatio>
-                )}
-
-                {/* Content */}
-                <article className="prose prose-lg dark:prose-invert max-w-none">
-                    {markdownContent && (
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {markdownContent}
-                        </ReactMarkdown>
+                <Flex align="center" gap="md" className="text-sm text-muted-foreground">
+                    {formattedDate && (
+                        <Flex align="center" gap="xs">
+                            <Calendar className="h-4 w-4" />
+                            <span>{formattedDate}</span>
+                        </Flex>
                     )}
-                </article>
+                    {meta}
+                </Flex>
 
-                <Separator className="my-12" />
+                {headerExtras}
+            </Stack>
 
-                {/* Footer */}
-                <Stack as="footer" gap="md" align="center">
-                    <Text variant="muted">
-                        {footerText}
-                    </Text>
-                    <Button asChild>
-                        <Link to="/contact">{common.getInTouch}</Link>
-                    </Button>
-                </Stack>
-            </Container>
-        </>
+            <Separator className="mb-10" />
+
+            {/* Feature Image */}
+            {featureImageUrl && (
+                <AspectRatio ratio={16 / 9} className="mb-10 overflow-hidden rounded-lg">
+                    <img
+                        src={featureImageUrl}
+                        alt={title ?? ''}
+                        className="h-full w-full object-cover"
+                    />
+                </AspectRatio>
+            )}
+
+            {/* Content */}
+            <article className="prose lg:prose-lg dark:prose-invert max-w-none">
+                {markdownContent && (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {markdownContent}
+                    </ReactMarkdown>
+                )}
+            </article>
+        </Container>
     )
 }
 

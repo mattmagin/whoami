@@ -1,5 +1,5 @@
 import { Text, Stack } from '@/components/ui'
-import type { ResumeCertification } from '@/types'
+import type { ResumeCertification } from '@/api'
 
 interface CertificationsProps {
     certifications: ResumeCertification[]

@@ -1,69 +1,99 @@
-import ky from 'ky';
+import { hc, type InferResponseType } from 'hono/client';
+import type { ApiType } from '../../server/api';
 import { parseApiError, ApiError, isApiError } from './errors';
-import type { Post, Project, ResumeData } from '../types';
 
-const api = ky.create({
-    prefixUrl: '/api',
-});
+// ---------------------------------------------------------------------------
+// Hono RPC client
+// ---------------------------------------------------------------------------
 
-export type { Post, Project, ResumeData };
-export { ApiError, isApiError };
+const client = hc<ApiType>('/api');
 
-export const getPosts = async (): Promise<Post[]> => {
-    try {
-        return await api.get('posts').json<Post[]>();
-    } catch (error) {
-        throw await parseApiError(error);
-    }
-};
+// ---------------------------------------------------------------------------
+// Derived types (inferred from server route definitions)
+// ---------------------------------------------------------------------------
 
-export const getPost = async (slug: string): Promise<Post> => {
-    try {
-        return await api.get(`posts/${slug}`).json<Post>();
-    } catch (error) {
-        throw await parseApiError(error);
-    }
-};
+type PostsResponse = InferResponseType<typeof client.posts.$get, 200>;
+type ProjectsResponse = InferResponseType<typeof client.projects.$get, 200>;
+type ResumeResponse = InferResponseType<typeof client.resume.$get, 200>;
 
-export const getProjects = async (): Promise<Project[]> => {
-    try {
-        return await api.get('projects').json<Project[]>();
-    } catch (error) {
-        throw await parseApiError(error);
-    }
-};
+// Entity types
+export type Post = PostsResponse['data'][number];
+export type Project = ProjectsResponse['data'][number];
 
-export const getProject = async (slug: string): Promise<Project> => {
-    try {
-        return await api.get(`projects/${slug}`).json<Project>();
-    } catch (error) {
-        throw await parseApiError(error);
-    }
-};
+// Pagination
+export type PaginationMeta = PostsResponse['meta'];
+export type PaginatedResponse<T> = { data: T[]; meta: PaginationMeta };
 
-export const getResume = async (): Promise<ResumeData> => {
-    try {
-        return await api.get('resume').json<ResumeData>();
-    } catch (error) {
-        throw await parseApiError(error);
-    }
-};
+// Resume
+export type ResumeData = ResumeResponse;
+export type ResumeContact = ResumeData['contact'];
+export type ResumeExperience = ResumeData['experience'][number];
+export type ResumeProject = ResumeData['projects'][number];
+export type ResumeEducation = ResumeData['education'][number];
+export type ResumeCertification = ResumeData['certifications'][number];
 
+// Request payloads (manual — contacts route lacks typed validation middleware)
 export interface ContactPayload {
     name: string;
     email: string;
     message: string;
 }
 
+// Re-export error utilities
+export { ApiError, isApiError };
+
+// ---------------------------------------------------------------------------
+// API functions
+// ---------------------------------------------------------------------------
+
+export interface PaginationParams {
+    page?: number;
+}
+
+export const getPosts = async (params: PaginationParams = {}): Promise<PaginatedResponse<Post>> => {
+    const query: Record<string, string> = {};
+    if (params.page != null) query.page = String(params.page);
+    const res = await client.posts.$get({ query });
+    if (!res.ok) throw await parseApiError(res);
+    return res.json();
+};
+
+export const getPost = async (slug: string) => {
+    const res = await client.posts[':slug'].$get({ param: { slug } });
+    if (!res.ok) throw await parseApiError(res);
+    return res.json();
+};
+
+export const getProjects = async (params: PaginationParams = {}): Promise<PaginatedResponse<Project>> => {
+    const query: Record<string, string> = {};
+    if (params.page != null) query.page = String(params.page);
+    const res = await client.projects.$get({ query });
+    if (!res.ok) throw await parseApiError(res);
+    return res.json();
+};
+
+export const getProject = async (slug: string) => {
+    const res = await client.projects[':slug'].$get({ param: { slug } });
+    if (!res.ok) throw await parseApiError(res);
+    return res.json();
+};
+
+export const getResume = async (): Promise<ResumeData> => {
+    const res = await client.resume.$get();
+    if (!res.ok) throw await parseApiError(res);
+    return res.json();
+};
+
 export const createContact = async (payload: ContactPayload): Promise<void> => {
-    try {
-        await api.post('contacts', { json: { contact: payload } });
-    } catch (error) {
-        throw await parseApiError(error);
-    }
+    const res = await client.contacts.$post({
+        json: { contact: payload },
+    });
+    if (!res.ok) throw await parseApiError(res);
 };
 
 export const getContentVersion = async (): Promise<string> => {
-    const data = await api.get('version').json<{ version: string }>();
+    const res = await client.version.$get();
+    if (!res.ok) throw await parseApiError(res);
+    const data = await res.json();
     return data.version;
 };

@@ -40,6 +40,10 @@
   --color-primary-light: var(--primary-light);
   --color-primary-muted: var(--primary-muted);
 
+  /* Gridlines background */
+  --color-grid-line: var(--grid-line);
+  --color-grid-glow: var(--grid-glow);
+
   /* Typography */
   --font-sans: var(--font-sans);
   --font-serif: var(--font-serif);

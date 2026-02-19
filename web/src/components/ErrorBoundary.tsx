@@ -23,6 +23,18 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
         console.error('[ErrorBoundary] Uncaught error:', error, errorInfo)
     }
 
+    componentDidMount() {
+        // Auto-reset error state on Vite HMR updates so the boundary
+        // doesn't stay stuck showing the error page after a code fix.
+        if (import.meta.hot) {
+            import.meta.hot.on('vite:afterUpdate', () => {
+                if (this.state.error) {
+                    this.setState({ error: null })
+                }
+            })
+        }
+    }
+
     reset = () => {
         this.setState({ error: null })
     }

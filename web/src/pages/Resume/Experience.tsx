@@ -1,5 +1,5 @@
 import { Text, Stack, Flex } from '@/components/ui'
-import type { ResumeExperience } from '@/types'
+import type { ResumeExperience } from '@/api'
 
 interface ExperienceProps {
     experience: ResumeExperience[]

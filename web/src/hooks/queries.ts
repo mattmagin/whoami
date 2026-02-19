@@ -1,11 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
 import { getPosts, getPost, getProjects, getProject, getResume } from '@/api'
-import type { Post, Project, ResumeData } from '@/api'
 
-export const usePosts = () => {
+/** Ensures a minimum delay so skeleton loaders feel intentional */
+const withMinDelay = <T,>(promise: Promise<T>, ms = 400): Promise<T> =>
+  Promise.all([promise, new Promise((r) => setTimeout(r, ms))]).then(([result]) => result)
+
+export const usePosts = (page: number) => {
   return useQuery({
-    queryKey: ['posts'],
-    queryFn: getPosts,
+    queryKey: ['posts', page],
+    queryFn: () =>
+      page === 1
+        ? getPosts({ page })
+        : withMinDelay(getPosts({ page })),
   })
 }
 
@@ -17,10 +23,13 @@ export const usePost = (slug: string) => {
   })
 }
 
-export const useProjects = () => {
+export const useProjects = (page: number) => {
   return useQuery({
-    queryKey: ['projects'],
-    queryFn: getProjects,
+    queryKey: ['projects', page],
+    queryFn: () =>
+      page === 1
+        ? getProjects({ page })
+        : withMinDelay(getProjects({ page })),
   })
 }
 
@@ -39,4 +48,3 @@ export const useResume = () => {
   })
 }
 
-export type { Post, Project, ResumeData }

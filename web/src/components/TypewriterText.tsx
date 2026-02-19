@@ -1,5 +1,12 @@
 import { TypeAnimation } from 'react-type-animation'
-import strings from '@/content/strings.json'
+
+const TYPEWRITER_STRINGS = [
+  'Software Engineer',
+  'Powered By Coffee',
+  'Tinkerer and Maker at Heart',
+  'Homelabber',
+  'Open Source Enthusiast',
+]
 
 interface TypewriterTextProps {
   pauseAfterText?: number
@@ -9,7 +16,7 @@ interface TypewriterTextProps {
 }
 
 const TypewriterText = ({ className, pauseAfterText = 2000, pauseAfterDelete = 500 }: TypewriterTextProps) => {
-  const sequence = strings.typewriter.flatMap((text) =>
+  const sequence = TYPEWRITER_STRINGS.flatMap((text) =>
     [text, pauseAfterText, '', pauseAfterDelete]
   );
 

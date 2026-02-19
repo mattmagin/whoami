@@ -1,5 +1,5 @@
 import { Badge, Text, Stack, Flex } from '@/components/ui'
-import type { ResumeProject } from '@/types'
+import type { ResumeProject } from '@/api'
 
 interface ProjectsProps {
     projects: ResumeProject[]

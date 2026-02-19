@@ -1,45 +1,31 @@
 import { type ReactNode, useState, useCallback } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Container } from '@/components/ui'
-import SideNav from '@/components/SideNav'
-import PageHeader from './PageHeader'
+import TopNav from '@/components/TopNav'
 import ErrorBoundary from './ErrorBoundary'
 import ErrorState from './ErrorState'
-import { ROUTE, type Route } from '@/consts'
 import { ERROR_TYPE } from '@/consts'
-import { useContent } from '@/providers/ContentProvider'
-import { cn } from '@/lib/utils'
+import { cn, isHomeRoute } from '@/lib/utils'
+import { useCurrentRoute } from '@/hooks'
 
 const EXIT_DURATION = 400
-
-/** Map a pathname to the matching Route key for SideNav highlight */
-const deriveRoute = (pathname: string): Route => {
-  if (pathname === '/') return ROUTE.HOME
-  if (pathname.startsWith('/resume')) return ROUTE.RESUME
-  if (pathname.startsWith('/projects')) return ROUTE.PROJECTS
-  if (pathname.startsWith('/blog')) return ROUTE.BLOG
-  if (pathname.startsWith('/contact')) return ROUTE.CONTACT
-  return ROUTE.HOME
-}
 
 interface MainContainerProps {
   children: ReactNode
 }
 
 const MainContainer = ({ children }: MainContainerProps) => {
-  const location = useLocation()
+  const currentRoute = useCurrentRoute()
   const navigate = useNavigate()
-  const content = useContent()
 
   const [exiting, setExiting] = useState(false)
-  const [prevPathname, setPrevPathname] = useState(location.pathname)
+  const [prevPathname, setPrevPathname] = useState(currentRoute.path)
 
-  const currentRoute = deriveRoute(location.pathname)
-  const isHome = location.pathname === '/'
+  const isHome = isHomeRoute(currentRoute.path)
 
   // Synchronously reset exiting when the route changes (before paint).
-  if (location.pathname !== prevPathname) {
-    setPrevPathname(location.pathname)
+  if (currentRoute.path !== prevPathname) {
+    setPrevPathname(currentRoute.path)
     setExiting(false)
   }
 
@@ -60,32 +46,28 @@ const MainContainer = ({ children }: MainContainerProps) => {
   )
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden px-6 md:px-10 lg:px-16">
-      {/* Inner flex always uses items-center so SideNav stays in the same position on every page */}
-      <div className="flex w-full max-w-6xl mx-auto gap-12 items-center">
-        {/* Content column — border + padding shared by header and animated body */}
+    <div className="relative z-10 flex flex-col min-h-screen">
+      <TopNav
+        currentRoute={currentRoute.type}
+        onNavigate={handleNavigate}
+      />
+
+      {/* Content area */}
+      <div className="flex flex-1 flex-col px-6 md:px-10 lg:px-16">
         <div
           className={cn(
-            'flex-1 min-w-0 border-l border-primary/30 pl-6',
-            !isHome && 'self-stretch flex flex-col py-12 pr-4',
+            'w-full max-w-6xl mx-auto',
+            isHome ? 'flex flex-1 flex-col justify-center items-center' : 'py-12',
           )}
         >
-          {/* Persistent page header — typewriter handles enter/exit */}
-          <PageHeader
-            title={content?.heading ?? false}
-            description={content?.subheading ?? ''}
-          />
-
           {/* Animated content zone — keyed on pathname to replay enter animation on route change */}
           <div
-            key={location.pathname}
+            key={currentRoute.path}
             className={cn(
-              'flex-1 min-w-0 min-h-0',
-              !isHome && 'flex flex-col',
               exiting ? 'animate-slide-down' : 'animate-slide-up',
             )}
           >
-            <main className={cn(!isHome && 'flex-1 min-h-0 overflow-hidden')}>
+            <main>
               <ErrorBoundary
                 fallback={(error, reset) => (
                   <Container size="sm" padding="lg">
@@ -104,12 +86,6 @@ const MainContainer = ({ children }: MainContainerProps) => {
             </main>
           </div>
         </div>
-
-        {/* Side nav — persistent, never animates */}
-        <SideNav
-          currentRoute={currentRoute}
-          onNavigate={handleNavigate}
-        />
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useMemo, useState, useCallback, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, useCallback, type ReactNode } from 'react'
 import { ThemeProvider as EmotionThemeProvider, Global, css } from '@emotion/react'
-import { getTheme, type Theme, type ThemeKey } from '@/theme'
+import { getTheme, type Theme } from '@/theme'
 import {
   THEME_PREFERENCE,
   DEFAULT_THEME,
@@ -11,23 +11,8 @@ import {
   type ColorTheme,
 } from '@/consts'
 import { getStorageItem, setStorageItem } from '@/lib/localStorage'
-
-interface ThemeContextType {
-  /** The user's stored preference – may be 'system' */
-  preference: ThemePreference
-  /** The resolved theme key – always 'light' or 'dark' */
-  themeKey: ThemeKey
-  colorTheme: ColorTheme
-  theme: Theme
-  /** Set the user's preference (light / dark / system) */
-  setTheme: (pref: ThemePreference) => void
-  setColorTheme: (key: ColorTheme) => void
-  toggleTheme: () => void
-  /** Cycle through light → dark → system → light */
-  cycleTheme: () => void // Cycle through light → dark → system → light
-}
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+import { ThemeContext, type ThemeContextType } from './themeContext'
+import type { ThemeKey } from '@/theme'
 
 const themePreferences = Object.values(THEME_PREFERENCE) as ThemePreference[]
 const colorThemes = Object.values(COLOR_THEME) as ColorTheme[]
@@ -134,6 +119,10 @@ const generateCssVariables = (theme: Theme) => {
       --chart-3: ${theme.colors.chart3};
       --chart-4: ${theme.colors.chart4};
       --chart-5: ${theme.colors.chart5};
+
+      /* Gridlines background */
+      --grid-line: ${theme.colors.gridLine};
+      --grid-glow: ${theme.colors.gridGlow};
     }
 
     ::selection {
@@ -230,23 +219,3 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     </ThemeContext.Provider>
   )
 }
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useThemeContext = () => {
-  const context = useContext(ThemeContext)
-  if (context === undefined) {
-    throw new Error('useThemeContext must be used within a ThemeProvider')
-  }
-  return context
-}
-
-// Alias for convenience - can use either useTheme or useThemeContext
-// eslint-disable-next-line react-refresh/only-export-components
-export const useTheme = () => {
-  return useThemeContext()
-}
-
-// Re-export theme types and utilities for convenience
-export type { Theme, ThemeKey, ThemeColors, ThemeFonts, ThemeRadii, ColorPalette } from '@/theme'
-// eslint-disable-next-line react-refresh/only-export-components
-export { themes, getTheme, lightTheme, darkTheme } from '@/theme'

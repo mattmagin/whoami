@@ -3,6 +3,7 @@ import { MainContainer } from '@/components'
 import CommandPalette from '@/components/CommandPalette'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import ErrorState from '@/components/ErrorState'
+import AnimatedGridlinesBackground from '@/components/AnimatedGridlinesBackground'
 import { Container } from '@/components/ui'
 import { ERROR_TYPE } from '@/consts'
 import Providers from './providers'
@@ -23,6 +24,7 @@ const App = () => {
           </Container>
         )}
       >
+        <AnimatedGridlinesBackground />
         <CommandPalette />
         <MainContainer>
           <Pages />

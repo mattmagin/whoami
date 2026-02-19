@@ -13,10 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import { Command, CommandList, CommandEmpty, CommandGroup } from '@/components/ui/command'
 import { Kbd } from '@/components/ui/kbd'
-import { useThemeContext } from '@/providers/ThemeProvider'
-import { useContent } from '@/providers/ContentProvider'
-import { STORAGE_KEYS } from '@/consts'
-import { getStorageItem, setStorageItem } from '@/lib/localStorage'
+import { useThemeContext } from '@/providers/themeContext'
 import useCommandPaletteKeys from './useCommandPaletteKeys'
 import useThemePreview from './useThemePreview'
 import NavigationGroup from './NavigationGroup'
@@ -25,6 +22,8 @@ import ThemePickerItem from './ThemePickerItem'
 import ColorPickerItem from './ColorPickerItem'
 import SearchResults from './SearchResults'
 
+const SSH_COMMAND = 'ssh magin.tech'
+
 const CommandPalette = () => {
     const [open, setOpen] = useState(false)
     const [search, setSearch] = useState('')
@@ -32,18 +31,11 @@ const CommandPalette = () => {
     const navigate = useNavigate()
     const { preference, colorTheme, setTheme, setColorTheme } = useThemeContext()
     const [, copy] = useCopyToClipboard()
-    const { common, nav, commandPalette: cp } = useContent()!
 
     const appearanceRef = useRef<HTMLDivElement>(null)
     const themeRef = useRef<HTMLDivElement>(null)
 
-    const [boringMode, setBoringMode] = useState(
-        () => getStorageItem(STORAGE_KEYS.BORING_MODE) === 'true',
-    )
-
-    // Sync boring-mode state when palette opens
     const handleOpenChange = useCallback((next: boolean) => {
-        if (next) setBoringMode(getStorageItem(STORAGE_KEYS.BORING_MODE) === 'true')
         setOpen(next)
     }, [])
 
@@ -68,20 +60,12 @@ const CommandPalette = () => {
         command()
     }, [])
 
-    const handleToggleBoring = useCallback(() => {
-        setBoringMode((prev) => {
-            const next = !prev
-            setStorageItem(STORAGE_KEYS.BORING_MODE, next ? 'true' : 'false')
-            return next
-        })
-    }, [])
-
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogContent className="overflow-hidden p-0" showCloseButton={false}>
                 <DialogHeader className="sr-only">
                     <DialogTitle>Command Menu</DialogTitle>
-                    <DialogDescription>{cp.placeholder}</DialogDescription>
+                    <DialogDescription>Type a command or search...</DialogDescription>
                 </DialogHeader>
                 <Command
                     value={highlightedValue}
@@ -94,7 +78,7 @@ const CommandPalette = () => {
                         <CommandPrimitive.Input
                             value={search}
                             onValueChange={(v) => setSearch(v.trimStart())}
-                            placeholder={cp.placeholder}
+                            placeholder="Type a command or search..."
                             className="flex h-12 w-full bg-transparent py-3 text-sm outline-hidden placeholder:text-muted-foreground"
                         />
                         <Kbd className="hidden sm:inline-flex">ESC</Kbd>
@@ -102,25 +86,19 @@ const CommandPalette = () => {
 
                     {/* Results */}
                     <CommandList className="max-h-[28rem]">
-                        <CommandEmpty>{cp.noResults}</CommandEmpty>
+                        <CommandEmpty>No results found.</CommandEmpty>
 
                         <NavigationGroup
-                            heading={cp.navigation}
-                            nav={nav}
+                            heading="Navigation"
                             onSelect={(path) => runCommand(() => navigate(path))}
                         />
 
-                        <CommandGroup heading={cp.actions}>
+                        <CommandGroup heading="Actions">
                             <ActionsGroup
-                                sshCommand={common.sshCommand}
-                                copySshLabel={cp.copySshCommand}
-                                boringModeLabel={cp.boringMode}
-                                boringMode={boringMode}
                                 onCopySsh={() => runCommand(() => {
-                                    copy(common.sshCommand)
-                                    toast(cp.copiedToClipboard)
+                                    copy(SSH_COMMAND)
+                                    toast('Copied to clipboard!')
                                 })}
-                                onToggleBoring={handleToggleBoring}
                             />
 
                             <ThemePickerItem
@@ -133,7 +111,7 @@ const CommandPalette = () => {
                             <ColorPickerItem
                                 ref={appearanceRef}
                                 colorTheme={colorTheme}
-                                appearanceLabel={cp.appearance}
+                                appearanceLabel="Appearance"
                                 onSelect={() => { commitColor(); setOpen(false); setSearch('') }}
                                 onPick={(key) => { commitColor(); setColorTheme(key) }}
                             />
@@ -142,7 +120,7 @@ const CommandPalette = () => {
                         {/* Search-only items — visible only when user is searching */}
                         {search && (
                             <SearchResults
-                                colorThemeHeading={cp.colorTheme}
+                                colorThemeHeading="Color Theme"
                                 colorTheme={colorTheme}
                                 preference={preference}
                                 onSelectColor={(key) => { commitColor(); runCommand(() => setColorTheme(key)) }}
@@ -153,9 +131,9 @@ const CommandPalette = () => {
 
                     {/* Footer */}
                     <div className="flex items-center justify-between border-t border-border px-4 py-2 text-xs text-muted-foreground">
-                        <span>{cp.navigateHint}</span>
+                        <span>Navigate with ↑↓ keys</span>
                         <span>
-                            <Kbd>↵</Kbd> {cp.selectHint}
+                            <Kbd>↵</Kbd> to select
                         </span>
                     </div>
                 </Command>

@@ -1,7 +1,6 @@
-import { useEffect } from 'react'
 import { Download } from 'lucide-react'
-import { Button, Flex, ScrollArea, Separator, Stack } from '@/components/ui'
-import { useContent } from '@/providers/ContentProvider'
+import { Button, Flex, Separator, Stack } from '@/components/ui'
+import PageHeader from '@/components/PageHeader'
 import { useResume } from '@/hooks/queries'
 import ErrorState from '@/components/ErrorState'
 import { isApiError } from '@/api'
@@ -15,15 +14,7 @@ import Certifications from './Certifications'
 import Interests from './Interests'
 
 const Resume = () => {
-  const { resume: resumeStrings, setPageHeader } = useContent()!
   const { data: resumeData, isLoading: resumeLoading, error, refetch } = useResume()
-
-  // Override the default strings.json heading with the user's name/title from the API
-  useEffect(() => {
-    if (resumeData) {
-      setPageHeader(resumeData.name, resumeData.title)
-    }
-  }, [resumeData, setPageHeader])
 
   if (resumeLoading) {
     return <div>Loading...</div>
@@ -46,11 +37,12 @@ const Resume = () => {
   const { contact, summary, skills, experience, projects, education, certifications, interests } = resumeData
 
   return (
-    <ScrollArea className="h-full">
+    <>
+      <PageHeader title={resumeData.name} description={resumeData.title} />
       <Flex justify="end" className="mb-6">
         <Button>
           <Download className="mr-2 h-4 w-4" />
-          {resumeStrings.downloadPdf}
+          Download PDF
         </Button>
       </Flex>
       <Stack as="article" gap="xl">
@@ -70,7 +62,7 @@ const Resume = () => {
         <Separator />
         <Interests interests={interests} />
       </Stack>
-    </ScrollArea>
+    </>
   )
 }
 

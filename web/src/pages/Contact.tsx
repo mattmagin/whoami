@@ -1,21 +1,20 @@
-import { Mail, MapPin, Github, Linkedin, Terminal } from 'lucide-react'
-import { ScrollArea, Separator, Text, Stack, Flex, Grid } from '@/components/ui'
-import CopyButton from '@/components/CopyButton'
+import { Mail, MapPin, Github, Linkedin } from 'lucide-react'
+import { Text, Stack, Flex, Grid } from '@/components/ui'
 import ContactForm from '@/components/ContactForm'
+import PageHeader from '@/components/PageHeader'
 import { useResume } from '@/hooks/queries'
-import { useContent } from '@/providers/ContentProvider'
 
 const Contact = () => {
-  const { common, contact } = useContent()!
   const { data: resume } = useResume()
 
   return (
-    <ScrollArea className="h-full">
+    <>
+      <PageHeader title="Say Hello" description="Have a question, role opportunity, project idea or just want to say hello? I'd love to hear from you." />
       <Grid cols={{ base: 1, lg: 2 }} gap="xl">
         {/* Contact Form */}
         <Stack as="section" gap="lg">
           <Text variant="cardTitle" as="h2">
-            {contact.sendMessage}
+            Send a Message
           </Text>
           <ContactForm />
         </Stack>
@@ -23,7 +22,7 @@ const Contact = () => {
         {/* Contact Info */}
         <Stack as="section" gap="lg">
           <Text variant="cardTitle" as="h2">
-            {contact.otherWays}
+            Other Ways to Reach Me
           </Text>
 
           <Stack gap="lg">
@@ -37,7 +36,7 @@ const Contact = () => {
                   <Mail className="h-5 w-5" />
                 </Flex>
                 <Stack gap="none">
-                  <p className="font-medium">{contact.email}</p>
+                  <p className="font-medium">Email</p>
                   <Text variant="bodySmall">
                     {resume?.contact.email}
                   </Text>
@@ -45,20 +44,6 @@ const Contact = () => {
               </Flex>
             </a>
 
-            {/* Location */}
-            <div className="rounded-lg border border-border/50 bg-card p-4">
-              <Flex align="start" gap="md">
-                <Flex align="center" justify="center" className="h-10 w-10 rounded-lg bg-primary/10 text-primary">
-                  <MapPin className="h-5 w-5" />
-                </Flex>
-                <Stack gap="none">
-                  <p className="font-medium">{contact.location}</p>
-                  <Text variant="bodySmall">
-                    {resume?.contact.location}
-                  </Text>
-                </Stack>
-              </Flex>
-            </div>
 
             {/* GitHub */}
             {resume?.contact.github && (
@@ -104,28 +89,10 @@ const Contact = () => {
               </a>
             )}
 
-            <Separator />
-
-            {/* SSH */}
-            <Stack gap="sm" className="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-4">
-              <Flex align="center" gap="sm">
-                <Terminal className="h-5 w-5 text-primary" />
-                <p className="font-medium">{contact.preferTerminal}</p>
-              </Flex>
-              <Text variant="bodySmall">
-                {contact.sshDescription}
-              </Text>
-              <Flex align="center" gap="xs" className="rounded bg-muted pl-3 pr-1 py-1">
-                <code className="flex-1 font-mono text-sm">
-                  {common.sshCommand}
-                </code>
-                <CopyButton text={common.sshCommand} className="h-8 w-8" />
-              </Flex>
-            </Stack>
           </Stack>
         </Stack>
       </Grid>
-    </ScrollArea>
+    </>
   )
 }
 

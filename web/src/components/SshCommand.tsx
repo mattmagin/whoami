@@ -4,8 +4,9 @@ import { useCopyToClipboard } from 'usehooks-ts'
 import { Flex } from '@/components/ui'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import CopyButton from '@/components/CopyButton'
-import { useContent } from '@/providers/ContentProvider'
 import { cn } from '@/lib/utils'
+
+const SSH_COMMAND = 'ssh magin.tech'
 
 interface SshCommandProps {
     showHint?: boolean
@@ -14,12 +15,11 @@ interface SshCommandProps {
 }
 
 const SshCommand = ({ showHint = false, showTooltip = false, className }: SshCommandProps) => {
-    const { common, home, tuiEntry } = useContent()
     const [, copy] = useCopyToClipboard()
     const [copied, setCopied] = useState(false)
 
     const handleCopy = async () => {
-        const success = await copy(common.sshCommand)
+        const success = await copy(SSH_COMMAND)
         if (success) {
             setCopied(true)
             setTimeout(() => setCopied(false), 2000)
@@ -34,8 +34,8 @@ const SshCommand = ({ showHint = false, showTooltip = false, className }: SshCom
             className="cursor-pointer rounded-lg bg-muted/50 pl-4 pr-1 py-1 font-mono text-sm text-muted-foreground"
         >
             <Terminal className="h-4 w-4" />
-            <span>{showHint ? `${home.sshHint} ` : ''}{common.sshCommand}</span>
-            <CopyButton text={common.sshCommand} copied={copied} onCopy={handleCopy} className="h-8 w-8" />
+            <span>{showHint ? 'Or try: ' : ''}{SSH_COMMAND}</span>
+            <CopyButton text={SSH_COMMAND} copied={copied} onCopy={handleCopy} className="h-8 w-8" />
         </Flex>
     )
 
@@ -50,7 +50,7 @@ const SshCommand = ({ showHint = false, showTooltip = false, className }: SshCom
                     {commandBar}
                 </TooltipTrigger>
                 <TooltipContent>
-                    {tuiEntry.hoverHint}
+                    Try the TUI experience! Click to copy command to clipboard.
                 </TooltipContent>
             </Tooltip>
         </div>

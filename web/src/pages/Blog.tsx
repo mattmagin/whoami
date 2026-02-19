@@ -1,19 +1,31 @@
+import { useCallback } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { usePosts } from '@/hooks/queries'
 import ContentListPage from '@/components/ContentListPage'
-import { useContent } from '@/providers/ContentProvider'
-import type { Post } from '@/types'
+import PageHeader from '@/components/PageHeader'
+import type { Post } from '@/api'
 
 const Blog = () => {
-  const { blog } = useContent()!
-  const query = usePosts()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const page = Math.max(1, Number(searchParams.get('page')) || 1)
+  const query = usePosts(page)
+
+  const handlePageChange = useCallback((newPage: number) => {
+    setSearchParams(newPage > 1 ? { page: String(newPage) } : {})
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [setSearchParams])
 
   return (
-    <ContentListPage<Post>
-      emptyState={blog.emptyState}
-      query={query}
-      sort={(a, b) => new Date(b.publishedAt ?? 0).getTime() - new Date(a.publishedAt ?? 0).getTime()}
-      getEntryProps={(post) => ({ type: 'post', item: post })}
-    />
+    <>
+      <PageHeader title="Blog" description="Thoughts on development, tools, and the craft of building software." />
+      <ContentListPage<Post>
+        emptyState="No posts yet. Check back soon!"
+        query={query}
+        getEntryProps={(post) => ({ type: 'post', item: post })}
+        page={page}
+        onPageChange={handlePageChange}
+      />
+    </>
   )
 }
 

@@ -1,6 +1,6 @@
 import { Flex } from '@/components/ui'
 import { Mail, MapPin, Github, Linkedin } from 'lucide-react'
-import type { ResumeContact } from '@/types'
+import type { ResumeContact } from '@/api'
 
 interface HeaderProps {
     contact: ResumeContact

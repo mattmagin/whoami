@@ -1,5 +1,5 @@
 import { Text, Stack, Flex } from '@/components/ui'
-import type { ResumeEducation } from '@/types'
+import type { ResumeEducation } from '@/api'
 
 interface EducationProps {
     education: ResumeEducation[]

@@ -1,7 +1,7 @@
 import { Github, Linkedin, Mail } from 'lucide-react'
 import { Separator, Text, Stack, Flex, Container } from '@/components/ui'
 import SshCommand from '@/components/SshCommand'
-import { useContent } from '@/providers/ContentProvider'
+import { useResume } from '@/hooks/queries'
 
 const socialLinks = [
   { href: 'https://github.com', icon: Github, label: 'GitHub' },
@@ -11,7 +11,7 @@ const socialLinks = [
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
-  const { common, footer } = useContent()
+  const { data: resume } = useResume()
 
   return (
     <footer className="border-t border-border/50 bg-background transition-theme">
@@ -40,7 +40,7 @@ const Footer = () => {
 
           {/* Copyright */}
           <Text variant="bodySmall">
-            &copy; {currentYear} {footer.yourName}. {common.copyright}
+            &copy; {currentYear} {resume?.name}. All rights reserved.
           </Text>
         </Stack>
       </Container>

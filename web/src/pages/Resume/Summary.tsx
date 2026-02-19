@@ -1,7 +1,7 @@
 import { Text, Stack } from '@/components/ui'
 
 interface SummaryProps {
-    summary: string
+    summary: string | null
 }
 
 const Summary = ({ summary }: SummaryProps) => {

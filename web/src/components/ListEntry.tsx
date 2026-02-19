@@ -1,16 +1,14 @@
 import { Link } from 'react-router-dom'
-import { Calendar, Clock, ExternalLink, Github } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Badge, Button, Text } from '@/components/ui'
-import type { Post, Project } from '@/types'
-import { useContent } from '@/providers/ContentProvider'
+import { Text } from '@/components/ui'
+import type { Post, Project } from '@/api'
 
 type ListEntryProps =
     | { type: 'post'; item: Post }
     | { type: 'project'; item: Project }
 
 const ListEntry = (props: ListEntryProps) => {
-    const { common } = useContent()!
     const { type, item } = props
 
     const href = type === 'post' ? `/blog/${item.slug}` : `/projects/${item.slug}`
@@ -26,12 +24,6 @@ const ListEntry = (props: ListEntryProps) => {
                 day: 'numeric',
             })
             : null
-
-    const tags = type === 'post' ? item.tags : null
-    const readingTime = type === 'post' ? item.readingTime : null
-    const techStack = type === 'project' ? item.techStack : null
-    const githubUrl = type === 'project' ? item.githubUrl : null
-    const projectUrl = type === 'project' ? item.url : null
 
     return (
         <article
@@ -70,30 +62,6 @@ const ListEntry = (props: ListEntryProps) => {
                                 {formattedDate}
                             </span>
                         )}
-                        {readingTime && (
-                            <span className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                {readingTime}
-                            </span>
-                        )}
-                        {tags && tags.length > 0 && (
-                            <span className="flex flex-wrap gap-1.5">
-                                {tags.slice(0, 3).map((tag) => (
-                                    <Badge key={tag} variant="secondary" className="text-[0.65rem]">
-                                        {tag}
-                                    </Badge>
-                                ))}
-                            </span>
-                        )}
-                        {techStack && techStack.length > 0 && (
-                            <span className="flex flex-wrap gap-1.5">
-                                {techStack.map((tech) => (
-                                    <Badge key={tech} variant="outline" className="font-mono text-[0.65rem]">
-                                        {tech}
-                                    </Badge>
-                                ))}
-                            </span>
-                        )}
                     </div>
 
                     {/* Excerpt */}
@@ -104,38 +72,6 @@ const ListEntry = (props: ListEntryProps) => {
                     )}
                 </div>
             </Link>
-
-            {/* Project external links — rendered outside the main Link to avoid nested <a> */}
-            {type === 'project' && (githubUrl || projectUrl) && (
-                <div className="flex gap-2 pb-3 pl-0 sm:pl-[calc(6rem+1.25rem)]">
-                    {githubUrl && (
-                        <Button variant="outline" size="sm" asChild>
-                            <a
-                                href={githubUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2"
-                            >
-                                <Github className="h-3.5 w-3.5" />
-                                {common.code}
-                            </a>
-                        </Button>
-                    )}
-                    {projectUrl && (
-                        <Button variant="outline" size="sm" asChild>
-                            <a
-                                href={projectUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2"
-                            >
-                                <ExternalLink className="h-3.5 w-3.5" />
-                                {common.liveDemo}
-                            </a>
-                        </Button>
-                    )}
-                </div>
-            )}
         </article>
     )
 }

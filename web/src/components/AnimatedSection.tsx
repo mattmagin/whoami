@@ -54,10 +54,9 @@ export const AnimatedList = ({ children, className }: AnimatedListProps) => {
 export const AnimatedListItem = ({ children, className }: AnimatedListProps) => {
   return (
     <motion.div
-      variants={{
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0 },
-      }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
       transition={{
         duration: 0.4,
         ease: [0.21, 0.47, 0.32, 0.98],

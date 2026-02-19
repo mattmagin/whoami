@@ -1,8 +1,9 @@
 import { Hono } from 'hono';
-import { eq } from 'drizzle-orm';
+import { eq, count, asc } from 'drizzle-orm';
 import { db, schema } from '../db';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const DEFAULT_PER_PAGE = 5;
 
 const serializeProject = (project: typeof schema.projects.$inferSelect) => ({
   id: project.id,
@@ -23,8 +24,29 @@ const serializeProject = (project: typeof schema.projects.$inferSelect) => ({
 
 const app = new Hono()
   .get('/', async (c) => {
-    const allProjects = await db.select().from(schema.projects);
-    return c.json(allProjects.map(serializeProject));
+    const page = Math.max(1, Number(c.req.query('page')) || 1);
+    const offset = (page - 1) * DEFAULT_PER_PAGE;
+
+    const [totalResult, projects] = await Promise.all([
+      db.select({ count: count() }).from(schema.projects),
+      db.select()
+        .from(schema.projects)
+        .orderBy(asc(schema.projects.name))
+        .limit(DEFAULT_PER_PAGE)
+        .offset(offset),
+    ]);
+
+    const total = totalResult[0]?.count ?? 0;
+
+    return c.json({
+      data: projects.map(serializeProject),
+      meta: {
+        page,
+        perPage: DEFAULT_PER_PAGE,
+        total,
+        totalPages: Math.ceil(total / DEFAULT_PER_PAGE),
+      },
+    });
   })
   .get('/:slug', async (c) => {
     const param = c.req.param('slug');

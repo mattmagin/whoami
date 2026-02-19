@@ -20,6 +20,9 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@fontsource-variable/dm-sans": "^5.2.8",
+    "@fontsource-variable/fraunces": "^5.2.9",
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@hono/node-server": "^1.19.9",
     "@tanstack/query-async-storage-persister": "^5.90.22",
     "@tanstack/react-query": "^5.90.20",
@@ -31,8 +34,8 @@
     "drizzle-orm": "^0.45.1",
     "framer-motion": "^12.31.1",
     "hono": "^4.11.9",
-    "ky": "^1.14.3",
-    "lucide-react": "^0.563.0",
+    "lucide-react": "^0.568.0",
+    "motion": "^12.34.0",
     "postgres": "^3.4.8",
     "radix-ui": "^1.4.3",
     "react": "^19.2.0",
@@ -43,7 +46,7 @@
     "remark-gfm": "^4.0.1",
     "resend": "^6.9.2",
     "sonner": "^2.0.7",
-    "tailwind-merge": "^3.4.0",
+    "tailwind-merge": "^3.4.1",
     "usehooks-ts": "^3.1.1"
   },
   "devDependencies": {

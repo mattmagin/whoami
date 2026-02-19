@@ -1,5 +1,4 @@
 import { NAV_ROUTES, ROUTE_DEFINITIONS, type Route } from '@/consts'
-import { useContent } from '@/providers/ContentProvider'
 import { cn } from '@/lib/utils'
 
 /** Nav routes displayed in the side nav (all nav routes including Home) */
@@ -13,8 +12,6 @@ interface SideNavProps {
 }
 
 const SideNav = ({ currentRoute, onNavigate, className }: SideNavProps) => {
-    const { nav } = useContent()
-
     return (
         <nav
             className={cn(
@@ -24,15 +21,19 @@ const SideNav = ({ currentRoute, onNavigate, className }: SideNavProps) => {
             )}
         >
             {SIDE_NAV_ROUTES.map((route, index) => {
-                const { path, labelKey } = ROUTE_DEFINITIONS[route]
-                const label = nav[labelKey]
+                const { path, label } = ROUTE_DEFINITIONS[route]
                 const isCurrent = route === currentRoute
                 const number = String(index).padStart(2, '0')
 
                 return (
                     <button
                         key={path}
-                        onClick={() => onNavigate(path)}
+                        onClick={() => {
+                            onNavigate(path)
+                            if (document.activeElement instanceof HTMLElement) {
+                                document.activeElement.blur()
+                            }
+                        }}
                         className={cn(
                             'flex items-center gap-3 font-mono text-base uppercase tracking-widest transition-all duration-200 text-left',
                             isCurrent

@@ -1,5 +1,3 @@
-import { HTTPError } from 'ky'
-
 export class ApiError extends Error {
     status: number
     statusText: string
@@ -15,39 +13,26 @@ export class ApiError extends Error {
 }
 
 /**
- * Parse a ky HTTPError (or any unknown error) into an ApiError.
- * Attempts to read a JSON body with `error` or `errors` fields (Rails convention).
+ * Parse a non-ok Response into an ApiError.
+ * Attempts to read a JSON body with `message` or `error` fields.
  */
-export const parseApiError = async (error: unknown): Promise<ApiError> => {
-    if (error instanceof ApiError) {
-        return error
-    }
+export const parseApiError = async (res: Response): Promise<ApiError> => {
+    let detail: string | null = null
 
-    if (error instanceof HTTPError) {
-        const { status, statusText } = error.response
-        let detail: string | null = null
-
-        try {
-            const body = await error.response.json()
-            if (typeof body === 'object' && body !== null) {
-                if (typeof body.error === 'string') {
-                    detail = body.error
-                } else if (Array.isArray(body.errors)) {
-                    detail = body.errors.join(', ')
-                }
+    try {
+        const body = await res.json()
+        if (typeof body === 'object' && body !== null) {
+            if (typeof body.message === 'string') {
+                detail = body.message
+            } else if (typeof body.error === 'string') {
+                detail = body.error
             }
-        } catch {
-            // Response body wasn't JSON — that's fine
         }
-
-        return new ApiError(status, statusText, detail)
+    } catch {
+        // Response body wasn't JSON — that's fine
     }
 
-    if (error instanceof Error) {
-        return new ApiError(0, error.message)
-    }
-
-    return new ApiError(0, 'An unknown error occurred')
+    return new ApiError(res.status, res.statusText, detail)
 }
 
 /**

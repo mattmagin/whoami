@@ -44,42 +44,62 @@ const variantStyles = {
         color: ${themeVars.colors.foreground};
 
         @media (min-width: 768px) {
-            font-size: 3rem;
+            font-size: 2.75rem;
         }
 
         @media (min-width: 1024px) {
+            font-size: 3.25rem;
+        }
+
+        @media (min-width: 1536px) {
             font-size: 3.75rem;
         }
     `,
     sectionTitle: css`
         font-family: ${themeVars.fonts.serif};
-        font-size: 1.5rem;
+        font-size: 1.375rem;
         font-weight: 600;
         letter-spacing: -0.025em;
         line-height: 1.3;
         color: ${themeVars.colors.foreground};
 
         @media (min-width: 768px) {
+            font-size: 1.5rem;
+        }
+
+        @media (min-width: 1536px) {
             font-size: 1.875rem;
         }
     `,
     cardTitle: css`
         font-family: ${themeVars.fonts.serif};
-        font-size: 1.25rem;
+        font-size: 1.125rem;
         font-weight: 600;
         letter-spacing: -0.025em;
         line-height: 1.4;
         color: ${themeVars.colors.foreground};
+
+        @media (min-width: 1536px) {
+            font-size: 1.25rem;
+        }
     `,
     subtitle: css`
-        font-size: 1.25rem;
+        font-size: 1.125rem;
         line-height: 1.5;
         color: ${themeVars.colors.mutedForeground};
+
+        @media (min-width: 1536px) {
+            font-size: 1.25rem;
+        }
     `,
     body: css`
-        font-size: 1.125rem;
+        font-size: 1rem;
         line-height: 1.75;
         color: ${themeVars.colors.mutedForeground};
+
+        @media (min-width: 1536px) {
+            font-size: 1.125rem;
+        }
     `,
     bodySmall: css`
         font-size: 0.875rem;

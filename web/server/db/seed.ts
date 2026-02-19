@@ -39,6 +39,7 @@ Styling is handled entirely through Lip Gloss, with a consistent color palette a
 This project was an exercise in proving that terminal interfaces can be beautiful, accessible, and genuinely enjoyable to use — not just utilitarian tools for power users.`,
             techStack: ['Go', 'BubbleTea', 'Lipgloss', 'REST'],
             githubUrl: 'https://github.com/example/portfolio-tui',
+            imageUrl: 'https://picsum.photos/seed/portfolio-tui/800/450',
             featured: true,
             publishedAt: weeksAgo(1),
         },
@@ -57,6 +58,7 @@ All tables use UUID primary keys to avoid exposing sequential IDs. Blueprinter h
 The API includes rate limiting on the contact form endpoint to prevent abuse, input validation with descriptive error messages, and CORS configuration scoped to known frontend origins. Deployment is handled through Kamal, which orchestrates Docker containers on a VPS with zero-downtime rolling deploys and automatic SSL via Let's Encrypt.`,
             techStack: ['Ruby', 'Rails', 'PostgreSQL', 'Docker', 'Kamal'],
             githubUrl: 'https://github.com/example/portfolio-api',
+            imageUrl: 'https://picsum.photos/seed/portfolio-api/800/450',
             featured: true,
             publishedAt: weeksAgo(1),
         },
@@ -76,6 +78,7 @@ On the frontend, TanStack Query manages server state with automatic cache invali
             techStack: ['React', 'TypeScript', 'Rails', 'ActionCable', 'PostgreSQL'],
             url: 'https://taskflow.example.com',
             githubUrl: 'https://github.com/example/task-flow',
+            imageUrl: 'https://picsum.photos/seed/task-flow/800/450',
             featured: true,
             publishedAt: monthsAgo(2),
         },
@@ -94,6 +97,7 @@ Results are posted as a single review with inline comments rather than individua
 The entire application runs in a Docker container with health checks and structured JSON logging. In practice, the bot caught roughly 30% of issues that would have otherwise required a human review round-trip, measurably shortening the feedback loop on team projects.`,
             techStack: ['Python', 'FastAPI', 'GitHub-API', 'Docker'],
             githubUrl: 'https://github.com/example/code-review-bot',
+            imageUrl: 'https://picsum.photos/seed/code-review-bot/800/450',
             featured: false,
             publishedAt: monthsAgo(4),
         },
@@ -112,6 +116,7 @@ An optional \`sync\` subcommand pushes the local database to a simple REST API f
 The project was an exercise in writing ergonomic CLI tools in Rust. It uses \`clap\` for argument parsing with shell completions, \`rusqlite\` for the storage layer, and \`comfy-table\` for formatted terminal output. The binary compiles to a single static executable under 5 MB with no runtime dependencies.`,
             techStack: ['Rust', 'SQLite', 'REST'],
             githubUrl: 'https://github.com/example/expense-tracker',
+            imageUrl: 'https://picsum.photos/seed/expense-tracker-cli/800/450',
             featured: false,
             publishedAt: monthsAgo(6),
         },
@@ -130,6 +135,7 @@ Accessibility was a primary design goal. The entire dashboard is navigable via k
 The app is deployed to Netlify as a static site with serverless functions proxying the weather API calls to keep API keys off the client. Build times are under 10 seconds, and the production bundle is under 80 KB gzipped — a deliberate constraint to keep the dashboard fast on any connection.`,
             techStack: ['Vue.js', 'Tailwind', 'OpenWeatherAPI', 'Netlify'],
             url: 'https://weather.example.com',
+            imageUrl: 'https://picsum.photos/seed/weather-dashboard/800/450',
             featured: false,
             publishedAt: monthsAgo(8),
         },
@@ -288,6 +294,7 @@ After a few weeks of building with Bubble Tea, a few things stand out:
 ## What's next
 
 The TUI is live and accessible over SSH. In the next post, I'll cover how I set up the Wish SSH server and wired it into the Bubble Tea application — turning \`ssh portfolio.example.com\` into a fully interactive experience.`,
+            featureImageUrl: 'https://picsum.photos/seed/building-a-terminal-ui-with-go-and-bubble-tea/1200/675',
             publishedAt: daysAgo(3),
         },
         {
@@ -424,6 +431,7 @@ Here's the bottom line: I went from \`rails new\` to a fully functional API with
 Could I have built the same thing with Express? Phoenix? FastAPI? Absolutely. But I doubt I would have shipped as quickly, and I'm certain the codebase wouldn't be as consistent.
 
 Rails isn't the right choice for everything. But for a well-scoped REST API built by a small team (or a team of one), it's hard to beat.`,
+            featureImageUrl: 'https://picsum.photos/seed/why-i-chose-rails-for-my-api-backend/1200/675',
             publishedAt: weeksAgo(1),
         },
         {
@@ -567,6 +575,7 @@ For five dollars a month, I have a production server with SSL, automated deploym
 If you're building something that fits on one to three servers and you're comfortable with Docker, Kamal is excellent. It removes the complexity of Kubernetes without sacrificing the benefits of containerized deployments.
 
 For larger systems with complex networking, service discovery, or autoscaling requirements, you'll probably outgrow Kamal. But for everything else — personal projects, small SaaS apps, internal tools — it's become my default deployment strategy.`,
+            featureImageUrl: 'https://picsum.photos/seed/deploying-with-kamal-a-docker-first-approach/1200/675',
             publishedAt: weeksAgo(2),
         },
         {
@@ -704,6 +713,7 @@ Reading time estimation is a small feature, but the pattern it illustrates is un
 The feature itself took maybe 30 minutes to build. The tests took another 30. But those tests have caught three regressions already — each time I refactored the content parsing, the tests told me exactly what broke.
 
 That's the value of testing: not proving your code works today, but protecting it from breaking tomorrow.`,
+            featureImageUrl: 'https://picsum.photos/seed/testing-reading-time-calculations-in-ruby/1200/675',
             publishedAt: weeksAgo(3),
         },
         {
@@ -801,6 +811,7 @@ Document your tech choices, write about the build process, open-source the code.
 That's exactly what I've done here. The portfolio is the project. The blog posts explain the portfolio. The code is on GitHub for anyone to read. It's portfolios all the way down.
 
 And honestly? That's the most fun I've had building anything in a long time.`,
+            featureImageUrl: 'https://picsum.photos/seed/crafting-a-developer-portfolio-that-stands-out/1200/675',
             publishedAt: monthsAgo(1),
         },
     ];

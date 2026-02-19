@@ -3,7 +3,6 @@ import { Send, CheckCircle, AlertCircle } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import { Button, Input, Label, Textarea, Text, Stack, Flex, Grid } from '@/components/ui'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { useContent } from '@/providers/ContentProvider'
 import { useCreateContact } from '@/hooks'
 
 interface FormErrors {
@@ -51,7 +50,6 @@ const ContactForm = () => {
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [values, setValues] = useState<FormValues>({ name: '', email: '', message: '' })
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const { contactForm } = useContent()
   const { mutate, isPending: isSubmitting } = useCreateContact()
 
   function triggerConfetti() {
@@ -77,14 +75,14 @@ const ContactForm = () => {
   const validateField = (name: keyof FormValues, value: string): string | undefined => {
     switch (name) {
       case 'name':
-        if (!value.trim()) return contactForm.errors?.nameRequired
+        if (!value.trim()) return 'Please enter your name'
         return undefined
       case 'email':
-        if (!value.trim()) return contactForm.errors?.emailRequired
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return contactForm.errors?.emailInvalid
+        if (!value.trim()) return 'Please enter your email address'
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Please enter a valid email address'
         return undefined
       case 'message':
-        if (!value.trim()) return contactForm.errors?.messageRequired
+        if (!value.trim()) return 'Please enter a message'
         return undefined
       default:
         return undefined
@@ -142,7 +140,7 @@ const ContactForm = () => {
         triggerConfetti()
       },
       onError: () => {
-        setServerError(contactForm.errors?.serverError ?? 'Something went wrong. Please try again.')
+        setServerError('Something went wrong. Please try again.')
       },
     })
   }
@@ -151,15 +149,15 @@ const ContactForm = () => {
     return (
       <Stack align="center" gap="md" className="rounded-lg border border-primary/20 bg-primary/5 p-8">
         <CheckCircle className="h-12 w-12 text-primary" />
-        <Text variant="cardTitle">{contactForm.successTitle}</Text>
+        <Text variant="cardTitle">Message Sent!</Text>
         <Text variant="muted">
-          {contactForm.successDescription}
+          Thanks for reaching out. I'll get back to you soon.
         </Text>
         <Button
           variant="outline"
           onClick={() => setSubmitted(false)}
         >
-          {contactForm.sendAnother}
+          Send Another Message
         </Button>
       </Stack>
     )
@@ -169,12 +167,12 @@ const ContactForm = () => {
     <Stack as="form" gap="lg" onSubmit={handleSubmit} noValidate>
       <Grid cols={{ base: 1, sm: 2 }} gap="lg">
         <Stack gap="xs">
-          <Label htmlFor="name">{contactForm.nameLabel}</Label>
+          <Label htmlFor="name">Name</Label>
           <div className="relative">
             <Input
               id="name"
               name="name"
-              placeholder={contactForm.namePlaceholder}
+              placeholder="Your name"
               value={values.name}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -187,13 +185,13 @@ const ContactForm = () => {
           </div>
         </Stack>
         <Stack gap="xs">
-          <Label htmlFor="email">{contactForm.emailLabel}</Label>
+          <Label htmlFor="email">Email</Label>
           <div className="relative">
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder={contactForm.emailPlaceholder}
+              placeholder="you@example.com"
               value={values.email}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -208,12 +206,12 @@ const ContactForm = () => {
       </Grid>
 
       <Stack gap="xs">
-        <Label htmlFor="message">{contactForm.messageLabel}</Label>
+        <Label htmlFor="message">Message</Label>
         <div className="relative">
           <Textarea
             id="message"
             name="message"
-            placeholder={contactForm.messagePlaceholder}
+            placeholder="What would you like to discuss?"
             rows={6}
             value={values.message}
             onChange={handleChange}
@@ -241,10 +239,10 @@ const ContactForm = () => {
         className="w-full sm:w-fit"
       >
         {isSubmitting ? (
-          contactForm.sending
+          'Sending...'
         ) : (
           <>
-            {contactForm.sendButton}
+            Send Message
             <Send className="ml-2 h-4 w-4" />
           </>
         )}

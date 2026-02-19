@@ -1,5 +1,8 @@
 export {
     ThemeProvider,
+} from '../providers/ThemeProvider'
+
+export {
     useThemeContext,
     useTheme,
     themes,
@@ -11,7 +14,7 @@ export {
     type ThemeColors,
     type ThemeFonts,
     type ThemeRadii,
-} from '../providers/ThemeProvider'
+} from '../providers/themeContext'
 
 export {
     usePosts,
@@ -20,6 +23,7 @@ export {
     useProject,
     useResume,
 } from './queries'
+
 
 export {
     useCreateContact,
@@ -31,4 +35,7 @@ export {
 } from './useKeyBindings'
 
 export { default as usePostType } from './usePostType'
-export { default as useTypewriter, usePageTypewriter } from './useTypewriter'
+
+export { default as useDeferredLoading } from './useDeferredLoading'
+
+export { default as useCurrentRoute } from './useCurrentRoute'

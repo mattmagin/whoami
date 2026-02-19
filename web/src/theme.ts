@@ -55,13 +55,16 @@ export interface ThemeColors {
 
     // Selection
     selection: string
+
+    // Gridlines background
+    gridLine: string
+    gridGlow: string
 }
 
 export interface ThemeFonts {
     sans: string
     serif: string
     mono: string
-    outfit: string
 }
 
 export interface ThemeRadii {
@@ -101,10 +104,9 @@ export interface Theme {
 }
 
 const fonts: ThemeFonts = {
-    sans: '"DM Sans", system-ui, sans-serif',
-    serif: '"Fraunces", Georgia, serif',
-    mono: '"JetBrains Mono", monospace',
-    outfit: '"Outfit", system-ui, sans-serif',
+    sans: '"DM Sans Variable", "DM Sans", system-ui, sans-serif',
+    serif: '"Fraunces Variable", "Fraunces", Georgia, serif',
+    mono: '"JetBrains Mono Variable", "JetBrains Mono", monospace',
 }
 
 const baseRadius = '0.5rem'
@@ -174,6 +176,10 @@ export const lightTheme: Theme = {
 
         // Selection
         selection: 'rgba(92, 138, 102, 0.3)',
+
+        // Gridlines background
+        gridLine: 'rgba(45, 90, 61, 0.12)',
+        gridGlow: '#2d5a3d',
     },
     fonts,
     radii,
@@ -297,6 +303,10 @@ export const darkTheme: Theme = {
 
         // Selection
         selection: 'rgba(106, 171, 122, 0.4)',
+
+        // Gridlines background
+        gridLine: 'rgba(106, 171, 122, 0.08)',
+        gridGlow: '#6aab7a',
     },
     fonts,
     radii,
@@ -415,6 +425,8 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
             chart4: '#8a4a6a',
             chart5: '#c4708a',
             selection: 'rgba(139, 34, 82, 0.3)',
+            gridLine: 'rgba(139, 34, 82, 0.12)',
+            gridGlow: '#8b2252',
         },
         dark: {
             primaryLight: '#e88a9e',
@@ -442,6 +454,8 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
             chart4: '#e0668a',
             chart5: '#ab6a80',
             selection: 'rgba(224, 102, 128, 0.4)',
+            gridLine: 'rgba(224, 102, 128, 0.08)',
+            gridGlow: '#e06680',
         },
     },
 
@@ -472,6 +486,8 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
             chart4: '#4a7aaa',
             chart5: '#6a8ab0',
             selection: 'rgba(92, 122, 171, 0.3)',
+            gridLine: 'rgba(45, 74, 122, 0.12)',
+            gridGlow: '#2d4a7a',
         },
         dark: {
             primaryLight: '#8ab4e8',
@@ -499,6 +515,8 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
             chart4: '#6aabe0',
             chart5: '#8a9ec0',
             selection: 'rgba(106, 155, 224, 0.4)',
+            gridLine: 'rgba(106, 155, 224, 0.08)',
+            gridGlow: '#6a9be0',
         },
     },
 
@@ -529,6 +547,8 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
             chart4: '#aa8a4a',
             chart5: '#c0a060',
             selection: 'rgba(160, 128, 64, 0.3)',
+            gridLine: 'rgba(138, 107, 45, 0.12)',
+            gridGlow: '#8a6b2d',
         },
         dark: {
             primaryLight: '#e8ca80',
@@ -556,6 +576,8 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
             chart4: '#e0c06a',
             chart5: '#c0a860',
             selection: 'rgba(224, 184, 96, 0.4)',
+            gridLine: 'rgba(224, 184, 96, 0.08)',
+            gridGlow: '#e0b860',
         },
     },
 
@@ -586,6 +608,8 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
             chart4: '#7a5aaa',
             chart5: '#9a6ab0',
             selection: 'rgba(122, 92, 171, 0.3)',
+            gridLine: 'rgba(90, 45, 122, 0.12)',
+            gridGlow: '#5a2d7a',
         },
         dark: {
             primaryLight: '#c08ae8',
@@ -613,6 +637,8 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
             chart4: '#aa6adb',
             chart5: '#9a80c0',
             selection: 'rgba(171, 106, 224, 0.4)',
+            gridLine: 'rgba(171, 106, 224, 0.08)',
+            gridGlow: '#ab6ae0',
         },
     },
 
@@ -643,6 +669,8 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
             chart4: '#5a7088',
             chart5: '#8090a0',
             selection: 'rgba(120, 136, 160, 0.3)',
+            gridLine: 'rgba(74, 85, 104, 0.12)',
+            gridGlow: '#4a5568',
         },
         dark: {
             primaryLight: '#b5c2d0',
@@ -670,6 +698,8 @@ export const colorPalettes: Record<ColorTheme, ColorPalette> = {
             chart4: '#8a9eb0',
             chart5: '#a0a8b5',
             selection: 'rgba(160, 176, 192, 0.4)',
+            gridLine: 'rgba(160, 176, 192, 0.08)',
+            gridGlow: '#a0b0c0',
         },
     },
 }
@@ -729,6 +759,10 @@ export const themeVars = {
         border: 'var(--border)',
         input: 'var(--input)',
         ring: 'var(--ring)',
+
+        // Gridlines background
+        gridLine: 'var(--grid-line)',
+        gridGlow: 'var(--grid-glow)',
     },
 
     radii: {

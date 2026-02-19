@@ -1,5 +1,4 @@
 import { Text, Stack } from '@/components/ui'
-import { usePageTypewriter } from '@/hooks/useTypewriter'
 
 interface PageHeaderProps {
     /** Target heading text, or false when no header should show. */
@@ -8,25 +7,16 @@ interface PageHeaderProps {
 }
 
 const PageHeader = ({ title, description }: PageHeaderProps) => {
-    const headingTarget = title || ''
-    const subheadingTarget = title ? description : ''
-
-    const { heading, subheading, isAnimating, headingActive } = usePageTypewriter(headingTarget, subheadingTarget)
-
-    // Render nothing when fully empty and not mid-animation
-    if (!heading && !subheading && !isAnimating) {
+    if (!title) {
         return null
     }
 
     return (
         <div className="shrink-0 pb-6">
             <Stack as="header" gap="sm">
-                <Text variant="pageTitle">
-                    {heading}
-                    {headingActive && <span className="animate-pulse ml-[1px]">|</span>}
-                </Text>
-                {subheading && (
-                    <Text variant="body">{subheading}</Text>
+                <Text variant="pageTitle">{title}</Text>
+                {description && (
+                    <Text variant="body">{description}</Text>
                 )}
             </Stack>
         </div>

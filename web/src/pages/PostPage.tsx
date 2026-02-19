@@ -1,15 +1,13 @@
 import { useParams } from 'react-router-dom'
 import { Clock, ExternalLink, Github } from 'lucide-react'
-import { Badge, Button, Flex, ScrollArea } from '@/components/ui'
+import { Badge, Button, Flex } from '@/components/ui'
 import Post from '@/components/Post'
 import { usePost, useProject } from '@/hooks/queries'
-import { useContent } from '@/providers/ContentProvider'
 import usePostType from '@/hooks/usePostType'
 
 const PostPage = () => {
     const { slug } = useParams<{ slug: string }>()
     const type = usePostType()
-    const { common, blogPost: blogStrings, projectPost: projectStrings } = useContent()!
 
     const postQuery = usePost(type === 'blog' ? (slug ?? '') : '')
     const projectQuery = useProject(type === 'project' ? (slug ?? '') : '')
@@ -24,10 +22,6 @@ const PostPage = () => {
     const publishedAt = data?.publishedAt ?? null
     const markdownContent = type === 'blog' ? (post?.content ?? null) : (project?.description ?? null)
     const featureImageUrl = type === 'blog' ? post?.featureImageUrl : project?.imageUrl
-
-    const backTo = type === 'blog' ? '/blog' : '/projects'
-    const backLabel = type === 'blog' ? common.backToBlog : common.backToProjects
-    const footerText = type === 'blog' ? blogStrings.thanksForReading : projectStrings.interestedInProject
 
     // Blog badges: tags
     // Project badges: featured + tech stack
@@ -45,7 +39,7 @@ const PostPage = () => {
             <Flex gap="sm" wrap>
                 {project!.featured && (
                     <Badge className="bg-primary/10 text-primary hover:bg-primary/20">
-                        {common.featured}
+                        Featured
                     </Badge>
                 )}
                 {(project!.techStack ?? []).map((tech) => (
@@ -76,7 +70,7 @@ const PostPage = () => {
                         className="flex items-center gap-2"
                     >
                         <Github className="h-4 w-4" />
-                        {common.code}
+                        Code
                     </a>
                 </Button>
             )}
@@ -89,7 +83,7 @@ const PostPage = () => {
                         className="flex items-center gap-2"
                     >
                         <ExternalLink className="h-4 w-4" />
-                        {common.liveDemo}
+                        Live Demo
                     </a>
                 </Button>
             )}
@@ -97,23 +91,18 @@ const PostPage = () => {
     ) : undefined
 
     return (
-        <ScrollArea className="h-full">
-            <Post
-                isLoading={isLoading}
-                error={error}
-                refetch={refetch}
-                backTo={backTo}
-                backLabel={backLabel}
-                title={title}
-                publishedAt={publishedAt}
-                markdownContent={markdownContent}
-                featureImageUrl={featureImageUrl}
-                badges={badges}
-                meta={meta}
-                headerExtras={headerExtras}
-                footerText={footerText}
-            />
-        </ScrollArea>
+        <Post
+            isLoading={isLoading}
+            error={error}
+            refetch={refetch}
+            title={title}
+            publishedAt={publishedAt}
+            markdownContent={markdownContent}
+            featureImageUrl={featureImageUrl}
+            badges={badges}
+            meta={meta}
+            headerExtras={headerExtras}
+        />
     )
 }
 
