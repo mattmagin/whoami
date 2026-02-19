@@ -10,20 +10,20 @@
   <meta name="description"
     content="Full-stack software engineer specializing in Go, Ruby, and TypeScript. Explore my projects, blog, and resume." />
 
-  <!-- Prevent flash of unstyled content -->
-  <!-- <script>
+  <!-- Prevent flash of unstyled content (FOUC) for dark-mode users.
+       Must run synchronously before first paint. Reads the same 'theme'
+       localStorage key that ThemeProvider uses. -->
+  <script>
     (function () {
-      let theme = localStorage.getItem('theme');
-      if (!theme) {
-        // Detect system preference and store it
-        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        localStorage.setItem('theme', theme);
-      }
-      if (theme === 'dark') {
+      var theme = localStorage.getItem('theme');
+      // 'system' or missing → check OS preference
+      var isDark = theme === 'dark' ||
+        (theme !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (isDark) {
         document.documentElement.classList.add('dark');
       }
     })();
-  </script> -->
+  </script>
 </head>
 
 <body>
