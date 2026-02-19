@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { eq, asc, isNull, isNotNull, and } from 'drizzle-orm';
 import { db, schema } from '../db';
+import { published } from '../lib/filters';
 
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -24,9 +25,6 @@ const formatEducationDates = (startYear: number | null, endYear: number | null):
   if (endYear) return `${endYear}`;
   return '';
 };
-
-const published = <T extends { publishedAt: unknown; deletedAt: unknown }>(table: T) =>
-  and(isNotNull(table.publishedAt), isNull(table.deletedAt));
 
 const app = new Hono()
   .get('/', async (c) => {

@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
-import { eq, count, asc } from 'drizzle-orm';
+import { eq, and, count, asc } from 'drizzle-orm';
 import { db, schema } from '../db';
+import { published } from '../lib/filters';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DEFAULT_PER_PAGE = 5;
@@ -19,7 +20,6 @@ const serializeProject = (project: typeof schema.projects.$inferSelect) => ({
   publishedAt: project.publishedAt?.toISOString() ?? null,
   createdAt: project.createdAt.toISOString(),
   updatedAt: project.updatedAt.toISOString(),
-  deletedAt: project.deletedAt?.toISOString() ?? null,
 });
 
 const app = new Hono()
@@ -27,10 +27,13 @@ const app = new Hono()
     const page = Math.max(1, Number(c.req.query('page')) || 1);
     const offset = (page - 1) * DEFAULT_PER_PAGE;
 
+    const publishedFilter = published(schema.projects);
+
     const [totalResult, projects] = await Promise.all([
-      db.select({ count: count() }).from(schema.projects),
+      db.select({ count: count() }).from(schema.projects).where(publishedFilter),
       db.select()
         .from(schema.projects)
+        .where(publishedFilter)
         .orderBy(asc(schema.projects.name))
         .limit(DEFAULT_PER_PAGE)
         .offset(offset),
@@ -53,8 +56,8 @@ const app = new Hono()
     const isUuid = UUID_REGEX.test(param);
 
     const project = isUuid
-      ? await db.select().from(schema.projects).where(eq(schema.projects.id, param)).then(r => r[0])
-      : await db.select().from(schema.projects).where(eq(schema.projects.slug, param)).then(r => r[0]);
+      ? await db.select().from(schema.projects).where(and(eq(schema.projects.id, param), published(schema.projects))).then(r => r[0])
+      : await db.select().from(schema.projects).where(and(eq(schema.projects.slug, param), published(schema.projects))).then(r => r[0]);
 
     if (!project) {
       return c.json({ error: 'not_found', message: 'Project not found' }, 404);
