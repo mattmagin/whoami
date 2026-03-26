@@ -62,7 +62,7 @@ const PostPage = () => {
     const headerExtras = type === 'project' && (project?.githubUrl || project?.url) ? (
         <Flex gap="sm" wrap>
             {project!.githubUrl && (
-                <Button variant="outline" size="sm" asChild>
+                <Button variant="ghost" size="sm" asChild>
                     <a
                         href={project!.githubUrl}
                         target="_blank"
@@ -75,7 +75,7 @@ const PostPage = () => {
                 </Button>
             )}
             {project!.url && (
-                <Button variant="outline" size="sm" asChild>
+                <Button variant="ghost" size="sm" asChild>
                     <a
                         href={project!.url}
                         target="_blank"

@@ -46,6 +46,7 @@
 
   /* Typography */
   --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
   --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
 }
@@ -60,7 +61,8 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+
+    /* @apply bg-background text-foreground antialiased; */
     font-family: var(--font-sans);
   }
 
@@ -70,7 +72,7 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-serif);
+    font-family: var(--font-heading);
     @apply tracking-tight;
   }
 
@@ -85,81 +87,6 @@
 @layer utilities {
   .transition-theme {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  }
-}
-
-/* Page transition animations */
-@layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-out;
-  }
-
-  .animate-slide-up {
-    animation: slideUp 0.5s ease-out;
-  }
-
-  .animate-slide-up-delay-1 {
-    animation: slideUp 0.5s ease-out 0.1s both;
-  }
-
-  .animate-slide-up-delay-2 {
-    animation: slideUp 0.5s ease-out 0.2s both;
-  }
-
-  .animate-slide-up-delay-3 {
-    animation: slideUp 0.5s ease-out 0.3s both;
-  }
-
-  .animate-fade-out {
-    animation: fadeOut 0.4s ease-in forwards;
-  }
-
-  .animate-slide-down {
-    animation: slideDown 0.4s ease-in forwards;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  to {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 

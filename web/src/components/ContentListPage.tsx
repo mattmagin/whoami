@@ -2,7 +2,6 @@ import type { UseQueryResult } from '@tanstack/react-query'
 import { Text, Stack, Flex, Skeleton } from '@/components/ui'
 import ListEntry from '@/components/ListEntry'
 import ErrorState from '@/components/ErrorState'
-import { AnimatedListItem } from '@/components/AnimatedSection'
 import { isApiError } from '@/api'
 import type { PaginatedResponse, Post, Project } from '@/api'
 import { useDeferredLoading } from '@/hooks'
@@ -92,7 +91,6 @@ const ContentListPage = <T extends ContentItem>({
     }
 
     // Deferred period: loading but skeleton not yet visible — render nothing
-    // (the page slide-up animation masks this brief empty frame)
     if (isLoading) return null
 
     if (error) {
@@ -109,11 +107,10 @@ const ContentListPage = <T extends ContentItem>({
         <>
             <div className="flex flex-col gap-2">
                 {items.map((item) => (
-                    <AnimatedListItem key={item.slug}>
-                        <ListEntry
-                            {...getEntryProps(item)}
-                        />
-                    </AnimatedListItem>
+                    <ListEntry
+                        key={item.slug}
+                        {...getEntryProps(item)}
+                    />
                 ))}
             </div>
 

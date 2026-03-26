@@ -31,33 +31,23 @@ export interface RouteDefinition {
     icon?: LucideIcon
     /** React page component rendered for this route */
     component: React.ComponentType
-    /** Whether this route appears in the main navigation bar / command palette */
+    /** Whether this route appears in the main navigation bar */
     showInMainNavigation?: boolean
-    /** Single-key shortcuts (no modifiers) */
-    shortcuts?: string[]
     /** Post type discriminator for the unified PostPage */
     postType?: PostType
 }
 
 export const ROUTE_DEFINITIONS: Record<Route, RouteDefinition> = {
-    [ROUTE.HOME]: { type: ROUTE.HOME, path: '/', label: 'Home', icon: Home, component: HomePage, showInMainNavigation: true, shortcuts: ['0'] },
-    [ROUTE.RESUME]: { type: ROUTE.RESUME, path: '/resume', label: 'Resume', icon: FileText, component: ResumePage, showInMainNavigation: true, shortcuts: ['1'] },
-    [ROUTE.PROJECTS]: { type: ROUTE.PROJECTS, path: '/projects', label: 'Projects', icon: FolderKanban, component: ProjectsPage, showInMainNavigation: true, shortcuts: ['2'] },
-    [ROUTE.BLOG]: { type: ROUTE.BLOG, path: '/blog', label: 'Blog', icon: BookOpen, component: BlogPage, showInMainNavigation: true, shortcuts: ['3'] },
-    [ROUTE.CONTACT]: { type: ROUTE.CONTACT, path: '/contact', label: 'Get in Touch', icon: Mail, component: ContactPage, showInMainNavigation: true, shortcuts: ['4'] },
+    [ROUTE.HOME]: { type: ROUTE.HOME, path: '/', label: 'Home', icon: Home, component: HomePage, showInMainNavigation: true },
+    [ROUTE.RESUME]: { type: ROUTE.RESUME, path: '/resume', label: 'Resume', icon: FileText, component: ResumePage, showInMainNavigation: true },
+    [ROUTE.PROJECTS]: { type: ROUTE.PROJECTS, path: '/projects', label: 'Projects', icon: FolderKanban, component: ProjectsPage, showInMainNavigation: true },
+    [ROUTE.BLOG]: { type: ROUTE.BLOG, path: '/blog', label: 'Blog', icon: BookOpen, component: BlogPage, showInMainNavigation: true },
+    [ROUTE.CONTACT]: { type: ROUTE.CONTACT, path: '/contact', label: 'Get in Touch', icon: Mail, component: ContactPage, showInMainNavigation: true },
     [ROUTE.BLOG_POST]: { type: ROUTE.BLOG_POST, path: '/blog/:slug', label: 'Blog', component: PostPage, postType: 'blog' },
     [ROUTE.PROJECT_POST]: { type: ROUTE.PROJECT_POST, path: '/projects/:slug', label: 'Projects', component: PostPage, postType: 'project' },
 }
 
-/** Route keys that appear in the main navigation bar / command palette */
+/** Route keys that appear in the main navigation bar */
 export const NAV_ROUTES = (Object.keys(ROUTE_DEFINITIONS) as Route[]).filter(
     (r) => ROUTE_DEFINITIONS[r].showInMainNavigation,
-)
-
-/** Shortcut key → path lookup (for the global keyboard handler) */
-export const NAV_SHORTCUTS: Record<string, string> = Object.fromEntries(
-    NAV_ROUTES
-        .map((r) => ROUTE_DEFINITIONS[r])
-        .filter((d): d is RouteDefinition & { shortcuts: string[] } => !!d.shortcuts?.length)
-        .flatMap((d) => d.shortcuts.map((key) => [key, d.path] as const)),
 )

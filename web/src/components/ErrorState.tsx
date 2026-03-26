@@ -192,13 +192,13 @@ const ErrorState = ({
           >
             {actions}
             {onRetry && (
-              <Button onClick={onRetry} variant="outline">
+              <Button onClick={onRetry} variant="ghost">
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Try again
               </Button>
             )}
             {showReload && (
-              <Button onClick={() => window.location.reload()} variant={onRetry ? 'ghost' : 'outline'}>
+              <Button onClick={() => window.location.reload()} variant="ghost">
                 <RotateCcw className="mr-2 h-4 w-4" />
                 Reload page
               </Button>

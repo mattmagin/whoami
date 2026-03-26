@@ -1,55 +1,41 @@
-import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { Button, Text, Stack, Flex } from '@/components/ui'
-import { Kbd, KbdGroup } from '@/components/ui/kbd'
 import SshCommand from '@/components/SshCommand'
 import TypewriterText from '@/components/TypewriterText'
 import { useResume } from '@/hooks/queries'
-import { getModifierKey } from '@/lib/utils'
-
-const useModifierKey = () =>
-    useMemo(() => {
-        return getModifierKey()
-    }, [])
 
 const HeroSection = () => {
     const { data: resume } = useResume()
-    const modKey = useModifierKey()
 
     return (
         <Stack as="section" gap="lg" align="center" className="text-center">
-            <p className="text-base md:text-lg font-medium text-primary animate-fade-in">
+            <p className="text-base md:text-lg font-medium text-primary">
                 Hey, I'm
             </p>
-            <Text variant="pageTitle" className="!text-4xl md:!text-5xl lg:!text-6xl 2xl:!text-7xl animate-slide-up">
+            <Text variant="pageTitle" className="!text-4xl md:!text-5xl lg:!text-6xl 2xl:!text-7xl">
                 {resume?.name}
             </Text>
-            <div className="h-10 text-xl text-primary md:text-2xl 2xl:text-3xl animate-slide-up-delay-1">
+            <div className="h-10 text-xl text-primary md:text-2xl 2xl:text-3xl">
                 <TypewriterText />
             </div>
-            <Text variant="body" className="max-w-2xl text-center lg:text-xl animate-slide-up-delay-2">
+            <Text variant="body" className="max-w-2xl text-center lg:text-xl">
                 {resume?.summary}
             </Text>
-            <Flex gap="md" wrap justify="center" className="animate-slide-up-delay-3">
+            <Flex gap="md" wrap justify="center">
                 <Button asChild size="lg">
                     <Link to="/resume">
                         Resume
                         <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                 </Button>
-                <Button variant="outline" size="lg" asChild>
+                <Button variant="ghost" size="lg" asChild>
                     <Link to="/projects">Projects</Link>
                 </Button>
             </Flex>
 
             {/* SSH Access Hint with tooltip */}
-            <SshCommand showHint showTooltip className="mt-8 inline-flex animate-slide-up-delay-3" />
-
-            {/* Command palette hint */}
-            <p className="text-sm text-muted-foreground animate-slide-up-delay-3">
-                Press <KbdGroup><Kbd>{modKey}</Kbd><Kbd>K</Kbd></KbdGroup> for quick navigation
-            </p>
+            <SshCommand showHint showTooltip className="mt-8 inline-flex" />
         </Stack>
     )
 }

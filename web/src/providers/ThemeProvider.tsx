@@ -4,18 +4,14 @@ import { getTheme, type Theme } from '@/theme'
 import {
   THEME_PREFERENCE,
   DEFAULT_THEME,
-  DEFAULT_COLOR_THEME,
   STORAGE_KEYS,
-  COLOR_THEME,
   type ThemePreference,
-  type ColorTheme,
 } from '@/consts'
 import { getStorageItem, setStorageItem } from '@/lib/localStorage'
 import { ThemeContext, type ThemeContextType } from './themeContext'
 import type { ThemeKey } from '@/theme'
 
 const themePreferences = Object.values(THEME_PREFERENCE) as ThemePreference[]
-const colorThemes = Object.values(COLOR_THEME) as ColorTheme[]
 
 /** Detect OS preference */
 const getSystemTheme = (): ThemeKey => {
@@ -43,17 +39,6 @@ const getInitialPreference = (): ThemePreference => {
   return DEFAULT_THEME
 }
 
-const getInitialColorTheme = (): ColorTheme => {
-  if (typeof window === 'undefined') return DEFAULT_COLOR_THEME
-
-  const stored = getStorageItem(STORAGE_KEYS.COLOR_THEME)
-  if (stored && colorThemes.includes(stored as ColorTheme)) {
-    return stored as ColorTheme
-  }
-
-  return DEFAULT_COLOR_THEME
-}
-
 // Generate CSS variables from theme object
 const generateCssVariables = (theme: Theme) => {
   return css`
@@ -70,6 +55,7 @@ const generateCssVariables = (theme: Theme) => {
 
       /* Fonts */
       --font-sans: ${theme.fonts.sans};
+      --font-heading: ${theme.fonts.heading};
       --font-serif: ${theme.fonts.serif};
       --font-mono: ${theme.fonts.mono};
 
@@ -134,7 +120,6 @@ const generateCssVariables = (theme: Theme) => {
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [preference, setPreference] = useState<ThemePreference>(getInitialPreference)
   const [resolvedKey, setResolvedKey] = useState<ThemeKey>(() => resolveTheme(preference))
-  const [colorThemeKey, setColorThemeKey] = useState<ColorTheme>(getInitialColorTheme)
 
   // Adjust resolved key during render when preference changes
   const [prevPreference, setPrevPreference] = useState(preference)
@@ -170,19 +155,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [resolvedKey])
 
-  const theme = useMemo(
-    () => getTheme(resolvedKey, colorThemeKey),
-    [resolvedKey, colorThemeKey],
-  )
+  const theme = useMemo(() => getTheme(resolvedKey), [resolvedKey])
 
   const setTheme = useCallback((pref: ThemePreference) => {
     setStorageItem(STORAGE_KEYS.THEME, pref)
     setPreference(pref)
-  }, [])
-
-  const setColorTheme = useCallback((key: ColorTheme) => {
-    setStorageItem(STORAGE_KEYS.COLOR_THEME, key)
-    setColorThemeKey(key)
   }, [])
 
   const toggleTheme = useCallback(() => {
@@ -202,13 +179,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const contextValue: ThemeContextType = useMemo(() => ({
     preference,
     themeKey: resolvedKey,
-    colorTheme: colorThemeKey,
     theme,
     setTheme,
-    setColorTheme,
     toggleTheme,
     cycleTheme,
-  }), [preference, resolvedKey, colorThemeKey, theme, setTheme, setColorTheme, cycleTheme, toggleTheme])
+  }), [preference, resolvedKey, theme, setTheme, cycleTheme, toggleTheme])
 
   return (
     <ThemeContext.Provider value={contextValue}>

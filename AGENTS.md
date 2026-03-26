@@ -74,7 +74,7 @@
 ### React Frontend (`/web/src`)
 - **Components**: Functional components with TypeScript props
 - **Functions**: Use arrow function syntax (`const fn = () => {}`) instead of standard function declarations
-- **Exports**: Use `export default` for files with a single main component matching the filename (e.g., `PostCard.tsx` exports `PostCard`). Use named exports for files with multiple exports (e.g., `AnimatedSection.tsx` with 3 components, or `ThemeContext.tsx` with multiple hooks)
+- **Exports**: Use `export default` for files with a single main component matching the filename (e.g., `PostCard.tsx` exports `PostCard`). Use named exports for files with multiple exports (e.g., `ThemeContext.tsx` with multiple hooks)
 - **Barrel Files**: Re-export default exports as named in index.ts files (`export { default as Component } from './Component'`)
 - **State**: TanStack Query for server state, useState for local
 - **Styling**: Tailwind CSS + shadcn/ui components
@@ -84,10 +84,10 @@
 - **Routing**: React Router with lazy loading
 - **Forms**: React Hook Form with Zod validation
 - **DRY Constants**: When a value, set of options, or definition (routes, theme options, feature flags, etc.) is used in more than one file, it **must** be extracted into `/src/consts/` as a single source of truth. Follow this pattern:
-  1. Define an `as const` enum-like object for keys (e.g., `ROUTE`, `THEME_PREFERENCE`, `COLOR_THEME`).
+  1. Define an `as const` enum-like object for keys (e.g., `ROUTE`, `THEME_PREFERENCE`).
   2. Export a matching TypeScript type derived from that object (e.g., `type Route = typeof ROUTE[keyof typeof ROUTE]`).
-  3. Define a typed `Record` mapping each key to a definition object that carries all associated metadata — paths, labels (as string-key references into `strings.json`), icons, shortcuts, aliases, etc. (e.g., `ROUTE_DEFINITIONS`, `THEME_OPTIONS`, `COLOR_THEME_ALIASES`).
-  4. Derive any convenience lookups from the definitions rather than duplicating data (e.g., `NAV_SHORTCUTS` is derived from `ROUTE_DEFINITIONS`).
+  3. Define a typed `Record` mapping each key to a definition object that carries all associated metadata — paths, labels (as string-key references into `strings.json`), icons, aliases, etc. (e.g., `ROUTE_DEFINITIONS`, `THEME_OPTIONS`).
+  4. Derive any convenience lookups from the definitions rather than duplicating data (e.g., `NAV_ROUTES` is derived from `ROUTE_DEFINITIONS`).
   5. Re-export everything through `consts/index.ts` so consumers import from `@/consts`.
   6. **Never** duplicate these values locally in components — always import from the central const file.
 

@@ -103,7 +103,7 @@ const ContactForm = () => {
           Thanks for reaching out. I'll get back to you soon.
         </Text>
         <Button
-          variant="outline"
+          variant="ghost"
           onClick={() => setSubmitted(false)}
         >
           Send Another Message

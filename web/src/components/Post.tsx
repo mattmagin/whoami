@@ -85,7 +85,6 @@ const Post = ({
     }
 
     // Deferred period: loading but skeleton not yet visible — render nothing
-    // (the page slide-up animation masks this brief empty frame)
     if (isLoading) return null
 
     if (error) {

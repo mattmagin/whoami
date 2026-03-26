@@ -10,7 +10,7 @@ const NotFound = () => {
             <ErrorState
                 errorType={ERROR_TYPE.NOT_FOUND}
                 actions={
-                    <Button asChild variant="outline">
+                    <Button asChild variant="ghost">
                         <Link to="/">
                             <Home className="mr-2 h-4 w-4" />
                             Go home
