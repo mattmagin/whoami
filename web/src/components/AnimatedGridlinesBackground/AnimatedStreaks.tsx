@@ -31,10 +31,11 @@ const Streak: React.FC<StreakProps> = ({ streak, delay = 0 }) => {
 
     return (
         <motion.div
-            className={`absolute z-10 h-16 w-[${STREAK_THICKNESS}px]`}
+            className={`absolute z-10 h-16`}
             style={{
                 top,
                 left,
+                width: STREAK_THICKNESS,
                 background: 'linear-gradient(to bottom, transparent, var(--grid-glow))',
             }}
             initial={{ opacity: 0, transform: 'translateY(-20px)' }}

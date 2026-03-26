@@ -56,7 +56,7 @@ const MainContainer = ({ children }: MainContainerProps) => {
       <div className="flex flex-1 flex-col px-6 md:px-10 lg:px-16">
         <div
           className={cn(
-            'w-full max-w-6xl mx-auto',
+            'w-full mx-auto',
             isHome ? 'flex flex-1 flex-col justify-center items-center' : 'py-12',
           )}
         >
