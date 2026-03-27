@@ -2,7 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import { themeVars } from '@/theme'
-import { Theme } from '../new/theme'
+import { Theme } from '../theme'
 
 type TextVariant =
     | 'heroTitle'

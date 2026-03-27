@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { Text, Button } from "@/components/ui";
-import { Badge } from "@/components/new/Badge";
-import ShadowBox from "@/components/new/ShadowBox";
-import { Theme, type Color } from "@/components/new/theme";
+import { Badge } from "@/components/Badge";
+import ShadowBox from "@/components/ShadowBox";
+import { Theme, type Color } from "@/components/theme";
 import { useProjects } from "@/hooks";
 import type { Project } from "@/api";
 import { ExternalLink, Github } from "lucide-react";

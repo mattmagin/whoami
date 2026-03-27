@@ -1,5 +1,5 @@
-import About from '@/components/new/About'
-import { PageContent } from '@/components/new/layout'
+import About from '@/components/About'
+import { PageContent } from '@/components/layout'
 
 const AboutPage: React.FC = () => {
   return (

@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { Text, Button } from "@/components/ui";
-import { Badge } from "@/components/new/Badge";
-import ShadowBox from "@/components/new/ShadowBox";
-import { Theme } from "@/components/new/theme";
-import { SectionContainer } from "@/components/new/layout";
+import { Badge } from "@/components/Badge";
+import ShadowBox from "@/components/ShadowBox";
+import { Theme } from "@/components/theme";
+import { SectionContainer } from "@/components/layout";
 import { useResume } from "@/hooks";
 
 const ACCENT = Theme.colors.dark.orange;

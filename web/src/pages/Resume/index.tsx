@@ -1,5 +1,5 @@
-import Resume from '@/components/new/Resume'
-import { PageContent } from '@/components/new/layout'
+import Resume from '@/components/Resume'
+import { PageContent } from '@/components/layout'
 
 const ResumePage: React.FC = () => {
   return (

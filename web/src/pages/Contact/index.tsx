@@ -1,5 +1,5 @@
-import Contact from '@/components/new/Contact'
-import { PageContent } from '@/components/new/layout'
+import Contact from '@/components/Contact'
+import { PageContent } from '@/components/layout'
 
 const ContactPage: React.FC = () => {
   return (

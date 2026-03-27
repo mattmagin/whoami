@@ -1,5 +1,5 @@
-import Projects from '@/components/new/Projects'
-import { PageContent } from '@/components/new/layout'
+import Projects from '@/components/Projects'
+import { PageContent } from '@/components/layout'
 
 const ProjectsPage: React.FC = () => {
   return (

@@ -6,9 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import confetti from "canvas-confetti";
 import { Send, Mail, Github, Linkedin, MapPin, CheckCircle } from "lucide-react";
 import { Text, Button } from "@/components/ui";
-import ShadowBox from "@/components/new/ShadowBox";
-import { Theme } from "@/components/new/theme";
-import { SectionContainer } from "@/components/new/layout";
+import ShadowBox from "@/components/ShadowBox";
+import { Theme } from "@/components/theme";
+import { SectionContainer } from "@/components/layout";
 import { useCreateContact, useResume } from "@/hooks";
 import {
   CONTACT_LIMITS,

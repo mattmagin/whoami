@@ -1,4 +1,4 @@
-import { PageContent as Content } from "@/components/new/layout";
+import { PageContent as Content } from "@/components/layout";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import Grid from "../Grid";

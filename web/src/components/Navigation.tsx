@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
 import ShadowBox from "./ShadowBox";
 import { Theme } from "./theme";
-import { Button } from "../ui";
+import { Button } from "./ui";
 import Logo from "./Logo";
 import { HORIZONTAL_PADDING } from "./Container";
 import { NAV_ROUTES, ROUTE_DEFINITIONS } from "@/consts";

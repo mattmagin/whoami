@@ -5,8 +5,8 @@ import ErrorState from '@/components/ErrorState'
 import { Container } from '@/components/ui'
 import { ERROR_TYPE } from '@/consts'
 import Providers from './providers'
-import NewContainer from '@/components/new/Container'
-import Navigation from './components/new/Navigation'
+import NewContainer from '@/components/Container'
+import Navigation from '@/components/Navigation'
 import Pages from './pages'
 
 const App = () => {

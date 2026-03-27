@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Text } from "../ui";
+import { Text } from "./ui";
 
 const LogoText = styled(Text)`
     font-size: 35px;

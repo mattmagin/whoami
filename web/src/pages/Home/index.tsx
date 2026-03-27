@@ -1,10 +1,10 @@
 import TypewriterText from '@/components/TypewriterText'
 import { Text, Button } from '@/components/ui'
 import styled from '@emotion/styled'
-import { Badge } from '@/components/new/Badge'
-import ShadowBox, { OFFSET_STYLES } from '@/components/new/ShadowBox'
-import { Theme } from '@/components/new/theme'
-import { PageContent } from '@/components/new/layout'
+import { Badge } from '@/components/Badge'
+import ShadowBox, { OFFSET_STYLES } from '@/components/ShadowBox'
+import { Theme } from '@/components/theme'
+import { PageContent } from '@/components/layout'
 
 const TYPEWRITER_STRINGS = [
   { text: 'Software Engineer.', style: { color: '#04e17a' } },
