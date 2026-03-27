@@ -1,6 +1,8 @@
 import styled from '@emotion/styled'
 import ShadowBox from './ShadowBox'
 import { Theme } from './theme'
+import { PerspectiveGrid } from './PerspectiveGrid'
+import { DotBackground } from './styled'
 
 interface ContainerProps {
     children: React.ReactNode
@@ -8,7 +10,7 @@ interface ContainerProps {
 
 const OverallContainer = styled.div`
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     padding: 50px;
     display: flex;
     justify-content: center;
@@ -17,7 +19,6 @@ const OverallContainer = styled.div`
 
 const ControlContainer = styled.div`
     width: 100%;
-    height: fill-available;
     max-width: 2200px;
 `
 
@@ -26,8 +27,14 @@ export const HORIZONTAL_PADDING = 30;
 const Container: React.FC<ContainerProps> = ({ children }) => {
     return (
         <OverallContainer>
+            {/* <PerspectiveGrid /> */}
             <ControlContainer>
-                <ShadowBox styles={{ content: { padding: '30px 0' } }}>{children}</ShadowBox>
+                <ShadowBox styles={{ content: { padding: '30px 0' } }}>
+                    <DotBackground />
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                        {children}
+                    </div>
+                </ShadowBox>
             </ControlContainer>
         </OverallContainer>
     )

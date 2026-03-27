@@ -1,9 +1,11 @@
 import styled from "@emotion/styled";
+import { Link } from "react-router-dom";
 import ShadowBox from "./ShadowBox";
 import { Theme } from "./theme";
 import { Button } from "../ui";
 import Logo from "./Logo";
 import { HORIZONTAL_PADDING } from "./Container";
+import { NAV_ROUTES, ROUTE_DEFINITIONS } from "@/consts";
 
 const ControlContainer = styled.div`
     width: 100%;
@@ -16,23 +18,22 @@ const LayoutContainer = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    // width: 100%;
     height: 100%;
     width: 100%;
 
     :first-child {
      align-self: flex-start;
-     flex: 1;
     }
 `;
 
-const NavigationItems = styled.div`
-    // display: flex;
-    // justify-content: flex-end;
-    // gap: 20px;
-    // align-items: center;
-    // width: 100%;
-    // height: 100%;
+const NavigationItems = styled.div``;
+
+const NavLink = styled(Link)`
+    text-decoration: none;
+`;
+
+const ExternalNavLink = styled.a`
+    text-decoration: none;
 `;
 
 const Navigation: React.FC = () => {
@@ -40,12 +41,32 @@ const Navigation: React.FC = () => {
         <ControlContainer>
             <ShadowBox backgroundColor={Theme.colors.light.yellow} offset="xsm" styles={{ wrapper: { width: `calc(100% - ${HORIZONTAL_PADDING * 2}px)` }, content: { padding: '0 20px' } }}>
                 <LayoutContainer>
-                    <Logo />
+                    <NavLink to="/">
+                        <Logo />
+                    </NavLink>
                     <NavigationItems>
-                        <Button variant="ghost">1. Home</Button>
-                        <Button variant="ghost">2. Resume</Button>
-                        <Button variant="ghost">3. Projects</Button>
-                        <Button>4. Contact</Button>
+                        {NAV_ROUTES.map((routeKey, index) => {
+                            const route = ROUTE_DEFINITIONS[routeKey];
+                            const isContact = route.type === 'contact';
+                            if (route.externalUrl) {
+                                return (
+                                    <ExternalNavLink href={route.externalUrl} target="_blank" rel="noopener noreferrer" key={route.type}>
+                                        <Button variant="ghost">
+                                            {index + 1}. {route.label}
+                                        </Button>
+                                    </ExternalNavLink>
+                                );
+                            }
+                            return (
+                                <NavLink to={route.path} key={route.type}>
+                                    <Button
+                                        variant={isContact ? "primary" : "ghost"}
+                                    >
+                                        {index + 1}. {route.label}
+                                    </Button>
+                                </NavLink>
+                            );
+                        })}
                     </NavigationItems>
                 </LayoutContainer>
             </ShadowBox>

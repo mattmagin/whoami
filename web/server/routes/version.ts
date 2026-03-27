@@ -6,7 +6,6 @@ const app = new Hono()
   .get('/', async (c) => {
     const result = await db.execute<{ latest: Date | null }>(sql`
       SELECT GREATEST(
-        (SELECT MAX(updated_at) FROM posts),
         (SELECT MAX(updated_at) FROM projects),
         (SELECT MAX(updated_at) FROM resumes)
       ) AS latest

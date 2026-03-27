@@ -17,8 +17,6 @@ export {
 } from '../providers/themeContext'
 
 export {
-    usePosts,
-    usePost,
     useProjects,
     useProject,
     useResume,
@@ -33,8 +31,6 @@ export {
     default as useKeyBindings,
     type KeyBinding,
 } from './useKeyBindings'
-
-export { default as usePostType } from './usePostType'
 
 export { default as useDeferredLoading } from './useDeferredLoading'
 

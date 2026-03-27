@@ -12,16 +12,14 @@ const client = hc<ApiType>('/api');
 // Derived types (inferred from server route definitions)
 // ---------------------------------------------------------------------------
 
-type PostsResponse = InferResponseType<typeof client.posts.$get, 200>;
 type ProjectsResponse = InferResponseType<typeof client.projects.$get, 200>;
 type ResumeResponse = InferResponseType<typeof client.resume.$get, 200>;
 
 // Entity types
-export type Post = PostsResponse['data'][number];
 export type Project = ProjectsResponse['data'][number];
 
 // Pagination
-export type PaginationMeta = PostsResponse['meta'];
+export type PaginationMeta = ProjectsResponse['meta'];
 export type PaginatedResponse<T> = { data: T[]; meta: PaginationMeta };
 
 // Resume
@@ -49,20 +47,6 @@ export { ApiError, isApiError };
 export interface PaginationParams {
     page?: number;
 }
-
-export const getPosts = async (params: PaginationParams = {}): Promise<PaginatedResponse<Post>> => {
-    const query: Record<string, string> = {};
-    if (params.page != null) query.page = String(params.page);
-    const res = await client.posts.$get({ query });
-    if (!res.ok) throw await parseApiError(res);
-    return res.json();
-};
-
-export const getPost = async (slug: string) => {
-    const res = await client.posts[':slug'].$get({ param: { slug } });
-    if (!res.ok) throw await parseApiError(res);
-    return res.json();
-};
 
 export const getProjects = async (params: PaginationParams = {}): Promise<PaginatedResponse<Project>> => {
     const query: Record<string, string> = {};
