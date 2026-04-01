@@ -18,3 +18,6 @@ override.tf.json
 *.tfvars.json
 *.auto.tfvars
 *.auto.tfvars.json
+
+/admin
+/admin/*

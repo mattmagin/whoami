@@ -1,17 +1,15 @@
 import { createContext, useContext } from 'react'
-import type { Theme, ThemeKey, ThemeColors, ThemeFonts, ThemeRadii, ColorPalette } from '@/theme'
-import type { ThemePreference, ColorTheme } from '@/consts'
+import type { Theme, ThemeKey, ThemeColors, ThemeFonts, ThemeRadii } from '@/theme'
+import type { ThemePreference } from '@/consts'
 
 export interface ThemeContextType {
   /** The user's stored preference – may be 'system' */
   preference: ThemePreference
   /** The resolved theme key – always 'light' or 'dark' */
   themeKey: ThemeKey
-  colorTheme: ColorTheme
   theme: Theme
   /** Set the user's preference (light / dark / system) */
   setTheme: (pref: ThemePreference) => void
-  setColorTheme: (key: ColorTheme) => void
   toggleTheme: () => void
   /** Cycle through light → dark → system → light */
   cycleTheme: () => void
@@ -33,5 +31,5 @@ export const useTheme = () => {
 }
 
 // Re-export theme types and utilities for convenience
-export type { Theme, ThemeKey, ThemeColors, ThemeFonts, ThemeRadii, ColorPalette }
+export type { Theme, ThemeKey, ThemeColors, ThemeFonts, ThemeRadii }
 export { themes, getTheme, lightTheme, darkTheme } from '@/theme'

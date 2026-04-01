@@ -1,7 +1,73 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Geist Pixel is not published on Google Fonts; faces use files from the `geist` package. */
+@font-face {
+  font-family: "Geist Pixel Square";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Square.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geist Pixel Grid";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Grid.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geist Pixel Circle";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Circle.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geist Pixel Triangle";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Triangle.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geist Pixel Line";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Line.woff2") format("woff2");
+}
+
 @custom-variant dark (&:is(.dark *));
+
+/* Legacy palette (from `src/components/theme.ts`) — light values only for now. */
+:root {
+  --content-background: #f9f5f2;
+  --secondary-section-background: #ffffff;
+  --border-outline: #000000;
+  --heading: #282825;
+  --black: #000000;
+  --body: #52514e;
+
+  --green: #04e17a;
+  --orange: #ff7a05;
+  --blue: #0099ff;
+  --yellow: #f7cb45;
+  --pink: #ff91e7;
+  --purple: #9147ff;
+
+  --off-white: #fffdf5;
+  --bold-yellow: #ffd23f;
+  --coral-pink: #ff6b6b;
+  --sky-blue: #74b9ff;
+  --second-orange: #ffa552;
+  --soft-green: #88d498;
+  --lavender: #b8a9fa;
+}
 
 /* Theme - CSS variable mappings for Tailwind */
 @theme inline {
@@ -14,6 +80,7 @@
   --radius-4xl: calc(var(--radius) + 16px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-warm: var(--bg-warm);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -44,10 +111,43 @@
   --color-grid-line: var(--grid-line);
   --color-grid-glow: var(--grid-glow);
 
+  /* Legacy palette */
+  --color-content-background: var(--content-background);
+  --color-secondary-section-background: var(--secondary-section-background);
+  --color-border-outline: var(--border-outline);
+  --color-heading: var(--heading);
+  --color-black: var(--black);
+  --color-body: var(--body);
+
+  --color-green: var(--green);
+  --color-orange: var(--orange);
+  --color-blue: var(--blue);
+  --color-yellow: var(--yellow);
+  --color-pink: var(--pink);
+  --color-purple: var(--purple);
+
+  --color-off-white: var(--off-white);
+  --color-bold-yellow: var(--bold-yellow);
+  --color-coral-pink: var(--coral-pink);
+  --color-sky-blue: var(--sky-blue);
+  --color-second-orange: var(--second-orange);
+  --color-soft-green: var(--soft-green);
+  --color-lavender: var(--lavender);
+
   /* Typography */
   --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
   --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
+
+  /* Geist (sans + mono from Google Fonts in index.html); pixel faces above */
+  --font-geist: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-geist-mono: "Geist Mono", ui-monospace, monospace;
+  --font-geist-pixel: "Geist Pixel Square", "Geist Mono", monospace;
+  --font-geist-pixel-grid: "Geist Pixel Grid", "Geist Mono", monospace;
+  --font-geist-pixel-circle: "Geist Pixel Circle", "Geist Mono", monospace;
+  --font-geist-pixel-triangle: "Geist Pixel Triangle", "Geist Mono", monospace;
+  --font-geist-pixel-line: "Geist Pixel Line", "Geist Mono", monospace;
 }
 
 @layer base {
@@ -60,7 +160,8 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+
+    /* @apply bg-background text-foreground antialiased; */
     font-family: var(--font-sans);
   }
 
@@ -70,7 +171,7 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-serif);
+    font-family: var(--font-heading);
     @apply tracking-tight;
   }
 
@@ -85,81 +186,6 @@
 @layer utilities {
   .transition-theme {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  }
-}
-
-/* Page transition animations */
-@layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-out;
-  }
-
-  .animate-slide-up {
-    animation: slideUp 0.5s ease-out;
-  }
-
-  .animate-slide-up-delay-1 {
-    animation: slideUp 0.5s ease-out 0.1s both;
-  }
-
-  .animate-slide-up-delay-2 {
-    animation: slideUp 0.5s ease-out 0.2s both;
-  }
-
-  .animate-slide-up-delay-3 {
-    animation: slideUp 0.5s ease-out 0.3s both;
-  }
-
-  .animate-fade-out {
-    animation: fadeOut 0.4s ease-in forwards;
-  }
-
-  .animate-slide-down {
-    animation: slideDown 0.4s ease-in forwards;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  to {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 
