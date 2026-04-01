@@ -1,8 +1,7 @@
 import styled from '@emotion/styled'
 import ShadowBox from './ShadowBox'
 import { Theme } from './theme'
-import { PerspectiveGrid } from './PerspectiveGrid'
-import { DotBackground } from './styled'
+import { DotBackground } from './DotBackground'
 
 interface ContainerProps {
     children: React.ReactNode
@@ -26,12 +25,12 @@ export const HORIZONTAL_PADDING = 30;
 
 const Container: React.FC<ContainerProps> = ({ children }) => {
     return (
-        <OverallContainer>
-            {/* <PerspectiveGrid /> */}
-            <ControlContainer>
-                <ShadowBox styles={{ content: { padding: '30px 0' } }}>
+        <OverallContainer className="overall-container">
+            <ControlContainer className="container-content">
+                {/* TODO move to const along with the side padding */}
+                <ShadowBox styles={{ content: { padding: '2rem 0' } }}>
                     <DotBackground />
-                    <div style={{ position: 'relative', zIndex: 1 }}>
+                    <div style={{ position: 'relative', zIndex: 1, height: '100%' }}>
                         {children}
                     </div>
                 </ShadowBox>

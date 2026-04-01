@@ -43,6 +43,18 @@ const variantStyles = {
         letter-spacing: -0.025em;
         line-height: 1.2;
         color: ${Theme.colors.light.heading};
+
+        @media (max-width: 1500px) {
+            font-size: 4.5rem;
+        }
+
+        @media (max-width: 1350px) {
+            font-size: 4rem;
+        }
+
+        @media (max-width: 700px) {
+            font-size: 3.5rem;
+        }
     `,
     pageTitle: css`
         font-family: ${themeVars.fonts.heading};
@@ -66,15 +78,15 @@ const variantStyles = {
     `,
     sectionTitle: css`
         font-family: ${themeVars.fonts.heading};
-        font-size: 1.375rem;
-        font-weight: 600;
+        font-size: 1.8rem;
+        font-weight: 700;
         letter-spacing: -0.025em;
         line-height: 1.3;
         color: ${Theme.colors.light.blue};
 
-        @media (min-width: 768px) {
-            font-size: 1.5rem;
-        }
+        // @media (min-width: 768px) {
+        //     font-size: 1.5rem;
+        // }
 
         @media (min-width: 1536px) {
             font-size: 1.875rem;

@@ -67,6 +67,9 @@ const generateCssVariables = (theme: Theme) => {
       --background: ${theme.colors.background};
       --foreground: ${theme.colors.foreground};
 
+      /* Legacy / semantic aliases */
+      --bg-warm: ${theme.colors.background};
+
       /* Card */
       --card: ${theme.colors.card};
       --card-foreground: ${theme.colors.cardForeground};

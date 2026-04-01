@@ -7,7 +7,7 @@ import '@fontsource-variable/fraunces'
 import '@fontsource-variable/jetbrains-mono'
 
 import './index.css'
-import App from './App.tsx'
+import App from './app/index.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

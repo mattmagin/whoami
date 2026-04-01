@@ -4,17 +4,19 @@ import { keyframes } from "@emotion/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import confetti from "canvas-confetti";
-import { Send, Mail, Github, Linkedin, MapPin, CheckCircle } from "lucide-react";
+import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, type LucideIcon, Icon } from "lucide-react";
 import { Text, Button } from "@/components/ui";
 import ShadowBox from "@/components/ShadowBox";
 import { Theme } from "@/components/theme";
-import { SectionContainer } from "@/components/layout";
 import { useCreateContact, useResume } from "@/hooks";
 import {
   CONTACT_LIMITS,
   contactSchema,
   type ContactFormValues,
 } from "@/consts";
+import { PageHeading } from "../Text";
+import { PageContent } from "../layout";
+import { v4 as uuidv4 } from 'uuid';
 
 const ACCENT = Theme.colors.dark.pink;
 
@@ -23,22 +25,17 @@ const pulse = keyframes`
   50% { opacity: 1; }
 `;
 
-const Section = styled.section`
-  width: 100%;
-  background-color: ${Theme.colors.dark.contentBackground};
-  padding: 80px 0;
-`;
-
 const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 40px;
+  margin-top: 4rem;
 `;
 
 const TwoCol = styled.div`
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 40px;
+  grid-template-columns: 0.75fr 1fr;
+  gap: 10rem;
   align-items: start;
 `;
 
@@ -142,16 +139,12 @@ const CharCount = styled.span<{ $near?: boolean; $over?: boolean }>`
 /* ── Contact info sidebar ── */
 
 const InfoBox = styled.div`
-  padding: 32px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 24px;
 `;
 
 const LinkRow = styled.a`
-  display: flex;
-  align-items: center;
-  gap: 12px;
   color: ${Theme.colors.dark.heading};
   text-decoration: none;
   font-weight: 600;
@@ -197,12 +190,16 @@ const SkeletonBlock = styled.div<{ $w?: string; $h?: string }>`
 const LoadingSkeleton = () => (
   <Content>
     <SkeletonBlock $w="200px" $h="32px" />
-    <TwoCol>
-      <SkeletonBlock $h="380px" />
-      <SkeletonBlock $h="260px" />
-    </TwoCol>
+    <SkeletonBlock $h="380px" />
+    <SkeletonBlock $h="260px" />
   </Content>
 );
+
+interface ContactInfo {
+  icon: LucideIcon;
+  href: string;
+  label: string;
+}
 
 const Contact: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -257,191 +254,165 @@ const Contact: React.FC = () => {
     });
   };
 
-  const contact = resume?.contact;
+  const contactInfo: ContactInfo[] = [
+    {
+      icon: Mail,
+      label: "Email",
+      href: "mailto:mail@mattmagin.dev",
+    },
+    {
+      icon: Github,
+      label: "GitHub",
+      href: "https://github.com/mattmagin",
+    },
+    {
+      icon: Linkedin,
+      label: "LinkedIn",
+      href: "https://www.linkedin.com/in/mattmagin",
+    }
+  ]
 
   return (
-    <Section id="contact">
-      <SectionContainer>
-        {resumeLoading ? (
-          <LoadingSkeleton />
-        ) : (
-          <Content>
-            <Text variant="sectionTitle" style={{ color: ACCENT }}>
-              Get in Touch
-            </Text>
-
-            <TwoCol>
-              {/* ── Form column ── */}
-              <ShadowBox offset="sm">
-                <FormBox>
-                  {submitted ? (
-                    <SuccessBox>
-                      <CheckCircle size={48} color={Theme.colors.dark.green} />
-                      <Text variant="cardTitle">Message Sent!</Text>
-                      <Text variant="body">
-                        Thanks for reaching out. I&apos;ll get back to you soon.
-                      </Text>
-                      <Button
-                        variant="ghost"
-                        onClick={() => setSubmitted(false)}
-                      >
-                        Send Another Message
-                      </Button>
-                    </SuccessBox>
-                  ) : (
-                    <FormFields onSubmit={handleSubmit(onSubmit)} noValidate>
-                      <FieldRow>
-                        <FieldGroup>
-                          <StyledLabel htmlFor="contact-name">
-                            Name
-                          </StyledLabel>
-                          <StyledInput
-                            id="contact-name"
-                            placeholder="Your name"
-                            maxLength={CONTACT_LIMITS.name}
-                            disabled={isSubmitting}
-                            $hasError={!!errors.name}
-                            {...register("name")}
-                          />
-                          {errors.name && (
-                            <FieldError>{errors.name.message}</FieldError>
-                          )}
-                        </FieldGroup>
-                        <FieldGroup>
-                          <StyledLabel htmlFor="contact-email">
-                            Email
-                          </StyledLabel>
-                          <StyledInput
-                            id="contact-email"
-                            type="email"
-                            placeholder="you@example.com"
-                            maxLength={CONTACT_LIMITS.email}
-                            disabled={isSubmitting}
-                            $hasError={!!errors.email}
-                            {...register("email")}
-                          />
-                          {errors.email && (
-                            <FieldError>{errors.email.message}</FieldError>
-                          )}
-                        </FieldGroup>
-                      </FieldRow>
-
+    <>
+      {resumeLoading ? (
+        <LoadingSkeleton />
+      ) : (
+        <PageContent>
+          <div>
+            <div className="mb-8 gap-2 flex flex-col">
+              <PageHeading text="Get in" styledText="Touch" />
+              <Text variant="body">
+                I'd love to hear from you, whether it's just to say hello or to discuss a project. Drop me a line below or reach out via my social links.
+              </Text>
+            </div>
+            <InfoBox>
+              {contactInfo.map((contact) => (
+                <div key={uuidv4()}>
+                  <ShadowBox key={uuidv4()} offset="xxsm" backgroundColor={ACCENT} styles={{ content: { padding: "8px 16px" } }}>
+                    <LinkRow key={uuidv4()} href={contact.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                      <contact.icon size={18} />
+                      <Text variant="body">{contact.label}</Text>
+                    </LinkRow>
+                  </ShadowBox>
+                </div>
+              ))}
+            </InfoBox>
+          </div>
+          <div>
+            <ShadowBox offset="sm">
+              <FormBox className="form-box">
+                {submitted ? (
+                  <SuccessBox>
+                    <CheckCircle size={48} color={Theme.colors.dark.green} />
+                    <Text variant="cardTitle">Message Sent!</Text>
+                    <Text variant="body">
+                      Thanks for reaching out. I&apos;ll get back to you soon.
+                    </Text>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setSubmitted(false)}
+                    >
+                      Send Another Message
+                    </Button>
+                  </SuccessBox>
+                ) : (
+                  <FormFields onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <FieldRow>
                       <FieldGroup>
-                        <StyledLabel htmlFor="contact-message">
-                          Message
+                        <StyledLabel htmlFor="contact-name">
+                          Name
                         </StyledLabel>
-                        <StyledTextarea
-                          id="contact-message"
-                          placeholder="What would you like to discuss?"
-                          rows={6}
+                        <StyledInput
+                          id="contact-name"
+                          placeholder="Your name"
+                          maxLength={CONTACT_LIMITS.name}
                           disabled={isSubmitting}
-                          $hasError={!!errors.message}
-                          {...register("message")}
+                          $hasError={!!errors.name}
+                          {...register("name")}
                         />
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          {errors.message ? (
-                            <FieldError>{errors.message.message}</FieldError>
-                          ) : (
-                            <span />
-                          )}
-                          <CharCount $near={messageNear} $over={messageOver}>
-                            {messageLength.toLocaleString()}/
-                            {CONTACT_LIMITS.message.toLocaleString()}
-                          </CharCount>
-                        </div>
+                        {errors.name && (
+                          <FieldError>{errors.name.message}</FieldError>
+                        )}
                       </FieldGroup>
+                      <FieldGroup>
+                        <StyledLabel htmlFor="contact-email">
+                          Email
+                        </StyledLabel>
+                        <StyledInput
+                          id="contact-email"
+                          type="email"
+                          placeholder="you@example.com"
+                          maxLength={CONTACT_LIMITS.email}
+                          disabled={isSubmitting}
+                          $hasError={!!errors.email}
+                          {...register("email")}
+                        />
+                        {errors.email && (
+                          <FieldError>{errors.email.message}</FieldError>
+                        )}
+                      </FieldGroup>
+                    </FieldRow>
 
-                      {serverError && (
-                        <ServerError>
-                          <Text
-                            variant="bodySmall"
-                            style={{ color: "#e53e3e", fontWeight: 600 }}
-                          >
-                            {serverError}
-                          </Text>
-                        </ServerError>
-                      )}
-
-                      <Button
-                        ref={buttonRef}
-                        type="submit"
-                        color="pink"
-                        size="lg"
+                    <FieldGroup>
+                      <StyledLabel htmlFor="contact-message">
+                        Message
+                      </StyledLabel>
+                      <StyledTextarea
+                        id="contact-message"
+                        placeholder="Say hello!"
+                        rows={6}
                         disabled={isSubmitting}
+                        $hasError={!!errors.message}
+                        {...register("message")}
+                      />
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
                       >
-                        {isSubmitting ? "Sending..." : "Send Message"}
-                        {!isSubmitting && <Send size={16} />}
-                      </Button>
-                    </FormFields>
-                  )}
-                </FormBox>
-              </ShadowBox>
+                        {errors.message ? (
+                          <FieldError>{errors.message.message}</FieldError>
+                        ) : (
+                          <span />
+                        )}
+                        <CharCount $near={messageNear} $over={messageOver}>
+                          {messageLength.toLocaleString()}/
+                          {CONTACT_LIMITS.message.toLocaleString()}
+                        </CharCount>
+                      </div>
+                    </FieldGroup>
 
-              {/* ── Contact info column ── */}
-              <ShadowBox offset="sm" backgroundColor={ACCENT}>
-                <InfoBox>
-                  <Text
-                    variant="cardTitle"
-                    style={{ color: Theme.colors.dark.heading }}
-                  >
-                    Contact Info
-                  </Text>
+                    {serverError && (
+                      <ServerError>
+                        <Text
+                          variant="bodySmall"
+                          style={{ color: "#e53e3e", fontWeight: 600 }}
+                        >
+                          {serverError}
+                        </Text>
+                      </ServerError>
+                    )}
 
-                  {contact?.email && (
-                    <LinkRow href={`mailto:${contact.email}`}>
-                      <IconCircle $bg="#ffffff">
-                        <Mail size={18} />
-                      </IconCircle>
-                      {contact.email}
-                    </LinkRow>
-                  )}
-
-                  {contact?.github && (
-                    <LinkRow
-                      href={contact.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Button
+                      ref={buttonRef}
+                      type="submit"
+                      color="pink"
+                      size="lg"
+                      disabled={isSubmitting}
                     >
-                      <IconCircle $bg="#ffffff">
-                        <Github size={18} />
-                      </IconCircle>
-                      GitHub
-                    </LinkRow>
-                  )}
+                      {isSubmitting ? "Sending..." : "Send Message"}
+                      {!isSubmitting && <Send size={16} />}
+                    </Button>
+                  </FormFields>
+                )}
+              </FormBox>
+            </ShadowBox>
+          </div>
+        </PageContent >
 
-                  {contact?.linkedin && (
-                    <LinkRow
-                      href={contact.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <IconCircle $bg="#ffffff">
-                        <Linkedin size={18} />
-                      </IconCircle>
-                      LinkedIn
-                    </LinkRow>
-                  )}
-
-                  {contact?.location && (
-                    <LinkRow as="div">
-                      <IconCircle $bg="#ffffff">
-                        <MapPin size={18} />
-                      </IconCircle>
-                      {contact.location}
-                    </LinkRow>
-                  )}
-                </InfoBox>
-              </ShadowBox>
-            </TwoCol>
-          </Content>
-        )}
-      </SectionContainer>
-    </Section>
+      )}
+    </>
   );
 };
 

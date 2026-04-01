@@ -5,7 +5,7 @@ import { Slot } from 'radix-ui'
 import ShadowBox from '@/components/ShadowBox'
 import { Theme } from '@/components/theme'
 import { themeVars } from '@/theme'
-import type { Color, ThemeVariants } from '@/components/theme'
+import type { Color } from '@/components/theme'
 
 type ButtonVariant = 'primary' | 'ghost' | 'link'
 type ButtonSize = 'md' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg'

@@ -16,7 +16,7 @@ const SkeletonBlock = styled.div<{ $w?: string; $h?: string }>`
 `;
 
 const LoadingSkeleton = () => {
-    const skeletonBlocks = Array.from({ length: 4 }).map((_, i) => ({ $h: "260px" }));
+    const skeletonBlocks = Array.from({ length: 4 }).map(() => ({ $h: "260px" }));
 
     return (
         <Content>

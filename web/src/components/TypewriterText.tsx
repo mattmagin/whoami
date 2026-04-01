@@ -13,7 +13,7 @@ interface TypewriterTextProps {
 }
 
 const TypewriterText: React.FC<TypewriterTextProps> = ({ sequence, className, pauseAfterText = 2000, pauseAfterDelete = 500 }) => {
-  const composedSequence = sequence.flatMap(({ text, style }) =>
+  const composedSequence = sequence.flatMap(({ text }) =>
     [text, pauseAfterText, '', pauseAfterDelete]
   );
 

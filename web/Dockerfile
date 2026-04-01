@@ -1,5 +1,5 @@
 # ---- Stage 1: Build frontend ----
-FROM oven/bun:1 AS builder
+FROM oven/bun:latest AS builder
 WORKDIR /app
 
 # Install ALL dependencies (including devDeps for vite/tsc)
@@ -9,26 +9,26 @@ RUN bun install --frozen-lockfile
 # Copy source
 COPY . .
 
-# Build the React SPA → dist/
+# Build the server + React SPA → dist-server/ + dist/
 RUN bun run build
 
 # ---- Stage 2: Production runtime ----
-FROM oven/bun:1-slim
+FROM oven/bun:latest
 WORKDIR /app
 
 # Install production dependencies only
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile --production
+RUN bun install --production --frozen-lockfile
 
 # Copy built frontend assets
 COPY --from=builder /app/dist ./dist
 
-# Copy server source (Bun runs TypeScript directly)
-COPY server ./server
+# Copy compiled server output
+COPY --from=builder /app/dist-server ./dist-server
 
 ENV NODE_ENV=production
 
 # Railway injects PORT at runtime; default to 3001
 EXPOSE 3001
 
-CMD ["bun", "run", "server/index.ts"]
+CMD ["bun", "dist-server/index.js"]
